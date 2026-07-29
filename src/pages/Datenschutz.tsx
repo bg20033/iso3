@@ -20,10 +20,16 @@ export default function Datenschutz() {
           </p>
           <h2>Kontaktaufnahme</h2>
           <p>
-            Das Kontaktformular übermittelt keine Daten an einen Webserver. Es
-            erstellt auf Ihrem Gerät eine vorbereitete E-Mail, die erst über Ihr
-            E-Mail-Programm versendet wird. Für die weitere Bearbeitung gelten
-            die Datenschutzbestimmungen Ihres E-Mail-Anbieters.
+            Wenn Sie das Kontaktformular absenden, werden Ihre Angaben und die
+            von Ihnen ausgewählten Anhänge zur Bearbeitung der Projektanfrage
+            per E-Mail an IsoMat übermittelt. Die Website legt daraus kein
+            dauerhaftes Benutzerkonto und keine eigene Dateiablage an.
+          </p>
+          <p>
+            Zulässig sind bis zu fünf Bild-, PDF- oder CAD-Dateien. Ohne
+            abschliessendes Absenden wird nichts übermittelt. Falls der direkte
+            Versand nicht verfügbar ist, können Sie stattdessen eine
+            vorbereitete E-Mail in Ihrem eigenen E-Mail-Programm öffnen.
           </p>
           <h2>Technische Zugriffsdaten</h2>
           <p>

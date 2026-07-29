@@ -11,13 +11,27 @@ export type GalleryImage = {
 export type Solution = {
   no: string
   slug: keyof typeof mediaBySlug
+  productSlug: string
   title: string
   shortTitle: string
   eyebrow: string
   summary: string
   paragraphs: string[]
+  problem: string
+  approach: string
   benefits: string[]
   applications: string[]
+  seo: {
+    title: string
+    description: string
+    primaryKeyword: string
+    secondaryKeywords: string[]
+  }
+  faqs: {
+    question: string
+    answer: string
+  }[]
+  relatedSlugs: (keyof typeof mediaBySlug)[]
   gallery: GalleryImage[]
   featuredImage: GalleryImage
 }
@@ -41,11 +55,159 @@ export const nav = [
 const gallery = (slug: keyof typeof mediaBySlug): GalleryImage[] =>
   mediaBySlug[slug].map((image) => ({ ...image }))
 
+type SolutionSlug = keyof typeof mediaBySlug
+
+const solutionMeta: Record<
+  SolutionSlug,
+  Pick<Solution, 'productSlug' | 'seo' | 'relatedSlugs'>
+> = {
+  'ventile-armaturen': {
+    productSlug: 'ventile',
+    seo: {
+      title: 'Dämmkissen für Ventile & Armaturen | IsoMat',
+      description:
+        'Massgefertigte, abnehmbare Dämmkissen für Ventile, Pumpen, Flansche und Armaturen in Industrieanlagen.',
+      primaryKeyword: 'Dämmkissen Ventile',
+      secondaryKeywords: [
+        'Armaturen isolieren',
+        'abnehmbare Ventilisolierung',
+        'Isoliermatratzen Flansche',
+      ],
+    },
+    relatedSlugs: ['heizungszentralen', 'kompensatoren', 'sonderbau'],
+  },
+  heizungszentralen: {
+    productSlug: 'heizungszentralen',
+    seo: {
+      title: 'Isolierung für Heizungszentralen | IsoMat',
+      description:
+        'Wartungsfreundliche Dämmkissen für Pumpen, Ventile, Flansche und Rohrleitungen in Heizungszentralen.',
+      primaryKeyword: 'Isolierung Heizungszentrale',
+      secondaryKeywords: [
+        'Dämmkissen Heizzentrale',
+        'Pumpen isolieren',
+        'Wärmeverluste Armaturen',
+      ],
+    },
+    relatedSlugs: ['ventile-armaturen', 'revisionstueren', 'sonderbau'],
+  },
+  ascheaustragssysteme: {
+    productSlug: 'ascheaustragssysteme',
+    seo: {
+      title: 'Isolierung für Ascheaustrag & Trichter | IsoMat',
+      description:
+        'Passgenaue Isolierungen für beheizte Ascheaustragssysteme, Trichter, Schieber und Förderelemente.',
+      primaryKeyword: 'Ascheaustrag Isolierung',
+      secondaryKeywords: [
+        'Trichter isolieren',
+        'Begleitheizung schützen',
+        'Dämmkissen Fördersystem',
+      ],
+    },
+    relatedSlugs: ['revisionstueren', 'sonderbau', 'ventile-armaturen'],
+  },
+  revisionstueren: {
+    productSlug: 'revisionstueren',
+    seo: {
+      title: 'Dämmkissen für Revisionstüren | IsoMat',
+      description:
+        'Abnehmbare Dämmkissen für Revisionstüren und Öffnungen an Kesseln, Öfen, Trocknern und Prozessanlagen.',
+      primaryKeyword: 'Dämmkissen Revisionstüren',
+      secondaryKeywords: [
+        'Revisionsöffnung isolieren',
+        'Kessel Isolation',
+        'abnehmbare Ofenisolierung',
+      ],
+    },
+    relatedSlugs: ['ascheaustragssysteme', 'turbinen', 'sonderbau'],
+  },
+  kompensatoren: {
+    productSlug: 'kompensatoren',
+    seo: {
+      title: 'Flexible Dämmkissen für Kompensatoren | IsoMat',
+      description:
+        'Massgefertigte Wärmedämmung für axiale, laterale und universale Kompensatoren – flexibel und abnehmbar.',
+      primaryKeyword: 'Kompensator Isolierung',
+      secondaryKeywords: [
+        'Dämmkissen Kompensatoren',
+        'flexible Rohrleitungsisolierung',
+        'Wärmebrücke Kompensator',
+      ],
+    },
+    relatedSlugs: ['ventile-armaturen', 'turbinen', 'sonderbau'],
+  },
+  turbinen: {
+    productSlug: 'turbinen',
+    seo: {
+      title: 'Hochtemperatur-Isolierung für Turbinen | IsoMat',
+      description:
+        'Mehrteilige, abnehmbare Isoliermatratzen für Dampf-, Gas- und Industrieturbinen sowie Anschlussleitungen.',
+      primaryKeyword: 'Turbinen Isolierung',
+      secondaryKeywords: [
+        'Hochtemperatur Dämmkissen',
+        'Isoliermatratzen Dampfturbine',
+        'abnehmbare Turbinenisolierung',
+      ],
+    },
+    relatedSlugs: ['kompensatoren', 'revisionstueren', 'sonderbau'],
+  },
+  sonderbau: {
+    productSlug: 'sonderbau',
+    seo: {
+      title: 'Sonderisolierungen nach Mass | IsoMat',
+      description:
+        'Individuelle Dämmkonzepte für komplexe, bewegliche oder vibrierende Industriekomponenten und besondere Einbausituationen.',
+      primaryKeyword: 'Sonderisolierung Industrie',
+      secondaryKeywords: [
+        'Dämmkissen Sonderanfertigung',
+        'industrielle Isolierung nach Mass',
+        'Kombinationsisolierung',
+      ],
+    },
+    relatedSlugs: ['ventile-armaturen', 'turbinen', 'ascheaustragssysteme'],
+  },
+}
+
 const makeSolution = (
-  value: Omit<Solution, 'gallery' | 'featuredImage'>,
+  value: Omit<
+    Solution,
+    | 'gallery'
+    | 'featuredImage'
+    | 'productSlug'
+    | 'seo'
+    | 'faqs'
+    | 'relatedSlugs'
+    | 'problem'
+    | 'approach'
+  >,
 ): Solution => {
   const images = gallery(value.slug)
-  return { ...value, gallery: images, featuredImage: images[0] }
+  const meta = solutionMeta[value.slug]
+  return {
+    ...value,
+    ...meta,
+    problem: value.paragraphs[0],
+    approach: value.paragraphs[1],
+    faqs: [
+      {
+        question: `Sind die Dämmkissen für ${value.shortTitle} abnehmbar?`,
+        answer:
+          'Ja. Die Konstruktion ist für Wartung, Inspektion und Reparatur demontierbar und kann danach wieder passgenau montiert werden.',
+      },
+      {
+        question: 'Wie wird die passende Form bestimmt?',
+        answer:
+          'IsoMat fertigt anhand von Zeichnungen, Modellen oder einem Aufmass an der Anlage. Aussparungen und Befestigungen werden in die Konstruktion integriert.',
+      },
+      {
+        question: 'Welche Angaben helfen bei einer Projektanfrage?',
+        answer:
+          'Hilfreich sind Fotos, Abmessungen, Betriebstemperatur und Angaben zum benötigten Wartungszugang.',
+      },
+    ],
+    gallery: images,
+    featuredImage: images[0],
+  }
 }
 
 export const solutions: Solution[] = [
@@ -223,5 +385,10 @@ export const featuredReferences = solutions.flatMap((solution) =>
 )
 
 export function solutionBySlug(slug?: string) {
-  return solutions.find((solution) => solution.slug === slug)
+  return solutions.find(
+    (solution) => solution.slug === slug || solution.productSlug === slug,
+  )
 }
+
+export const productPath = (solution: Solution) =>
+  `/produkte/${solution.productSlug}`

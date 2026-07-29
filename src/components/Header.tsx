@@ -22,7 +22,13 @@ export function Header() {
             <NavLink
               to={item.to}
               end={item.to === '/'}
-              className={({ isActive }) => (isActive ? 'is-active' : '')}
+              className={({ isActive }) =>
+                isActive ||
+                (item.to === '/loesungen' &&
+                  location.pathname.startsWith('/produkte/'))
+                  ? 'is-active'
+                  : ''
+              }
               key={item.to}
             >
               {item.label}
@@ -54,7 +60,18 @@ export function Header() {
       {open && (
         <nav id="mobile-menu" className="mobile-menu" aria-label="Mobile Navigation">
           {nav.map((item) => (
-            <NavLink to={item.to} end={item.to === '/'} key={item.to}>
+            <NavLink
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) =>
+                isActive ||
+                (item.to === '/loesungen' &&
+                  location.pathname.startsWith('/produkte/'))
+                  ? 'is-active'
+                  : ''
+              }
+              key={item.to}
+            >
               {item.label}
             </NavLink>
           ))}

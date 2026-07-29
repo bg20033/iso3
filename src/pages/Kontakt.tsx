@@ -1,5 +1,12 @@
-import type { FormEvent } from 'react'
-import { ArrowUpRight, Mail, MapPin, Phone } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
+import {
+  ArrowUpRight,
+  FileUp,
+  Mail,
+  MapPin,
+  Paperclip,
+  Phone,
+} from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
@@ -8,16 +15,28 @@ import {
   getContactPrefill,
   projectPriorities,
 } from '../utils/contactPrefill'
+import {
+  formatFileSize,
+  validateContactFiles,
+} from '../utils/contactFiles'
 import { createMailtoLink } from '../utils/mailto'
 
 export default function Kontakt() {
   const [searchParams] = useSearchParams()
   const prefill = getContactPrefill(searchParams)
+  const [files, setFiles] = useState<File[]>([])
+  const [status, setStatus] = useState<
+    { kind: 'idle' | 'sending' | 'success' | 'error'; message?: string }
+  >({ kind: 'idle' })
+  const [fallbackLink, setFallbackLink] = useState('')
+  const [startedAt] = useState(() => Date.now())
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    const link = createMailtoLink({
+    const form = event.currentTarget
+    const data = new FormData(form)
+    const fileError = validateContactFiles(files)
+    const request = {
       name: String(data.get('name') ?? ''),
       company: String(data.get('company') ?? ''),
       email: String(data.get('email') ?? ''),
@@ -26,8 +45,50 @@ export default function Kontakt() {
       priority: String(data.get('priority') ?? ''),
       temperature: String(data.get('temperature') ?? ''),
       message: String(data.get('message') ?? ''),
-    })
-    window.location.assign(link)
+      attachments: files,
+    }
+    const link = createMailtoLink(request)
+    setFallbackLink(link)
+
+    if (fileError) {
+      setStatus({ kind: 'error', message: fileError })
+      return
+    }
+
+    setStatus({ kind: 'sending', message: 'Anfrage wird sicher übermittelt …' })
+    try {
+      data.set('startedAt', String(startedAt))
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        body: data,
+      })
+      const result = (await response.json().catch(() => null)) as
+        | { message?: string }
+        | null
+
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+            'Die Anfrage konnte momentan nicht übermittelt werden.',
+        )
+      }
+
+      setStatus({
+        kind: 'success',
+        message:
+          'Vielen Dank. Ihre Projektanfrage wurde an IsoMat übermittelt.',
+      })
+      setFiles([])
+      form.reset()
+    } catch (error) {
+      setStatus({
+        kind: 'error',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Die Anfrage konnte momentan nicht übermittelt werden.',
+      })
+    }
   }
 
   return (
@@ -36,12 +97,20 @@ export default function Kontakt() {
         index="03 · Kontakt"
         crumb="Kontakt"
         title="Ihre Anlage. Unsere nächste Massanfertigung."
-        lead="Beschreiben Sie die Komponente und die Betriebsbedingungen. Das Formular öffnet eine vorbereitete E-Mail an IsoMat."
+        lead="Beschreiben Sie die Komponente und senden Sie Fotos, Zeichnungen oder Projektdokumente direkt und sicher an IsoMat."
       />
 
       <section className="section section--light">
         <div className="shell contact-layout">
           <form className="contact-form" onSubmit={handleSubmit}>
+            <label className="form-honeypot" aria-hidden="true">
+              Website
+              <input
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
             <div className="form-grid">
               <label>
                 <span>Name *</span>
@@ -107,16 +176,71 @@ export default function Kontakt() {
                 required
               />
             </label>
+            <div className="file-upload">
+              <label htmlFor="attachments">
+                <FileUp size={22} aria-hidden="true" />
+                <span>
+                  <b>Fotos, PDF oder CAD hinzufügen</b>
+                  JPG, PNG, WebP, PDF, DWG oder DXF · max. 5 Dateien / 25 MB
+                </span>
+              </label>
+              <input
+                id="attachments"
+                name="attachments"
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp,.pdf,.dwg,.dxf"
+                multiple
+                onChange={(event) => {
+                  const selected = Array.from(event.currentTarget.files ?? [])
+                  const error = validateContactFiles(selected)
+                  setFiles(selected)
+                  setStatus(
+                    error
+                      ? { kind: 'error', message: error }
+                      : { kind: 'idle' },
+                  )
+                }}
+              />
+              {files.length > 0 && (
+                <ul className="file-list" aria-label="Ausgewählte Dateien">
+                  {files.map((file) => (
+                    <li key={`${file.name}-${file.size}`}>
+                      <Paperclip size={15} aria-hidden="true" />
+                      <span>{file.name}</span>
+                      <small>{formatFileSize(file.size)}</small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <label className="consent">
-              <input type="checkbox" required />
+              <input name="consent" type="checkbox" value="accepted" required />
               <span>
-                Ich habe den Hinweis zum E-Mail-Versand gelesen. Die Website
-                speichert die Eingaben nicht.
+                Ich habe den Datenschutzhinweis gelesen und stimme der
+                Übermittlung meiner Anfrage und Anhänge zu.
               </span>
             </label>
-            <button className="button button--signal" type="submit">
-              E-Mail vorbereiten <ArrowUpRight size={18} aria-hidden="true" />
+            <button
+              className="button button--signal"
+              type="submit"
+              disabled={status.kind === 'sending'}
+            >
+              {status.kind === 'sending' ? 'Wird gesendet …' : 'Anfrage senden'}
+              <ArrowUpRight size={18} aria-hidden="true" />
             </button>
+            {status.kind !== 'idle' && (
+              <div
+                className={`form-status form-status--${status.kind}`}
+                role={status.kind === 'error' ? 'alert' : 'status'}
+              >
+                <p>{status.message}</p>
+                {status.kind === 'error' && fallbackLink && (
+                  <a href={fallbackLink}>
+                    Stattdessen E-Mail im eigenen Programm öffnen
+                  </a>
+                )}
+              </div>
+            )}
           </form>
 
           <aside className="contact-aside">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { BenefitGrid } from '../components/BenefitGrid'
 import BlurText from '../components/BlurText'
 import { PageHead } from '../components/PageHead'
-import { ProcessTimeline } from '../components/ProcessTimeline'
+import { ProcessStory } from '../components/ProcessStory'
 import { ReferenceDome } from '../components/ReferenceDome'
 import {
   coreBenefits,
@@ -60,7 +60,7 @@ export default function UeberUns() {
             <span className="eyebrow">Arbeitsweise</span>
             <BlurText text="Ein klarer Weg zur Massanfertigung." />
           </div>
-          <ProcessTimeline steps={processSteps} />
+          <ProcessStory steps={processSteps} />
         </div>
       </section>
 

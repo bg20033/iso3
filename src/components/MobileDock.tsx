@@ -25,7 +25,8 @@ export function MobileDock() {
           label,
           className:
             pathname === to ||
-            (to !== '/' && pathname.startsWith(`${to}/`))
+            (to !== '/' && pathname.startsWith(`${to}/`)) ||
+            (to === '/loesungen' && pathname.startsWith('/produkte/'))
               ? 'is-active'
               : undefined,
           icon: <Icon size={20} strokeWidth={1.8} aria-hidden="true" />,

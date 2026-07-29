@@ -116,6 +116,7 @@ const BlurText: React.FC<BlurTextProps> = ({
         return (
           <motion.span
             key={index}
+            className="blur-word"
             initial={reduceMotion ? false : fromSnapshot}
             animate={reduceMotion ? undefined : inView ? animateKeyframes : fromSnapshot}
             transition={reduceMotion ? { duration: 0 } : spanTransition}

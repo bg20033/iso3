@@ -1,6 +1,6 @@
 import { lazy, Suspense, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { Solution } from '../data/site'
+import { productPath, type Solution } from '../data/site'
 import { ResponsiveImage } from './ResponsiveImage'
 import { useInteractiveVisuals } from './useInteractiveVisuals'
 
@@ -30,7 +30,7 @@ export function SolutionCircularGallery({
       {solutions.map((solution) => (
         <Link
           className="static-solution-card"
-          to={`/loesungen/${solution.slug}`}
+          to={productPath(solution)}
           key={solution.slug}
         >
           <ResponsiveImage image={solution.featuredImage} />
@@ -62,7 +62,7 @@ export function SolutionCircularGallery({
       </div>
       <nav className="reactbits-gallery-links" aria-label="Lösungen auswählen">
         {solutions.map((solution) => (
-          <Link to={`/loesungen/${solution.slug}`} key={solution.slug}>
+          <Link to={productPath(solution)} key={solution.slug}>
             <span>{solution.no}</span>
             {solution.shortTitle}
           </Link>

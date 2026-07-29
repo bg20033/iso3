@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/build_worker.mjs",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs && vite build --config vite.worker.config.ts",
     "lint": "oxlint",
     "test": "vitest run",
     "media": "python3 scripts/prepare_media.py",
@@ -15,7 +15,7 @@
     "@fontsource/barlow": "^5.3.0",
     "@fontsource/barlow-condensed": "^5.3.0",
     "@use-gesture/react": "^10.3.1",
-    "lucide-react": "^1.27.0",
+    "lucide-react": "^0.542.0",
     "motion": "^12.43.0",
     "ogl": "^1.0.11",
     "react": "^19.2.7",

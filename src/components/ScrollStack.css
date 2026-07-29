@@ -1,0 +1,36 @@
+.scroll-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.scroll-stack-card {
+  --stack-progress: 0;
+  --stack-index: 0;
+  position: sticky;
+  top: calc(var(--header-h) + 2rem + (var(--stack-index) * 0.65rem));
+  min-height: 12rem;
+  opacity: calc(0.58 + (var(--stack-progress) * 0.42));
+  transform:
+    translateY(calc((1 - var(--stack-progress)) * 34px))
+    scale(calc(0.975 + (var(--stack-progress) * 0.025)));
+  transition:
+    opacity 100ms linear,
+    transform 100ms linear;
+}
+
+.scroll-stack.is-static .scroll-stack-card {
+  position: relative;
+  top: auto;
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+  .scroll-stack-card {
+    position: relative;
+    top: auto;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

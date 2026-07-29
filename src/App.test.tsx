@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 
 describe('routing', () => {
@@ -20,7 +20,7 @@ describe('routing', () => {
 
   it('renders a solution detail route and the mobile dock labels', async () => {
     render(
-      <MemoryRouter initialEntries={['/loesungen/turbinen']}>
+      <MemoryRouter initialEntries={['/produkte/turbinen']}>
         <App />
       </MemoryRouter>,
     )
@@ -48,6 +48,7 @@ describe('routing', () => {
   })
 
   it('keeps capability cards, sidebar items and CTAs keyboard accessible', async () => {
+    const scrollSpy = vi.spyOn(Element.prototype, 'scrollIntoView')
     render(
       <MemoryRouter initialEntries={['/loesungen']}>
         <App />
@@ -68,6 +69,22 @@ describe('routing', () => {
       screen.getByRole('button', { name: '06 Turbinen' }),
       { key: 'Enter' },
     )
+    expect(scrollSpy).toHaveBeenCalled()
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Dämmkonzepte für komplexe Industrieanlagen.',
+      }),
+    ).toBeInTheDocument()
+  })
+
+  it('redirects a legacy solution URL to its canonical product page', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen/turbinen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Turbinen' }),
     ).toBeInTheDocument()

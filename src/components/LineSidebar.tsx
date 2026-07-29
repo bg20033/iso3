@@ -153,7 +153,12 @@ const LineSidebar = ({
 
   useEffect(
     () => () => {
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        // Handle zurücksetzen, sonst hält startLoop() die Schleife nach einem
+        // Remount (z. B. React StrictMode) für immer angehalten.
+        rafRef.current = null;
+      }
     },
     []
   );

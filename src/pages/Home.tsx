@@ -3,14 +3,18 @@ import { Link } from 'react-router-dom'
 import { BenefitGrid } from '../components/BenefitGrid'
 import BlurText from '../components/BlurText'
 import { HeroRings } from '../components/HeroRings'
-import { ProcessTimeline } from '../components/ProcessTimeline'
+import { HeroShapeGrid } from '../components/HeroShapeGrid'
+import { IndustrialVelocity } from '../components/IndustrialVelocity'
+import { ProcessStory } from '../components/ProcessStory'
 import { ProjectQuickBrief } from '../components/ProjectQuickBrief'
 import { ReferenceDome } from '../components/ReferenceDome'
+import ScrollReveal from '../components/ScrollReveal'
 import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
 import {
   coreBenefits,
   featuredReferences,
   processSteps,
+  productPath,
   solutions,
 } from '../data/site'
 
@@ -19,6 +23,7 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="hero__grid" aria-hidden="true" />
+        <HeroShapeGrid />
         <HeroRings />
 
         <div className="shell hero__inner">
@@ -54,15 +59,23 @@ export default function Home() {
 
           <figure className="hero__plate">
             <div className="hero__plate-image">
-              <img
-                src="/hero-industrial.webp"
-                alt="Isolierte Rohrleitungen und Armaturen in einer Heizzentrale"
-                width="1600"
-                height="900"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-              />
+              <picture>
+                <source
+                  media="(max-width: 900px)"
+                  srcSet="/hero-industrial-640.webp"
+                />
+                <img
+                  src="/hero-industrial-1200.webp"
+                  srcSet="/hero-industrial-800.webp 800w, /hero-industrial-1200.webp 1200w, /hero-industrial.webp 1451w"
+                  sizes="48vw"
+                  alt="Isolierte Rohrleitungen und Armaturen in einer Heizzentrale"
+                  width="1451"
+                  height="1084"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
             </div>
             <figcaption>
               <span>
@@ -70,12 +83,18 @@ export default function Home() {
               </span>
               <span>Aufnahme aus dem IsoMat-Archiv</span>
             </figcaption>
+            <div className="hero__hud" aria-hidden="true">
+              <span>ISO / 01</span>
+              <b>AUFMASS</b>
+              <i />
+              <small>PASSGENAU · ABNEHMBAR</small>
+            </div>
           </figure>
         </div>
 
         <nav className="hero__register" aria-label="Lösungsbereiche">
           {solutions.map((solution) => (
-            <Link to={`/loesungen/${solution.slug}`} key={solution.slug}>
+            <Link to={productPath(solution)} key={solution.slug}>
               <span>{solution.no}</span>
               {solution.shortTitle}
             </Link>
@@ -83,12 +102,16 @@ export default function Home() {
         </nav>
       </section>
 
+      <IndustrialVelocity />
+
       <section className="section section--light">
         <div className="shell">
           <div className="section-heading">
             <div>
               <span className="eyebrow">01 · Lösungen</span>
-              <BlurText text="Für jede Anlage die passende Form." />
+              <ScrollReveal>
+                Für jede Anlage die passende Form.
+              </ScrollReveal>
             </div>
             <p>
               Von einzelnen Ventilen bis zu kompletten Turbinen: Konstruktion,
@@ -128,7 +151,7 @@ export default function Home() {
               So arbeitet IsoMat <MoveRight aria-hidden="true" />
             </Link>
           </div>
-          <ProcessTimeline steps={processSteps} />
+          <ProcessStory steps={processSteps} />
         </div>
       </section>
 

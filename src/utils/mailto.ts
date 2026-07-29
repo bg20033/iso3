@@ -7,6 +7,7 @@ export type ContactRequest = {
   priority?: string
   temperature?: string
   message: string
+  attachments?: readonly File[]
 }
 
 export function createMailtoLink(
@@ -22,6 +23,11 @@ export function createMailtoLink(
     `Anwendung: ${request.application}`,
     `Priorität: ${request.priority || '–'}`,
     `Betriebstemperatur: ${request.temperature || '–'}`,
+    `Anhänge: ${
+      request.attachments?.length
+        ? `${request.attachments.map((file) => file.name).join(', ')} (bitte manuell anhängen)`
+        : '–'
+    }`,
     '',
     'Projektbeschreibung:',
     request.message,
