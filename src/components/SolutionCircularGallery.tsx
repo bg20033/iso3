@@ -52,7 +52,7 @@ export function SolutionCircularGallery({
           <CircularGallery
             items={items}
             bend={bend}
-            textColor="#ffffff"
+            textColor="#0e1112"
             borderRadius={0.035}
             font="700 30px Arial"
             scrollSpeed={1.7}

@@ -22,8 +22,8 @@ export function SolutionSidebar({
       className="reactbits-line-sidebar"
       items={solutions.map((solution) => solution.shortTitle)}
       accentColor="#d62622"
-      textColor="#6d7376"
-      markerColor="#9da3a6"
+      textColor="#454c4f"
+      markerColor="#a9afb2"
       proximityRadius={120}
       maxShift={16}
       markerLength={48}

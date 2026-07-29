@@ -1,8 +1,10 @@
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import BlurText from '../components/BlurText'
+import GlareHover from '../components/GlareHover'
 import { ResponsiveImage } from '../components/ResponsiveImage'
 import { SolutionSidebar } from '../components/SolutionSidebar'
+import SpotlightCard from '../components/SpotlightCard'
 import { solutionBySlug, solutions } from '../data/site'
 
 export default function LoesungDetail() {
@@ -14,17 +16,20 @@ export default function LoesungDetail() {
   return (
     <>
       <section className="detail-hero">
-        <ResponsiveImage image={solution.featuredImage} eager />
-        <div className="detail-hero__shade" aria-hidden="true" />
-        <div className="shell detail-hero__content">
-          <Link className="detail-back" to="/loesungen">
-            <ArrowLeft size={17} aria-hidden="true" /> Alle Lösungen
-          </Link>
-          <span className="eyebrow eyebrow--light">
-            {solution.no} · {solution.eyebrow}
-          </span>
-          <BlurText as="h1" text={solution.title} />
-          <p>{solution.summary}</p>
+        <div className="shell">
+          <div className="detail-hero__content">
+            <Link className="detail-back" to="/loesungen">
+              <ArrowLeft size={17} aria-hidden="true" /> Alle Lösungen
+            </Link>
+            <span className="eyebrow">
+              {solution.no} · {solution.eyebrow}
+            </span>
+            <BlurText as="h1" text={solution.title} />
+            <p>{solution.summary}</p>
+          </div>
+          <div className="detail-hero__plate">
+            <ResponsiveImage image={solution.featuredImage} eager />
+          </div>
         </div>
       </section>
 
@@ -49,48 +54,70 @@ export default function LoesungDetail() {
               </div>
             </div>
 
-            <div className="detail-facts">
-              <article>
-                <span className="eyebrow">Vorteile</span>
-                <ul>
-                  {solution.benefits.map((benefit) => (
-                    <li key={benefit}>{benefit}</li>
-                  ))}
-                </ul>
-              </article>
-              <article>
-                <span className="eyebrow">Typische Komponenten</span>
-                <div className="tag-list">
-                  {solution.applications.map((application) => (
-                    <span key={application}>{application}</span>
-                  ))}
-                </div>
-              </article>
+            <div className="detail-benefits">
+              <span className="eyebrow">Vorteile</span>
+              <div className="detail-benefit-grid">
+                {solution.benefits.map((benefit, index) => (
+                  <SpotlightCard
+                    className="detail-benefit-card"
+                    spotlightColor="rgba(214, 38, 34, 0.12)"
+                    key={benefit}
+                  >
+                    <span>0{index + 1}</span>
+                    <p>{benefit}</p>
+                  </SpotlightCard>
+                ))}
+              </div>
             </div>
+
+            <article className="detail-applications">
+              <span className="eyebrow">Typische Komponenten</span>
+              <div className="tag-list">
+                {solution.applications.map((application) => (
+                  <span key={application}>{application}</span>
+                ))}
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
-      <section className="section section--graphite">
+      <section className="section section--black">
         <div className="shell">
-          <div className="section-heading section-heading--light">
+          <div className="section-heading">
             <div>
-              <span className="eyebrow eyebrow--light">Referenzen</span>
+              <span className="eyebrow">Referenzen</span>
               <BlurText text={`Einblicke: ${solution.title}`} />
             </div>
             <p>{solution.gallery.length} reale Aufnahmen aus dem IsoMat-Archiv.</p>
           </div>
           <div className="photo-grid">
             {solution.gallery.map((image, index) => (
-              <a
-                href={image.src}
+              <GlareHover
+                width="100%"
+                height="100%"
+                background="#eceeef"
+                borderRadius="0"
+                borderColor="#d2d6d8"
+                glareColor="#ffffff"
+                glareOpacity={0.24}
+                glareAngle={-38}
+                glareSize={180}
+                transitionDuration={700}
                 className={index % 7 === 0 ? 'photo-grid__wide' : undefined}
-                target="_blank"
-                rel="noreferrer"
                 key={image.src}
               >
-                <ResponsiveImage image={image} />
-              </a>
+                <a
+                  href={image.src}
+                  className="photo-card"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${image.alt} vergrössern`}
+                >
+                  <ResponsiveImage image={image} />
+                  <span>Aufnahme öffnen ↗</span>
+                </a>
+              </GlareHover>
             ))}
           </div>
         </div>

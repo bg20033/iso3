@@ -37,7 +37,7 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
           fit={0.56}
           minRadius={520}
           maxRadius={920}
-          overlayBlurColor="#090a0b"
+          overlayBlurColor="#eceeef"
           dragSensitivity={18}
           dragDampening={0.8}
           openedImageWidth="min(860px, 84vw)"

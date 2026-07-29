@@ -1,11 +1,19 @@
 import type { FormEvent } from 'react'
 import { ArrowUpRight, Mail, MapPin, Phone } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
 import { company, solutions } from '../data/site'
+import {
+  getContactPrefill,
+  projectPriorities,
+} from '../utils/contactPrefill'
 import { createMailtoLink } from '../utils/mailto'
 
 export default function Kontakt() {
+  const [searchParams] = useSearchParams()
+  const prefill = getContactPrefill(searchParams)
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -15,6 +23,7 @@ export default function Kontakt() {
       email: String(data.get('email') ?? ''),
       phone: String(data.get('phone') ?? ''),
       application: String(data.get('application') ?? 'Allgemeine Anfrage'),
+      priority: String(data.get('priority') ?? ''),
       temperature: String(data.get('temperature') ?? ''),
       message: String(data.get('message') ?? ''),
     })
@@ -52,7 +61,11 @@ export default function Kontakt() {
               </label>
               <label>
                 <span>Anwendung *</span>
-                <select name="application" required defaultValue="">
+                <select
+                  name="application"
+                  required
+                  defaultValue={prefill.application}
+                >
                   <option value="" disabled>
                     Bitte auswählen
                   </option>
@@ -65,8 +78,24 @@ export default function Kontakt() {
                 </select>
               </label>
               <label>
+                <span>Priorität</span>
+                <select name="priority" defaultValue={prefill.priority}>
+                  <option value="">Bitte auswählen</option>
+                  {projectPriorities.map((priority) => (
+                    <option value={priority} key={priority}>
+                      {priority}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
                 <span>Betriebstemperatur</span>
-                <input name="temperature" placeholder="z. B. 280 °C" />
+                <input
+                  name="temperature"
+                  defaultValue={prefill.temperature}
+                  maxLength={40}
+                  placeholder="z. B. 280 °C"
+                />
               </label>
             </div>
             <label>

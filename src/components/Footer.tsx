@@ -8,7 +8,7 @@ export function Footer() {
       <div className="shell">
         <div className="footer__main">
           <div>
-            <Logo inverted />
+            <Logo />
             <p className="footer__claim">
               Massgefertigte, abnehmbare Isolierungen für industrielle Anlagen.
             </p>

@@ -15,7 +15,7 @@ export function HeroRings() {
       <Suspense fallback={null}>
         <MagicRings
           color="#d62622"
-          colorTwo="#aeb4b6"
+          colorTwo="#8f9698"
           speed={0.42}
           ringCount={6}
           attenuation={12}

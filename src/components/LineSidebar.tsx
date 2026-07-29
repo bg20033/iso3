@@ -185,6 +185,7 @@ const LineSidebar = ({
             }}
             className="line-sidebar__item"
             aria-current={activeIndex === index ? 'true' : undefined}
+            aria-label={`${String(index + 1).padStart(2, '0')} ${label}`}
             onClick={() => handleClick(index, label)}
             onKeyDown={event => {
               if (event.key === 'Enter' || event.key === ' ') {

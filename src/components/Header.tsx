@@ -30,9 +30,14 @@ export function Header() {
           ))}
         </nav>
 
-        <a className="button button--compact header__cta" href="tel:+41562451628">
-          056 245 16 28
-        </a>
+        <div className="header__actions">
+          <a className="header__phone" href="tel:+41562451628">
+            056 245 16 28
+          </a>
+          <Link className="button button--compact header__cta" to="/kontakt">
+            Projekt anfragen
+          </Link>
+        </div>
 
         <button
           type="button"
@@ -53,6 +58,7 @@ export function Header() {
               {item.label}
             </NavLink>
           ))}
+          <a href="tel:+41562451628">056 245 16 28</a>
           <Link className="button" to="/kontakt">
             Projekt anfragen <span aria-hidden="true">↗</span>
           </Link>

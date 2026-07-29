@@ -1,7 +1,9 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { BenefitGrid } from '../components/BenefitGrid'
 import BlurText from '../components/BlurText'
 import { PageHead } from '../components/PageHead'
+import { ProcessTimeline } from '../components/ProcessTimeline'
 import { ReferenceDome } from '../components/ReferenceDome'
 import {
   coreBenefits,
@@ -40,49 +42,33 @@ export default function UeberUns() {
         </div>
       </section>
 
-      <section className="section section--graphite">
+      <section className="section section--metal">
         <div className="shell">
-          <div className="section-heading section-heading--light">
+          <div className="section-heading">
             <div>
-              <span className="eyebrow eyebrow--light">Leistung</span>
+              <span className="eyebrow">Leistung</span>
               <BlurText text="Vier Prinzipien für jede Lösung." />
             </div>
           </div>
-          <div className="benefit-grid">
-            {coreBenefits.map((benefit, index) => (
-              <article className="benefit-card" key={benefit.title}>
-                <span>0{index + 1}</span>
-                <h3>{benefit.title}</h3>
-                <p>{benefit.text}</p>
-              </article>
-            ))}
-          </div>
+          <BenefitGrid benefits={coreBenefits} />
         </div>
       </section>
 
-      <section className="section section--metal">
+      <section className="section section--graphite">
         <div className="shell editorial-grid">
           <div>
             <span className="eyebrow">Arbeitsweise</span>
             <BlurText text="Ein klarer Weg zur Massanfertigung." />
           </div>
-          <ol className="process-list">
-            {processSteps.map(([no, title, text]) => (
-              <li key={no}>
-                <span>{no}</span>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </li>
-            ))}
-          </ol>
+          <ProcessTimeline steps={processSteps} />
         </div>
       </section>
 
       <section className="section section--black">
         <div className="shell">
-          <div className="section-heading section-heading--light">
+          <div className="section-heading">
             <div>
-              <span className="eyebrow eyebrow--light">Archiv</span>
+              <span className="eyebrow">Archiv</span>
               <BlurText text="Lösungen aus realen Anlagen." />
             </div>
             <p>Ein Querschnitt durch verschiedene Komponenten und Einbausituationen.</p>

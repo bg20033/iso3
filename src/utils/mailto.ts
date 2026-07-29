@@ -4,6 +4,7 @@ export type ContactRequest = {
   email: string
   phone?: string
   application: string
+  priority?: string
   temperature?: string
   message: string
 }
@@ -19,6 +20,7 @@ export function createMailtoLink(
     `E-Mail: ${request.email}`,
     `Telefon: ${request.phone || '–'}`,
     `Anwendung: ${request.application}`,
+    `Priorität: ${request.priority || '–'}`,
     `Betriebstemperatur: ${request.temperature || '–'}`,
     '',
     'Projektbeschreibung:',
