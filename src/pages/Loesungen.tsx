@@ -1,9 +1,9 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { CircularGallery } from '../components/CircularGallery'
-import { LineSidebar } from '../components/LineSidebar'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
+import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
+import { SolutionSidebar } from '../components/SolutionSidebar'
 import { solutions } from '../data/site'
 
 export default function Loesungen() {
@@ -17,13 +17,13 @@ export default function Loesungen() {
       />
       <section className="section section--black solutions-orbit">
         <div className="shell">
-          <CircularGallery solutions={solutions} bend={3} />
+          <SolutionCircularGallery solutions={solutions} bend={3} />
         </div>
       </section>
       <section className="section section--light">
         <div className="shell solutions-layout">
           <aside className="solutions-layout__nav">
-            <LineSidebar solutions={solutions} />
+            <SolutionSidebar solutions={solutions} />
           </aside>
           <div className="solution-list">
             {solutions.map((solution) => (

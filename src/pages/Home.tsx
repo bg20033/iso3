@@ -1,10 +1,10 @@
 import { ArrowUpRight, MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { BlurText } from '../components/BlurText'
-import { CircularGallery } from '../components/CircularGallery'
-import { DomeGallery } from '../components/DomeGallery'
-import { MagicRings } from '../components/MagicRings'
+import BlurText from '../components/BlurText'
+import { HeroRings } from '../components/HeroRings'
+import { ReferenceDome } from '../components/ReferenceDome'
 import { Reveal } from '../components/Reveal'
+import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
 import {
   coreBenefits,
   featuredReferences,
@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-        <MagicRings />
+        <HeroRings />
         <div className="hero__image" aria-hidden="true" />
         <div className="hero__shade" aria-hidden="true" />
         <div className="shell hero__content">
@@ -62,7 +62,7 @@ export default function Home() {
               Material und Befestigung richten sich nach Ihrer Anwendung.
             </p>
           </div>
-          <CircularGallery solutions={solutions} bend={3} />
+          <SolutionCircularGallery solutions={solutions} bend={3} />
         </div>
       </section>
 
@@ -129,7 +129,7 @@ export default function Home() {
               industriellem Sonderbau.
             </p>
           </div>
-          <DomeGallery images={featuredReferences} />
+          <ReferenceDome images={featuredReferences} />
         </div>
       </section>
 

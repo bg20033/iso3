@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { BlurText } from './BlurText'
+import BlurText from './BlurText'
 
 type PageHeadProps = {
   index: string

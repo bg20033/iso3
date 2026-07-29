@@ -1,8 +1,8 @@
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { BlurText } from '../components/BlurText'
-import { DomeGallery } from '../components/DomeGallery'
+import BlurText from '../components/BlurText'
 import { PageHead } from '../components/PageHead'
+import { ReferenceDome } from '../components/ReferenceDome'
 import {
   coreBenefits,
   featuredReferences,
@@ -87,7 +87,7 @@ export default function UeberUns() {
             </div>
             <p>Ein Querschnitt durch verschiedene Komponenten und Einbausituationen.</p>
           </div>
-          <DomeGallery images={featuredReferences} />
+          <ReferenceDome images={featuredReferences} />
         </div>
       </section>
 

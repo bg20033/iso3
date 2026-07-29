@@ -5,4 +5,9 @@ import { sites } from './build/sites-vite-plugin.ts'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), sites()],
+  resolve: {
+    alias: {
+      '@': new URL('./src', import.meta.url).pathname,
+    },
+  },
 })

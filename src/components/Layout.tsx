@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
-import { Dock } from './Dock'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import { MobileDock } from './MobileDock'
 
 export function Layout() {
   const { pathname } = useLocation()
@@ -34,7 +34,7 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer />
-      <Dock />
+      <MobileDock />
     </div>
   )
 }

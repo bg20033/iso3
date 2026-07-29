@@ -1,8 +1,8 @@
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { BlurText } from '../components/BlurText'
-import { LineSidebar } from '../components/LineSidebar'
+import BlurText from '../components/BlurText'
 import { ResponsiveImage } from '../components/ResponsiveImage'
+import { SolutionSidebar } from '../components/SolutionSidebar'
 import { solutionBySlug, solutions } from '../data/site'
 
 export default function LoesungDetail() {
@@ -31,7 +31,10 @@ export default function LoesungDetail() {
       <section className="section section--light">
         <div className="shell solutions-layout">
           <aside className="solutions-layout__nav">
-            <LineSidebar solutions={solutions} activeSlug={solution.slug} />
+            <SolutionSidebar
+              solutions={solutions}
+              activeSlug={solution.slug}
+            />
           </aside>
           <div>
             <div className="detail-copy">
