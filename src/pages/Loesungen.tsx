@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Check } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
-import GlareHover from '../components/GlareHover'
+import { BeforeAfterSlider } from '../components/BeforeAfterSlider'
 import { PageHead } from '../components/PageHead'
-import { ResponsiveImage } from '../components/ResponsiveImage'
 import ReflectiveCard from '../components/ReflectiveCard'
-import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
-import { SolutionSidebar } from '../components/SolutionSidebar'
 import { SolutionModal } from '../components/SolutionModal'
 import { useInteractiveVisuals } from '../components/useInteractiveVisuals'
 import {
@@ -15,10 +12,23 @@ import {
   type Solution,
 } from '../data/site'
 
-const referenceCount = solutions.reduce(
-  (total, solution) => total + solution.gallery.length,
-  0,
+// Temporary focus for the public Lösungen index. The other six solutions stay
+// in site.ts and remain available through their direct modal URLs.
+const visibleSolutions = solutions.filter(
+  (solution) => solution.slug === 'ventile-armaturen',
 )
+
+const beforeImage = {
+  src: '/media/ventile/before-after/ventil-vorher-1280.webp',
+  thumb: '/media/ventile/before-after/ventil-vorher-640.webp',
+  alt: 'Ungedämmtes blaues Industrieventil vor der IsoMat-Ausführung',
+}
+
+const afterImage = {
+  src: '/media/ventile/before-after/ventil-nachher-1280.webp',
+  thumb: '/media/ventile/before-after/ventil-nachher-640.webp',
+  alt: 'Dasselbe Industrieventil mit passgenauem IsoMat-Dämmkissen',
+}
 
 export default function Loesungen() {
   const interactive = useInteractiveVisuals()
@@ -48,99 +58,87 @@ export default function Loesungen() {
   return (
     <>
       <PageHead
-        index="01 · Lösungen"
+        index="01 · Ventile & Armaturen"
         crumb="Lösungen"
-        title="Dämmkonzepte für komplexe Industrieanlagen."
-        lead="Jede Lösung wird auf Geometrie, Temperatur, Bewegung und Wartungszugang der jeweiligen Komponente abgestimmt."
+        title="Dämmkissen für Ventile & Armaturen."
+        lead="Passgenau gefertigt, für Wartung abnehmbar und exakt auf Geometrie, Temperatur und Zugänglichkeit der Komponente abgestimmt."
       />
 
-      <section className="section section--metal solutions-orbit">
+      <section className="section section--light ventile-focus">
         <div className="shell">
-          <SolutionCircularGallery solutions={solutions} bend={3} />
-          <p className="gallery-hint">
-            <span>Ziehen oder scrollen zum Blättern</span>
-            <span>
-              {solutions.length} Kategorien · {referenceCount} Referenzaufnahmen
-            </span>
-          </p>
-        </div>
-      </section>
+          {visibleSolutions.map((solution) => (
+            <article className="ventile-focus__article" key={solution.slug}>
+              <div className="ventile-focus__heading">
+                <div>
+                  <span className="eyebrow">
+                    {solution.no} · Vorher / Nachher
+                  </span>
+                  <h2>Wärme schützen. Zugang behalten.</h2>
+                </div>
+                <p>{solution.summary}</p>
+              </div>
 
-      <section className="section section--light">
-        <div className="shell solutions-layout">
-          <aside className="solutions-layout__nav">
-            <SolutionSidebar
-              solutions={solutions}
-              mode="index"
-              label="Index"
-            />
-          </aside>
+              <div className="ventile-focus__layout">
+                <BeforeAfterSlider before={beforeImage} after={afterImage} />
 
-          <div className="solution-card-grid">
-            {solutions.map((solution) => (
-              <article
-                className="solution-card-anchor"
-                id={solution.slug}
-                key={solution.slug}
-              >
                 <ReflectiveCard
-                  className="solution-card"
+                  className="ventile-focus__content"
                   disabled={!interactive}
                 >
-                  <GlareHover
-                    width="100%"
-                    height="100%"
-                    background="#eceeef"
-                    borderRadius="0"
-                    borderColor="#d2d6d8"
-                    glareColor="#ffffff"
-                    glareOpacity={0.22}
-                    glareAngle={-38}
-                    glareSize={180}
-                    transitionDuration={720}
-                    className="solution-card__media"
-                  >
+                  <span className="eyebrow">{solution.eyebrow}</span>
+                  <h3>{solution.title}</h3>
+                  <p>{solution.paragraphs[1]}</p>
+
+                  <ul className="ventile-focus__benefits">
+                    {solution.benefits.map((benefit) => (
+                      <li key={benefit}>
+                        <Check aria-hidden="true" />
+                        <span>{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="solution-card__tags">
+                    {solution.applications.map((application) => (
+                      <span key={application}>{application}</span>
+                    ))}
+                  </div>
+
+                  <div className="ventile-focus__actions">
                     <button
-                      className="solution-card__image"
+                      className="button"
                       type="button"
-                      onClick={() => openModal(solution)}
                       aria-haspopup="dialog"
-                      aria-label={`${solution.title} öffnen`}
+                      aria-label={`Mehr erfahren: ${solution.title}`}
+                      onClick={() => openModal(solution)}
                     >
-                      <ResponsiveImage image={solution.featuredImage} />
+                      Mehr erfahren
+                      <ArrowUpRight aria-hidden="true" />
                     </button>
-                  </GlareHover>
-                  <div className="solution-card__body">
-                    <span className="eyebrow">
-                      {solution.no} · {solution.eyebrow}
-                    </span>
-                    <h2>{solution.title}</h2>
-                    <p>{solution.summary}</p>
-                    <div className="solution-card__tags">
-                      {solution.applications.slice(0, 3).map((application) => (
-                        <span key={application}>{application}</span>
-                      ))}
-                    </div>
-                    <div className="solution-card__foot">
-                      <button
-                        className="text-link solution-card__more"
-                        type="button"
-                        aria-haspopup="dialog"
-                        aria-label={`Mehr erfahren: ${solution.title}`}
-                        onClick={() => openModal(solution)}
-                      >
-                        Mehr erfahren{' '}
-                        <ArrowUpRight aria-hidden="true" />
-                      </button>
-                      <span className="solution-card__count">
-                        {solution.gallery.length} Aufnahmen
-                      </span>
-                    </div>
+                    <span>{solution.gallery.length} reale Aufnahmen</span>
                   </div>
                 </ReflectiveCard>
-              </article>
-            ))}
-          </div>
+              </div>
+
+              <div
+                className="ventile-focus__rail"
+                aria-label="Technische Vorteile"
+              >
+                <div>
+                  <span>01</span>
+                  <strong>Passgenaue Form</strong>
+                </div>
+                <div>
+                  <span>02</span>
+                  <strong>Antrieb bleibt zugänglich</strong>
+                </div>
+                <div>
+                  <span>03</span>
+                  <strong>Für Wartung abnehmbar</strong>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 

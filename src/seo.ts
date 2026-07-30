@@ -22,9 +22,9 @@ const staticRoutes: RouteSeo[] = [
   },
   {
     path: '/loesungen',
-    title: 'Industrielle Isolierlösungen | IsoMat GmbH',
+    title: 'Ventile & Armaturen isolieren | IsoMat GmbH',
     description:
-      'Dämmkonzepte für Ventile, Heizungszentralen, Ascheaustrag, Revisionstüren, Kompensatoren, Turbinen und Sonderbau.',
+      'Passgenaue, abnehmbare Dämmkissen für Ventile, Pumpen, Flansche und Armaturen – mit realem Vorher-Nachher-Vergleich.',
     image: '/og.png',
     crumb: 'Lösungen',
   },

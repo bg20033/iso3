@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import App from './App'
 
 describe('routing', () => {
@@ -13,7 +13,7 @@ describe('routing', () => {
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Dämmkonzepte für komplexe Industrieanlagen.',
+        name: 'Dämmkissen für Ventile & Armaturen.',
       }),
     ).toBeInTheDocument()
   })
@@ -47,35 +47,57 @@ describe('routing', () => {
     expect(screen.getByLabelText('Betriebstemperatur')).toHaveValue('320 °C')
   })
 
-  it('keeps capability cards, sidebar items and CTAs keyboard accessible', async () => {
-    const scrollSpy = vi.spyOn(Element.prototype, 'scrollIntoView')
+  it('shows only the Ventile focus and keeps its controls keyboard accessible', async () => {
     render(
       <MemoryRouter initialEntries={['/loesungen']}>
         <App />
       </MemoryRouter>,
     )
 
-    const cardLink = await screen.findByRole('button', {
-      name: 'Ventile & Armaturen öffnen',
+    const moreButton = await screen.findByRole('button', {
+      name: 'Mehr erfahren: Ventile & Armaturen',
     })
-    cardLink.focus()
-    expect(cardLink).toHaveFocus()
+    moreButton.focus()
+    expect(moreButton).toHaveFocus()
+    expect(
+      screen.queryByRole('button', { name: /Turbinen/ }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Kompensatoren/ }),
+    ).not.toBeInTheDocument()
 
     const cta = screen.getByRole('link', { name: 'Projekt anfragen' })
     cta.focus()
     expect(cta).toHaveFocus()
 
-    fireEvent.keyDown(
-      screen.getByRole('button', { name: '06 Turbinen' }),
-      { key: 'Enter' },
-    )
-    expect(scrollSpy).toHaveBeenCalled()
     expect(
       await screen.findByRole('heading', {
         level: 1,
-        name: 'Dämmkonzepte für komplexe Industrieanlagen.',
+        name: 'Dämmkissen für Ventile & Armaturen.',
       }),
     ).toBeInTheDocument()
+  })
+
+  it('supports mouse, touch-native range input and keyboard comparison controls', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const slider = await screen.findByRole('slider', {
+      name: 'Vergleich zwischen Vorher und Nachher',
+    })
+
+    expect(slider).toHaveValue('50')
+    fireEvent.keyDown(slider, { key: 'ArrowRight' })
+    expect(slider).toHaveValue('55')
+    fireEvent.change(slider, { target: { value: '72' } })
+    expect(slider).toHaveValue('72')
+    fireEvent.keyDown(slider, { key: 'Home' })
+    expect(slider).toHaveValue('0')
+    fireEvent.keyDown(slider, { key: 'End' })
+    expect(slider).toHaveValue('100')
   })
 
   it('opens a solution quickview modal and closes it with Escape', async () => {

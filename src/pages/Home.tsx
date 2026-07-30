@@ -21,18 +21,22 @@ export default function Home() {
       <section className="hero">
         <picture className="hero__backdrop">
           <source
-            media="(max-width: 800px)"
-            srcSet="/hero-valve-industrial-768.webp"
+            media="(max-width: 640px)"
+            srcSet="/hero-industrial-640.webp"
           />
           <source
-            media="(max-width: 1280px)"
-            srcSet="/hero-valve-industrial-1280.webp"
+            media="(max-width: 900px)"
+            srcSet="/hero-industrial-800.webp"
+          />
+          <source
+            media="(max-width: 1440px)"
+            srcSet="/hero-industrial-1200.webp"
           />
           <img
-            src="/hero-valve-industrial.webp"
-            alt="Industrieventil mit silbernem IsoMat-Dämmkissen"
-            width="1672"
-            height="941"
+            src="/hero-industrial.webp"
+            alt="Industrieanlage mit Rohrleitungen, Armaturen und Metallkonstruktion"
+            width="1452"
+            height="1088"
             loading="eager"
             fetchPriority="high"
             decoding="async"
