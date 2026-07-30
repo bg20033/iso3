@@ -392,3 +392,6 @@ export function solutionBySlug(slug?: string) {
 
 export const productPath = (solution: Solution) =>
   `/produkte/${solution.productSlug}`
+
+export const solutionQuickviewPath = (solution: Solution) =>
+  `/loesungen?solution=${encodeURIComponent(solution.productSlug)}`

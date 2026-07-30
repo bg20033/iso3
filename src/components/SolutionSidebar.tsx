@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { productPath, type Solution } from '../data/site'
+import { solutionQuickviewPath, type Solution } from '../data/site'
 import LineSidebar from './LineSidebar'
 
 type SolutionSidebarProps = {
@@ -72,7 +72,7 @@ export function SolutionSidebar({
 
   const handleClick = (index: number) => {
     if (mode === 'detail') {
-      navigate(productPath(solutions[index]))
+      navigate(solutionQuickviewPath(solutions[index]))
       return
     }
     document.getElementById(solutions[index].slug)?.scrollIntoView({

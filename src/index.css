@@ -1400,6 +1400,11 @@ p {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: inherit;
 }
 
 .solution-card__image picture,
@@ -2729,7 +2734,7 @@ p {
 }
 
 .solution-modal__dialog {
-  width: min(1180px, 100%);
+  width: min(1320px, 100%);
   max-height: calc(100dvh - clamp(1.5rem, 6vw, 5rem));
   overflow: auto;
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -2898,19 +2903,206 @@ p {
   text-transform: uppercase;
 }
 
-.solution-modal__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.5rem;
-  margin-top: 2rem;
+.solution-modal__section {
+  padding: clamp(2rem, 5vw, 5rem);
+  border-top: 1px solid var(--edge);
 }
 
-.solution-modal__actions .text-link {
+.solution-modal__section-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(240px, 0.75fr);
+  align-items: end;
+  gap: 1.5rem 3rem;
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+
+.solution-modal__section-heading h3 {
+  max-width: 16ch;
+  margin-top: 0.45rem;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+}
+
+.solution-modal__section-heading > p {
+  max-width: 44ch;
+  color: var(--ink-soft);
+}
+
+.solution-modal__gallery {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.solution-modal__gallery .eyebrow {
+  color: var(--signal);
+}
+
+.solution-modal__gallery .solution-modal__section-heading > p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.solution-modal__photo-grid {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-auto-rows: 220px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.solution-modal__photo {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: #202425;
+}
+
+.solution-modal__photo--wide {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.solution-modal__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 420ms var(--ease);
+}
+
+.solution-modal__photo span {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.45rem 0.6rem;
+  background: rgba(14, 17, 18, 0.82);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.solution-modal__photo:hover img {
+  transform: scale(1.025);
+}
+
+.solution-modal__faq {
+  background:
+    linear-gradient(rgba(14, 17, 18, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 17, 18, 0.035) 1px, transparent 1px),
+    var(--paper);
+  background-size: 64px 64px;
+}
+
+.solution-modal__faq .faq-list {
+  max-width: 900px;
+  margin-left: auto;
+}
+
+.solution-modal__related {
+  background: var(--foil-soft);
+}
+
+.solution-modal__related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--edge);
+  background: var(--edge);
+}
+
+.solution-modal__related-grid button {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.25rem 0.8rem;
+  padding: 0 0 1.25rem;
+  overflow: hidden;
   border: 0;
-  background: transparent;
+  background: var(--paper);
+  color: var(--ink);
   cursor: pointer;
-  font: inherit;
+  text-align: left;
+}
+
+.solution-modal__related-grid img {
+  width: 100%;
+  height: 210px;
+  grid-column: 1 / -1;
+  margin-bottom: 0.8rem;
+  object-fit: cover;
+  transition: transform 320ms var(--ease);
+}
+
+.solution-modal__related-grid button > span,
+.solution-modal__related-grid button > strong,
+.solution-modal__related-grid button > small {
+  margin-inline: 1rem;
+}
+
+.solution-modal__related-grid button > span {
+  color: var(--signal);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+}
+
+.solution-modal__related-grid button > strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.solution-modal__related-grid button > small {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.solution-modal__related-grid button:hover img {
+  transform: scale(1.025);
+}
+
+.solution-modal__related-grid button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--signal);
+  outline-offset: -3px;
+}
+
+.solution-modal__footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 5vw, 5rem);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.solution-modal__footer h3 {
+  margin-top: 0.35rem;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.solution-modal__footer > button {
+  padding: 0.75rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.48);
+  background: transparent;
+  color: var(--white);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 @keyframes modal-backdrop-in {
@@ -3323,6 +3515,24 @@ p {
   .solution-modal__grid,
   .solution-modal__split {
     grid-template-columns: 1fr;
+  }
+
+  .solution-modal__section-heading,
+  .solution-modal__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-modal__photo-grid {
+    grid-auto-rows: 180px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .solution-modal__related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-modal__footer .button {
+    width: fit-content;
   }
 
   .solution-modal__media {

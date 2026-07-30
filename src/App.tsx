@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { Layout } from './components/Layout'
-import { productPath, solutionBySlug } from './data/site'
+import { solutionBySlug, solutionQuickviewPath } from './data/site'
 import Datenschutz from './pages/Datenschutz'
 import Home from './pages/Home'
 import Impressum from './pages/Impressum'
@@ -15,7 +15,7 @@ function LegacySolutionRedirect() {
   const solution = solutionBySlug(slug)
   return (
     <Navigate
-      to={solution ? productPath(solution) : '/nicht-gefunden'}
+      to={solution ? solutionQuickviewPath(solution) : '/nicht-gefunden'}
       replace
     />
   )

@@ -14,7 +14,7 @@ import {
   coreBenefits,
   featuredReferences,
   processSteps,
-  productPath,
+  solutionQuickviewPath,
   solutions,
 } from '../data/site'
 
@@ -96,7 +96,7 @@ export default function Home() {
 
         <nav className="hero__register" aria-label="Lösungsbereiche">
           {solutions.map((solution) => (
-            <Link to={productPath(solution)} key={solution.slug}>
+            <Link to={solutionQuickviewPath(solution)} key={solution.slug}>
               <span>{solution.no}</span>
               {solution.shortTitle}
             </Link>

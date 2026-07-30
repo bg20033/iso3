@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import GlareHover from '../components/GlareHover'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
@@ -9,7 +9,11 @@ import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
 import { SolutionSidebar } from '../components/SolutionSidebar'
 import { SolutionModal } from '../components/SolutionModal'
 import { useInteractiveVisuals } from '../components/useInteractiveVisuals'
-import { productPath, solutions, type Solution } from '../data/site'
+import {
+  solutionBySlug,
+  solutions,
+  type Solution,
+} from '../data/site'
 
 const referenceCount = solutions.reduce(
   (total, solution) => total + solution.gallery.length,
@@ -18,10 +22,28 @@ const referenceCount = solutions.reduce(
 
 export default function Loesungen() {
   const interactive = useInteractiveVisuals()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedSolution, setSelectedSolution] = useState<Solution | null>(
-    null,
+    () => solutionBySlug(searchParams.get('solution') || undefined) ?? null,
   )
-  const closeModal = useCallback(() => setSelectedSolution(null), [])
+  const selectedSlug = searchParams.get('solution')
+
+  useEffect(() => {
+    setSelectedSolution(solutionBySlug(selectedSlug || undefined) ?? null)
+  }, [selectedSlug])
+
+  const openModal = useCallback(
+    (solution: Solution) => {
+      setSelectedSolution(solution)
+      setSearchParams({ solution: solution.productSlug }, { replace: true })
+    },
+    [setSearchParams],
+  )
+
+  const closeModal = useCallback(() => {
+    setSelectedSolution(null)
+    setSearchParams({}, { replace: true })
+  }, [setSearchParams])
 
   return (
     <>
@@ -78,13 +100,15 @@ export default function Loesungen() {
                     transitionDuration={720}
                     className="solution-card__media"
                   >
-                    <Link
+                    <button
                       className="solution-card__image"
-                      to={productPath(solution)}
+                      type="button"
+                      onClick={() => openModal(solution)}
+                      aria-haspopup="dialog"
                       aria-label={`${solution.title} öffnen`}
                     >
                       <ResponsiveImage image={solution.featuredImage} />
-                    </Link>
+                    </button>
                   </GlareHover>
                   <div className="solution-card__body">
                     <span className="eyebrow">
@@ -103,7 +127,7 @@ export default function Loesungen() {
                         type="button"
                         aria-haspopup="dialog"
                         aria-label={`Mehr erfahren: ${solution.title}`}
-                        onClick={() => setSelectedSolution(solution)}
+                        onClick={() => openModal(solution)}
                       >
                         Mehr erfahren{' '}
                         <ArrowUpRight aria-hidden="true" />
@@ -135,6 +159,7 @@ export default function Loesungen() {
       <SolutionModal
         solution={selectedSolution}
         onClose={closeModal}
+        onSelectSolution={openModal}
       />
     </>
   )

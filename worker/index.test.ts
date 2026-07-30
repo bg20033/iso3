@@ -81,7 +81,7 @@ describe('contact Worker endpoint', () => {
     )
     expect(response.status).toBe(308)
     expect(response.headers.get('location')).toBe(
-      'https://example.test/produkte/turbinen',
+      'https://example.test/loesungen?solution=turbinen',
     )
   })
 

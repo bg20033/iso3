@@ -55,7 +55,7 @@ describe('routing', () => {
       </MemoryRouter>,
     )
 
-    const cardLink = await screen.findByRole('link', {
+    const cardLink = await screen.findByRole('button', {
       name: 'Ventile & Armaturen öffnen',
     })
     cardLink.focus()
@@ -95,16 +95,18 @@ describe('routing', () => {
       name: 'Ventile & Armaturen',
     })
     expect(dialog).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Häufige Fragen' })).toBeInTheDocument()
+    expect(screen.getByText(/reale Aufnahmen aus dem IsoMat-Archiv/)).toBeInTheDocument()
     expect(
-      screen.getByRole('link', { name: 'Details & Referenzen' }),
-    ).toHaveAttribute('href', '/produkte/ventile')
+      screen.queryByRole('link', { name: 'Details & Referenzen' }),
+    ).not.toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(moreButton).toHaveFocus()
   })
 
-  it('redirects a legacy solution URL to its canonical product page', async () => {
+  it('redirects a legacy solution URL to its full quickview modal', async () => {
     render(
       <MemoryRouter initialEntries={['/loesungen/turbinen']}>
         <App />
@@ -112,7 +114,24 @@ describe('routing', () => {
     )
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Turbinen' }),
+      await screen.findByRole('dialog', { name: 'Turbinen' }),
     ).toBeInTheDocument()
+  })
+
+  it('opens the full Kompensatoren content directly from the query URL', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen?solution=kompensatoren']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Kompensatoren',
+    })
+    expect(dialog).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Einblicke: Kompensatoren' }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Häufige Fragen' })).toBeInTheDocument()
   })
 })
