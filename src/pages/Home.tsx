@@ -44,12 +44,6 @@ export default function Home() {
         <div className="hero__grid" aria-hidden="true" />
         <HeroShapeGrid />
         <HeroRings />
-        <div className="hero__measure hero__measure--x" aria-hidden="true">
-          <span>64</span>
-        </div>
-        <div className="hero__measure hero__measure--y" aria-hidden="true">
-          <span>64</span>
-        </div>
 
         <div className="shell hero__inner">
           <div className="hero__content">
@@ -83,14 +77,7 @@ export default function Home() {
               <li>Passgenau</li>
               <li>Abnehmbar</li>
               <li>Wiederverwendbar</li>
-              <li>Wartungsfreundlich</li>
             </ul>
-          </div>
-
-          <div className="hero__asset-note" aria-hidden="true">
-            <span>ISO / 01</span>
-            <b>Massanfertigung</b>
-            <small>Passgenau · Abnehmbar · Wiederverwendbar</small>
           </div>
         </div>
 
