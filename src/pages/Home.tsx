@@ -22,9 +22,34 @@ export default function Home() {
   return (
     <>
       <section className="hero">
+        <picture className="hero__backdrop">
+          <source
+            media="(max-width: 720px)"
+            srcSet="/hero-valve-industrial-768.webp"
+          />
+          <source
+            media="(max-width: 1280px)"
+            srcSet="/hero-valve-industrial-1280.webp"
+          />
+          <img
+            src="/hero-valve-industrial.webp"
+            alt="Industrieventil mit massgefertigtem silbernem IsoMat-Dämmkissen"
+            width="1672"
+            height="941"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         <div className="hero__grid" aria-hidden="true" />
         <HeroShapeGrid />
         <HeroRings />
+        <div className="hero__measure hero__measure--x" aria-hidden="true">
+          <span>64</span>
+        </div>
+        <div className="hero__measure hero__measure--y" aria-hidden="true">
+          <span>64</span>
+        </div>
 
         <div className="shell hero__inner">
           <div className="hero__content">
@@ -33,9 +58,14 @@ export default function Home() {
             </span>
             <BlurText
               as="h1"
-              className="hero__title"
-              text="Wärme schützen. Zugang behalten."
+              className="hero__brand-title"
+              text="IsoMat"
+              animateBy="letters"
+              delay={85}
             />
+            <p className="hero__tagline">
+              Wärme schützen. Zugang behalten.
+            </p>
             <p className="hero__lead">
               Massgefertigte Dämmkissen für komplexe Industrieanlagen –
               abnehmbar, wiederverwendbar und exakt auf Ihre Komponenten
@@ -57,39 +87,11 @@ export default function Home() {
             </ul>
           </div>
 
-          <figure className="hero__plate">
-            <div className="hero__plate-image">
-              <picture>
-                <source
-                  media="(max-width: 900px)"
-                  srcSet="/hero-industrial-640.webp"
-                />
-                <img
-                  src="/hero-industrial-1200.webp"
-                  srcSet="/hero-industrial-800.webp 800w, /hero-industrial-1200.webp 1200w, /hero-industrial.webp 1451w"
-                  sizes="48vw"
-                  alt="Isolierte Rohrleitungen und Armaturen in einer Heizzentrale"
-                  width="1451"
-                  height="1084"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                />
-              </picture>
-            </div>
-            <figcaption>
-              <span>
-                <b>Heizzentrale</b> · Dampf- und Kondensatführung
-              </span>
-              <span>Aufnahme aus dem IsoMat-Archiv</span>
-            </figcaption>
-            <div className="hero__hud" aria-hidden="true">
-              <span>ISO / 01</span>
-              <b>AUFMASS</b>
-              <i />
-              <small>PASSGENAU · ABNEHMBAR</small>
-            </div>
-          </figure>
+          <div className="hero__asset-note" aria-hidden="true">
+            <span>ISO / 01</span>
+            <b>Massanfertigung</b>
+            <small>Passgenau · Abnehmbar · Wiederverwendbar</small>
+          </div>
         </div>
 
         <nav className="hero__register" aria-label="Lösungsbereiche">
