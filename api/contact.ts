@@ -1,4 +1,8 @@
-import worker from '../worker/index'
+import worker from '../worker/index.js'
+
+declare const process: {
+  env: Record<string, string | undefined>
+}
 
 const assets = {
   fetch: async () => new Response('Not found', { status: 404 }),

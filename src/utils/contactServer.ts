@@ -1,4 +1,4 @@
-import { contactFileRules } from './contactFiles'
+import { contactFileRules } from './contactFiles.js'
 
 export type ServerAttachment = {
   name: string

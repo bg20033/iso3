@@ -4,7 +4,7 @@ import {
   sanitizeFilename,
   validateServerAttachments,
   type ServerAttachment,
-} from '../src/utils/contactServer'
+} from '../src/utils/contactServer.js'
 
 type Env = {
   ASSETS: {
