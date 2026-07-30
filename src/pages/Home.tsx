@@ -2,8 +2,6 @@ import { ArrowUpRight, MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BenefitGrid } from '../components/BenefitGrid'
 import BlurText from '../components/BlurText'
-import { HeroRings } from '../components/HeroRings'
-import { HeroShapeGrid } from '../components/HeroShapeGrid'
 import { IndustrialVelocity } from '../components/IndustrialVelocity'
 import { ProcessStory } from '../components/ProcessStory'
 import { ProjectQuickBrief } from '../components/ProjectQuickBrief'
@@ -14,7 +12,6 @@ import {
   coreBenefits,
   featuredReferences,
   processSteps,
-  solutionQuickviewPath,
   solutions,
 } from '../data/site'
 
@@ -29,61 +26,30 @@ export default function Home() {
           />
           <source
             media="(max-width: 1280px)"
-            srcSet="/hero-valve-focus-768.webp"
+            srcSet="/hero-valve-industrial-1280.webp"
           />
           <img
-            src="/hero-valve-focus.webp"
-            alt="Nahaufnahme eines Industrieventils mit silbernem IsoMat-Dämmkissen"
-            width="1022"
-            height="940"
+            src="/hero-valve-industrial.webp"
+            alt="Industrieventil mit silbernem IsoMat-Dämmkissen"
+            width="1672"
+            height="941"
             loading="eager"
             fetchPriority="high"
             decoding="async"
           />
         </picture>
-        <div className="hero__grid" aria-hidden="true" />
-        <HeroShapeGrid />
-        <HeroRings />
 
         <div className="shell hero__inner">
           <div className="hero__content">
-            <span className="eyebrow">
-              Industrielle Isoliertechnik · Spreitenbach
-            </span>
             <BlurText
               as="h1"
-              className="hero__headline"
-              text="Dämmkissen nach Mass."
-              delay={100}
+              className="hero__brand-title"
+              text="IsoMat"
+              animateBy="letters"
+              delay={85}
             />
-            <p className="hero__lead">
-              Massgefertigte, abnehmbare Isolierungen für Ventile, Armaturen
-              und komplexe Anlagenkomponenten.
-            </p>
-            <div className="button-row">
-              <Link className="button button--signal" to="/loesungen">
-                Lösungen entdecken <ArrowUpRight size={18} aria-hidden="true" />
-              </Link>
-              <Link className="button button--outline-light" to="/kontakt">
-                Projekt besprechen
-              </Link>
-            </div>
-            <ul className="hero__proof" aria-label="Produktvorteile">
-              <li>Passgenau</li>
-              <li>Abnehmbar</li>
-              <li>Wiederverwendbar</li>
-            </ul>
           </div>
         </div>
-
-        <nav className="hero__register" aria-label="Lösungsbereiche">
-          {solutions.map((solution) => (
-            <Link to={solutionQuickviewPath(solution)} key={solution.slug}>
-              <span>{solution.no}</span>
-              {solution.shortTitle}
-            </Link>
-          ))}
-        </nav>
       </section>
 
       <IndustrialVelocity />
