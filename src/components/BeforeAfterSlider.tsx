@@ -57,26 +57,34 @@ export function BeforeAfterSlider({
       style={{ '--comparison-position': `${position}%` } as CSSProperties}
     >
       <picture className="before-after__image before-after__image--before">
-        <source srcSet={`${before.thumb} 640w, ${before.src} 1280w`} />
+        <source
+          srcSet={`${before.thumb} 640w, ${before.src} 1280w`}
+          sizes="(max-width: 900px) calc(100vw - 2rem), 52vw"
+        />
         <img
-          src={before.src}
+          src={before.thumb}
           alt={before.alt}
           width="1280"
           height="1714"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
           decoding="async"
         />
       </picture>
 
       <div className="before-after__after" aria-hidden="true">
         <picture className="before-after__image">
-          <source srcSet={`${after.thumb} 640w, ${after.src} 1280w`} />
+          <source
+            srcSet={`${after.thumb} 640w, ${after.src} 1280w`}
+            sizes="(max-width: 900px) calc(100vw - 2rem), 52vw"
+          />
           <img
-            src={after.src}
+            src={after.thumb}
             alt=""
             width="1280"
             height="1714"
-            loading="lazy"
+            loading="eager"
+            fetchPriority="high"
             decoding="async"
           />
         </picture>

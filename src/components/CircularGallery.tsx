@@ -776,6 +776,7 @@ interface CircularGalleryProps {
   fontUrl?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  onReady?: () => void;
 }
 
 export default function CircularGallery({
@@ -786,14 +787,28 @@ export default function CircularGallery({
   font = 'bold 30px Figtree',
   fontUrl,
   scrollSpeed = 2,
-  scrollEase = 0.05
+  scrollEase = 0.05,
+  onReady
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
     let app: App | undefined;
     let isMounted = true;
-    resolveFont(font, fontUrl).then(resolvedFont => {
+    const imageSources = Array.from(new Set((items ?? []).map(item => item.image)));
+    const imagesReady = Promise.all(
+      imageSources.map(
+        src =>
+          new Promise<void>(resolve => {
+            const image = new Image();
+            image.onload = () => resolve();
+            image.onerror = () => resolve();
+            image.src = src;
+          })
+      )
+    );
+
+    Promise.all([resolveFont(font, fontUrl), imagesReady]).then(([resolvedFont]) => {
       if (!isMounted || !containerRef.current) return;
       app = new App(containerRef.current, {
         items,
@@ -804,12 +819,15 @@ export default function CircularGallery({
         scrollSpeed,
         scrollEase
       });
+      requestAnimationFrame(() => {
+        if (isMounted) onReady?.();
+      });
     });
     return () => {
       isMounted = false;
       if (app) app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, onReady]);
   return (
     <div
       className="circular-gallery"

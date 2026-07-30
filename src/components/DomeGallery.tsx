@@ -22,6 +22,7 @@ type DomeGalleryProps = {
   imageBorderRadius?: string;
   openedImageBorderRadius?: string;
   grayscale?: boolean;
+  onReady?: () => void;
 };
 
 type ItemDef = {
@@ -156,7 +157,8 @@ export default function DomeGallery({
   openedImageHeight = '400px',
   imageBorderRadius = '30px',
   openedImageBorderRadius = '30px',
-  grayscale = true
+  grayscale = true,
+  onReady
 }: DomeGalleryProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -197,6 +199,36 @@ export default function DomeGallery({
   }, []);
 
   const items = useMemo(() => buildItems(images, segments), [images, segments]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let cancelled = false;
+    let frame = 0;
+    const uniqueImages = Array.from(root.querySelectorAll('img')).filter(
+      (image, index, all) =>
+        all.findIndex(candidate => candidate.currentSrc === image.currentSrc) === index
+    );
+    const waitForImage = (image: HTMLImageElement) =>
+      image.complete
+        ? Promise.resolve()
+        : new Promise<void>(resolve => {
+            image.addEventListener('load', () => resolve(), { once: true });
+            image.addEventListener('error', () => resolve(), { once: true });
+          });
+
+    Promise.all(uniqueImages.map(waitForImage)).then(() => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        if (!cancelled) onReady?.();
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [items, onReady]);
 
   const applyTransform = (xDeg: number, yDeg: number) => {
     const el = sphereRef.current;

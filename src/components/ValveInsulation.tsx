@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { MousePointer2 } from 'lucide-react'
 import { jacketLayers } from '../data/site'
+import { useNearViewport } from '../hooks/useNearViewport'
 import { useInteractiveVisuals } from './useInteractiveVisuals'
 
 const ValveScene = lazy(() => import('./ValveScene'))
@@ -53,6 +54,8 @@ export function ValveInsulation() {
   const sectionRef = useRef<HTMLElement>(null)
   const progressRef = useRef(0)
   const [activeLayer, setActiveLayer] = useState(0)
+  const nearby = useNearViewport(sectionRef)
+  const sceneEnabled = interactive && nearby
 
   useEffect(() => {
     const section = sectionRef.current
@@ -105,7 +108,7 @@ export function ValveInsulation() {
       <div className="valve-stage">
         <div className="shell valve-stage__inner">
           <div className="valve-stage__viewport">
-            {interactive ? (
+            {sceneEnabled ? (
               <Suspense fallback={<ValveDiagram />}>
                 <ValveScene layers={jacketLayers} progressRef={progressRef} />
               </Suspense>
@@ -114,7 +117,7 @@ export function ValveInsulation() {
             )}
             <span className="valve-stage__hint">
               <MousePointer2 size={14} aria-hidden="true" />
-              {interactive
+              {sceneEnabled
                 ? 'Scrollen öffnet die Schnittansicht · Ziehen dreht das Ventil'
                 : 'Schnitt durch den Aufbau'}
             </span>
