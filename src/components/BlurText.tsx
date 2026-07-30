@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import type { Transition } from 'motion/react';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
 export type BlurTextProps = {
   text?: string;
@@ -49,67 +49,60 @@ const BlurText: React.FC<BlurTextProps> = ({
   const reduceMotion = useReducedMotion();
   const elements = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(Boolean(reduceMotion));
-  // Der Knoten liegt im State, nicht in einem Ref: nur so läuft der Effekt
-  // erneut, sobald das Element hängt. Mit einem Ref verschluckt StrictMode
-  // den ersten Observer-Callback, und Überschriften, die beim Mounten schon
-  // im Viewport stehen, bleiben für immer unsichtbar.
-  const [node, setNode] = useState<HTMLElement | null>(null);
+  const ref = useRef<HTMLElement | null>(null);
 
+  // Der Effekt hängt bewusst NICHT am Element. Unter React StrictMode werden
+  // Ref-Detach und Ref-Attach im selben Commit gebatcht, der Node-State ändert
+  // sich netto nicht, und ein davon abhängiger Effekt läuft nie erneut – die
+  // Überschrift bliebe für immer auf opacity 0 stehen. Deshalb wird das
+  // Element hier bei jedem Tick frisch aus dem Ref gelesen.
   useEffect(() => {
-    if (reduceMotion) {
-      setInView(true);
-      return;
-    }
-    if (!node) return;
-
-    if (typeof IntersectionObserver === 'undefined') {
+    if (reduceMotion || typeof IntersectionObserver === 'undefined') {
       setInView(true);
       return;
     }
 
-    // Bereits sichtbare Elemente sofort freigeben
-    const isOnScreen = () => {
-      const rect = node.getBoundingClientRect();
+    let observer: IntersectionObserver | null = null;
+    let timer = 0;
+    let elapsed = 0;
+
+    const isOnScreen = (el: HTMLElement) => {
+      const rect = el.getBoundingClientRect();
       return rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0;
     };
 
-    if (isOnScreen()) {
-      setInView(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+    const tick = () => {
+      const el = ref.current;
+      if (el) {
+        if (isOnScreen(el)) {
           setInView(true);
-          observer.disconnect();
+          observer?.disconnect();
+          return;
         }
-      },
-      { threshold, rootMargin }
-    );
-    observer.observe(node);
+        if (!observer) {
+          observer = new IntersectionObserver(
+            ([entry]) => {
+              if (entry.isIntersecting) {
+                setInView(true);
+                observer?.disconnect();
+              }
+            },
+            { threshold, rootMargin }
+          );
+          observer.observe(el);
+        }
+      }
+      elapsed += 120;
+      if (elapsed < 2000) timer = window.setTimeout(tick, 120);
+    };
 
-    // Sicherheitsnetz: beim ersten Effektlauf steht das Layout oft noch nicht,
-    // und StrictMode verwirft den ersten Observer-Callback. Also nachmessen.
-    let frame = requestAnimationFrame(() => {
-      if (isOnScreen()) {
-        setInView(true);
-        observer.disconnect();
-      }
-    });
-    const timer = window.setTimeout(() => {
-      if (isOnScreen()) {
-        setInView(true);
-        observer.disconnect();
-      }
-    }, 400);
+    tick();
 
     return () => {
-      cancelAnimationFrame(frame);
       window.clearTimeout(timer);
-      observer.disconnect();
+      observer?.disconnect();
     };
-  }, [node, threshold, rootMargin, reduceMotion]);
+  }, [threshold, rootMargin, reduceMotion]);
 
   const defaultFrom = useMemo(
     () =>
@@ -138,7 +131,9 @@ const BlurText: React.FC<BlurTextProps> = ({
 
   return (
     <Component
-      ref={setNode}
+      ref={node => {
+        ref.current = node;
+      }}
       className={className}
       style={{ display: 'flex', flexWrap: 'wrap' }}
     >

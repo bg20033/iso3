@@ -1,4 +1,3 @@
-import LineSidebar from './LineSidebar'
 import { scrollToSection, useScrollSpy } from '../hooks/useScrollSpy'
 
 export type PageIndexItem = { id: string; label: string }
@@ -6,40 +5,61 @@ export type PageIndexItem = { id: string; label: string }
 type PageIndexProps = {
   items: PageIndexItem[]
   label?: string
+  /** Alternative zum Scroll-Spy: Index wird von aussen gesetzt. */
+  activeIndex?: number | null
+  onSelect?: (index: number) => void
 }
 
 /**
- * Klebender Blattindex am linken Rand. Markiert den Abschnitt, der gerade
- * gelesen wird, und springt beim Klick dorthin.
+ * Klebende Leiste am linken Rand. Eine durchgehende Linie trägt die
+ * Abschnitte; der gelesene Teil ist ausgezogen, der aktuelle rot markiert.
  */
-export function PageIndex({ items, label = 'Index' }: PageIndexProps) {
+export function PageIndex({
+  items,
+  label = 'Index',
+  activeIndex,
+  onSelect,
+}: PageIndexProps) {
   const idKey = items.map((item) => item.id).join('|')
-  const activeIndex = useScrollSpy(idKey)
+  const spyIndex = useScrollSpy(idKey, activeIndex === undefined)
+  const active = activeIndex === undefined ? spyIndex : activeIndex
 
   return (
-    <div className="solutions-nav">
-      <span className="solutions-nav__label">
+    <nav className="page-index" aria-label={label}>
+      <span className="page-index__label">
         {label}
         <b>{String(items.length).padStart(2, '0')}</b>
       </span>
-      <LineSidebar
-        key={activeIndex ?? 'none'}
-        className="reactbits-line-sidebar"
-        items={items.map((item) => item.label)}
-        accentColor="#d62622"
-        textColor="#454c4f"
-        markerColor="#a9afb2"
-        proximityRadius={110}
-        maxShift={14}
-        markerLength={44}
-        markerGap={10}
-        tickScale={0.55}
-        itemGap={16}
-        fontSize={0.95}
-        smoothing={90}
-        defaultActive={activeIndex}
-        onItemClick={(index) => scrollToSection(items[index].id)}
-      />
-    </div>
+
+      <ol className="page-index__list">
+        {items.map((item, index) => (
+          <li key={item.id}>
+            <button
+              className="page-index__item"
+              type="button"
+              data-state={
+                active === null || active === undefined
+                  ? 'ahead'
+                  : index < active
+                    ? 'passed'
+                    : index === active
+                      ? 'current'
+                      : 'ahead'
+              }
+              aria-current={index === active ? 'true' : undefined}
+              onClick={() =>
+                onSelect ? onSelect(index) : scrollToSection(item.id)
+              }
+            >
+              <span className="page-index__rule" aria-hidden="true" />
+              <span className="page-index__no">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span className="page-index__text">{item.label}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </nav>
   )
 }

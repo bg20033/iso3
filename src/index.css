@@ -1294,13 +1294,17 @@ p {
   position: relative;
 }
 
-/* Lösungs-Index. Die Bewegung liefert LineSidebar.css über --effect;
-   hier werden nur Position, Schrift und Rahmen gesetzt. */
-.solutions-nav {
+/* ==========================================================================
+   Blattindex: eine durchgehende Leiste, kein Flimmern
+   ========================================================================== */
+.solutions-nav,
+.page-index {
   position: sticky;
   top: calc(var(--header-h) + 2.25rem);
+  display: block;
 }
 
+.page-index__label,
 .solutions-nav__label {
   display: flex;
   align-items: baseline;
@@ -1316,33 +1320,99 @@ p {
   text-transform: uppercase;
 }
 
+.page-index__label b,
 .solutions-nav__label b {
   color: var(--signal);
   font-size: 0.9rem;
   letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
 }
 
-.reactbits-line-sidebar .line-sidebar__list {
-  padding-block: 1.25rem 0;
+.page-index__list {
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.reactbits-line-sidebar .line-sidebar__label {
+.page-index__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0 0.75rem;
+  width: 100%;
+  /* links Platz für die durchgehende Linie */
+  padding: 0.5rem 0 0.5rem 1.1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Der Strich läuft durch: die Segmente stossen lückenlos aneinander */
+.page-index__rule {
+  position: absolute;
+  top: 0;
+  bottom: -1px;
+  left: 0;
+  width: 1px;
+  background: var(--edge);
+  transition:
+    background 220ms var(--ease),
+    box-shadow 220ms var(--ease);
+}
+
+.page-index__item[data-state='passed'] .page-index__rule {
+  background: var(--ink-faint);
+}
+
+.page-index__item[data-state='current'] .page-index__rule {
+  background: var(--signal);
+  box-shadow: 1px 0 0 var(--signal);
+}
+
+.page-index__no {
+  color: var(--edge-strong);
   font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  transition: color 220ms var(--ease);
+}
+
+.page-index__text {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.98rem;
   font-weight: 600;
   letter-spacing: 0.07em;
+  line-height: 1.2;
   text-transform: uppercase;
+  transition: color 220ms var(--ease);
 }
 
-.reactbits-line-sidebar .line-sidebar__index {
-  margin-right: 0.7rem;
-  font-family: var(--font-display);
-  font-size: 0.74em;
-  letter-spacing: 0.14em;
+.page-index__item[data-state='passed'] .page-index__no,
+.page-index__item[data-state='passed'] .page-index__text {
+  color: var(--ink-soft);
 }
 
-.reactbits-line-sidebar .line-sidebar__item:focus-visible {
+.page-index__item[data-state='current'] .page-index__no,
+.page-index__item[data-state='current'] .page-index__text {
+  color: var(--signal);
+}
+
+.page-index__item:hover .page-index__text {
+  color: var(--ink);
+}
+
+.page-index__item:hover .page-index__rule {
+  background: var(--ink);
+}
+
+.page-index__item:focus-visible {
   outline: 2px solid var(--signal);
-  outline-offset: 6px;
+  outline-offset: 4px;
 }
 
 /* Hinweis unter interaktiven Galerien */
@@ -5409,8 +5479,9 @@ html {
   }
 }
 
+/* Kein overflow hier – das würde position: sticky der Indexleiste aushebeln. */
 .solutions-page {
-  overflow: hidden;
+  position: relative;
 }
 
 .page-block__note {
