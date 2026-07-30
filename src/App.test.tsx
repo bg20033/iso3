@@ -78,6 +78,32 @@ describe('routing', () => {
     ).toBeInTheDocument()
   })
 
+  it('opens a solution quickview modal and closes it with Escape', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const moreButton = await screen.findByRole('button', {
+      name: 'Mehr erfahren: Ventile & Armaturen',
+    })
+    moreButton.focus()
+    fireEvent.click(moreButton)
+
+    const dialog = screen.getByRole('dialog', {
+      name: 'Ventile & Armaturen',
+    })
+    expect(dialog).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Details & Referenzen' }),
+    ).toHaveAttribute('href', '/produkte/ventile')
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(moreButton).toHaveFocus()
+  })
+
   it('redirects a legacy solution URL to its canonical product page', async () => {
     render(
       <MemoryRouter initialEntries={['/loesungen/turbinen']}>

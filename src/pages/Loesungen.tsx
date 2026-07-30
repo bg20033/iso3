@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import GlareHover from '../components/GlareHover'
@@ -6,8 +7,9 @@ import { ResponsiveImage } from '../components/ResponsiveImage'
 import ReflectiveCard from '../components/ReflectiveCard'
 import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
 import { SolutionSidebar } from '../components/SolutionSidebar'
+import { SolutionModal } from '../components/SolutionModal'
 import { useInteractiveVisuals } from '../components/useInteractiveVisuals'
-import { productPath, solutions } from '../data/site'
+import { productPath, solutions, type Solution } from '../data/site'
 
 const referenceCount = solutions.reduce(
   (total, solution) => total + solution.gallery.length,
@@ -16,6 +18,10 @@ const referenceCount = solutions.reduce(
 
 export default function Loesungen() {
   const interactive = useInteractiveVisuals()
+  const [selectedSolution, setSelectedSolution] = useState<Solution | null>(
+    null,
+  )
+  const closeModal = useCallback(() => setSelectedSolution(null), [])
 
   return (
     <>
@@ -92,13 +98,16 @@ export default function Loesungen() {
                       ))}
                     </div>
                     <div className="solution-card__foot">
-                      <Link
-                        className="text-link"
-                        to={productPath(solution)}
+                      <button
+                        className="text-link solution-card__more"
+                        type="button"
+                        aria-haspopup="dialog"
+                        aria-label={`Mehr erfahren: ${solution.title}`}
+                        onClick={() => setSelectedSolution(solution)}
                       >
-                        Details & Referenzen{' '}
+                        Mehr erfahren{' '}
                         <ArrowUpRight aria-hidden="true" />
-                      </Link>
+                      </button>
                       <span className="solution-card__count">
                         {solution.gallery.length} Aufnahmen
                       </span>
@@ -122,6 +131,11 @@ export default function Loesungen() {
           </Link>
         </div>
       </section>
+
+      <SolutionModal
+        solution={selectedSolution}
+        onClose={closeModal}
+      />
     </>
   )
 }
