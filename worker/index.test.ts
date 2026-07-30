@@ -84,4 +84,30 @@ describe('contact Worker endpoint', () => {
       'https://example.test/produkte/turbinen',
     )
   })
+
+  it('serves prerendered HTML when the asset binding retains the dist prefix', async () => {
+    const prefixedAssets = {
+      fetch: vi.fn(async (request: Request) => {
+        const pathname = new URL(request.url).pathname
+        return pathname === '/dist/index.html'
+          ? new Response('<!doctype html><h1>IsoMat</h1>', {
+              headers: { 'content-type': 'text/html' },
+            })
+          : new Response('missing', { status: 404 })
+      }),
+    }
+
+    const response = await worker.fetch(
+      new Request('https://example.test/'),
+      { ASSETS: prefixedAssets },
+    )
+
+    expect(response.status).toBe(200)
+    expect(await response.text()).toContain('<h1>IsoMat</h1>')
+    expect(prefixedAssets.fetch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: 'https://example.test/dist/index.html',
+      }),
+    )
+  })
 })

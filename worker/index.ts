@@ -202,6 +202,28 @@ const assetRequest = (request: Request, pathname: string) => {
   return new Request(url, request)
 }
 
+async function fetchAsset(
+  request: Request,
+  env: Env,
+  pathname?: string,
+) {
+  const requestedPath = pathname || new URL(request.url).pathname
+  let response = await env.ASSETS.fetch(
+    pathname ? assetRequest(request, pathname) : request,
+  )
+
+  // Sites normally exposes assets from the archive's `dist` directory at
+  // the URL root. Some deployment revisions retain the archive prefix in the
+  // asset binding, so support both layouts without changing public URLs.
+  if (response.status === 404 && !requestedPath.startsWith('/dist/')) {
+    response = await env.ASSETS.fetch(
+      assetRequest(request, `/dist${requestedPath}`),
+    )
+  }
+
+  return response
+}
+
 const securityHeaders = (response: Response) => {
   const headers = new Headers(response.headers)
   headers.set('x-content-type-options', 'nosniff')
@@ -235,7 +257,7 @@ export default {
       return Response.redirect(new URL(redirects[pathname], url), 308)
     }
 
-    let response = await env.ASSETS.fetch(request)
+    let response = await fetchAsset(request, env)
     if (
       response.status === 404 &&
       (request.method === 'GET' || request.method === 'HEAD') &&
@@ -243,11 +265,9 @@ export default {
     ) {
       const routeFile =
         pathname === '/' ? '/index.html' : `${pathname}/index.html`
-      response = await env.ASSETS.fetch(assetRequest(request, routeFile))
+      response = await fetchAsset(request, env, routeFile)
       if (response.status === 404) {
-        const fallback = await env.ASSETS.fetch(
-          assetRequest(request, '/404.html'),
-        )
+        const fallback = await fetchAsset(request, env, '/404.html')
         response = new Response(fallback.body, {
           status: 404,
           headers: fallback.headers,
