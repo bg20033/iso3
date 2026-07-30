@@ -3708,9 +3708,8 @@ p {
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(255, 255, 255, 0.1) 14%,
-    transparent 28%
+    rgba(255, 255, 255, 0.22) 0%,
+    transparent 11%
   );
   content: '';
 }
@@ -3758,48 +3757,25 @@ p {
   width: min(43%, 620px);
 }
 
-.hero__brand-title {
-  width: max-content;
-  max-width: 100%;
+.hero__headline {
+  max-width: 10.5ch;
   margin-top: clamp(1.5rem, 2.5vw, 2.2rem);
-  background: linear-gradient(
-    90deg,
-    var(--ink) 0%,
-    var(--ink) 47.5%,
-    var(--signal) 47.5%,
-    var(--signal) 100%
-  );
-  background-clip: text;
-  color: transparent;
-  font-size: clamp(5.8rem, 8.3vw, 9.4rem);
-  flex-wrap: nowrap !important;
-  letter-spacing: -0.07em;
-  line-height: 0.82;
-  white-space: nowrap;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero__brand-title .blur-word {
-  flex: 0 0 auto;
-}
-
-.hero__tagline {
-  max-width: 17ch;
-  margin-top: clamp(1.8rem, 3vw, 2.5rem);
   color: var(--ink);
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 2.25vw, 2.55rem);
-  font-weight: 600;
-  letter-spacing: 0.005em;
-  line-height: 1;
-  text-transform: uppercase;
+  font-size: clamp(4.8rem, 6.5vw, 7.2rem);
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+  text-wrap: balance;
+}
+
+.hero__headline .blur-word:nth-child(n + 2) {
+  color: var(--signal);
 }
 
 .hero__lead {
-  max-width: 40ch;
-  margin-top: 1.25rem;
-  font-size: clamp(1rem, 1.15vw, 1.1rem);
+  max-width: 38ch;
+  margin-top: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  line-height: 1.65;
 }
 
 .hero .button-row {
@@ -3811,6 +3787,7 @@ p {
   margin-top: clamp(1.6rem, 2.5vw, 2rem);
   background: transparent;
   backdrop-filter: none;
+  border-bottom: 0;
 }
 
 .hero__measure {
@@ -3896,16 +3873,12 @@ p {
     width: 46%;
   }
 
-  .hero__brand-title {
-    font-size: clamp(5.3rem, 9.5vw, 7rem);
-  }
-
-  .hero__tagline {
-    font-size: clamp(1.55rem, 3vw, 2.3rem);
+  .hero__headline {
+    font-size: clamp(4.5rem, 8vw, 6.3rem);
   }
 
   .hero__backdrop img {
-    object-position: 56% center;
+    object-position: center;
   }
 }
 
@@ -3942,15 +3915,9 @@ p {
     width: 100%;
   }
 
-  .hero__brand-title {
+  .hero__headline {
     margin-top: 1.5rem;
-    font-size: clamp(5.2rem, 23vw, 8.5rem);
-  }
-
-  .hero__tagline {
-    max-width: 18ch;
-    margin-top: 1.8rem;
-    font-size: clamp(1.7rem, 7vw, 2.8rem);
+    font-size: clamp(4rem, 17vw, 6.7rem);
   }
 
   .hero__lead {
@@ -4001,12 +3968,8 @@ p {
     padding-block: 2.5rem 20.5rem;
   }
 
-  .hero__brand-title {
-    font-size: clamp(5rem, 27vw, 7.5rem);
-  }
-
-  .hero__tagline {
-    font-size: clamp(1.55rem, 8vw, 2.25rem);
+  .hero__headline {
+    font-size: clamp(3.75rem, 18vw, 5.5rem);
   }
 
   .hero__measure--x {

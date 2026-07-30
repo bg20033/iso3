@@ -24,18 +24,18 @@ export default function Home() {
       <section className="hero">
         <picture className="hero__backdrop">
           <source
-            media="(max-width: 720px)"
+            media="(max-width: 800px)"
             srcSet="/hero-valve-industrial-768.webp"
           />
           <source
             media="(max-width: 1280px)"
-            srcSet="/hero-valve-industrial-1280.webp"
+            srcSet="/hero-valve-focus-768.webp"
           />
           <img
-            src="/hero-valve-industrial.webp"
-            alt="Industrieventil mit massgefertigtem silbernem IsoMat-Dämmkissen"
-            width="1672"
-            height="941"
+            src="/hero-valve-focus.webp"
+            alt="Nahaufnahme eines Industrieventils mit silbernem IsoMat-Dämmkissen"
+            width="1022"
+            height="940"
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -52,18 +52,13 @@ export default function Home() {
             </span>
             <BlurText
               as="h1"
-              className="hero__brand-title"
-              text="IsoMat"
-              animateBy="letters"
-              delay={85}
+              className="hero__headline"
+              text="Dämmkissen nach Mass."
+              delay={100}
             />
-            <p className="hero__tagline">
-              Wärme schützen. Zugang behalten.
-            </p>
             <p className="hero__lead">
-              Massgefertigte Dämmkissen für komplexe Industrieanlagen –
-              abnehmbar, wiederverwendbar und exakt auf Ihre Komponenten
-              abgestimmt.
+              Massgefertigte, abnehmbare Isolierungen für Ventile, Armaturen
+              und komplexe Anlagenkomponenten.
             </p>
             <div className="button-row">
               <Link className="button button--signal" to="/loesungen">
