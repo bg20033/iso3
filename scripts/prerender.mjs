@@ -1,7 +1,8 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
-const template = await readFile('dist/index.html', 'utf8')
+const clientDirectory = 'dist/client'
+const template = await readFile(join(clientDirectory, 'index.html'), 'utf8')
 const { render, renderSeoHead, routes } = await import(
   '../dist-ssr/entry-server.js'
 )
@@ -15,12 +16,18 @@ const inject = async (pathname) => {
 
 for (const pathname of routes) {
   const file =
-    pathname === '/' ? 'dist/index.html' : join('dist', pathname, 'index.html')
+    pathname === '/'
+      ? join(clientDirectory, 'index.html')
+      : join(clientDirectory, pathname, 'index.html')
   await mkdir(dirname(file), { recursive: true })
   await writeFile(file, await inject(pathname), 'utf8')
 }
 
-await writeFile('dist/404.html', await inject('/nicht-gefunden'), 'utf8')
+await writeFile(
+  join(clientDirectory, '404.html'),
+  await inject('/nicht-gefunden'),
+  'utf8',
+)
 
 const sitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
@@ -33,9 +40,9 @@ const sitemap = [
   '',
 ].join('\n')
 
-await writeFile('dist/sitemap.xml', sitemap, 'utf8')
+await writeFile(join(clientDirectory, 'sitemap.xml'), sitemap, 'utf8')
 await writeFile(
-  'dist/robots.txt',
+  join(clientDirectory, 'robots.txt'),
   ['User-agent: *', 'Allow: /', '', 'Sitemap: https://isomat.ch/sitemap.xml', ''].join(
     '\n',
   ),
