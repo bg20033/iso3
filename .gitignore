@@ -17,6 +17,7 @@ dist-ssr
 IsoMat/
 tmp/
 .wrangler/
+.vercel/
 
 # Editor directories and files
 .vscode/*

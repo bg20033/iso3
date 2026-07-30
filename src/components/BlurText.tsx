@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import type { Transition } from 'motion/react';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export type BlurTextProps = {
   text?: string;
@@ -49,26 +49,67 @@ const BlurText: React.FC<BlurTextProps> = ({
   const reduceMotion = useReducedMotion();
   const elements = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(Boolean(reduceMotion));
-  const ref = useRef<HTMLElement | null>(null);
+  // Der Knoten liegt im State, nicht in einem Ref: nur so läuft der Effekt
+  // erneut, sobald das Element hängt. Mit einem Ref verschluckt StrictMode
+  // den ersten Observer-Callback, und Überschriften, die beim Mounten schon
+  // im Viewport stehen, bleiben für immer unsichtbar.
+  const [node, setNode] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     if (reduceMotion) {
       setInView(true);
       return;
     }
-    if (!ref.current) return;
+    if (!node) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+
+    // Bereits sichtbare Elemente sofort freigeben
+    const isOnScreen = () => {
+      const rect = node.getBoundingClientRect();
+      return rect.height > 0 && rect.top < window.innerHeight && rect.bottom > 0;
+    };
+
+    if (isOnScreen()) {
+      setInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true);
-          observer.unobserve(ref.current as Element);
+          observer.disconnect();
         }
       },
       { threshold, rootMargin }
     );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [threshold, rootMargin, reduceMotion]);
+    observer.observe(node);
+
+    // Sicherheitsnetz: beim ersten Effektlauf steht das Layout oft noch nicht,
+    // und StrictMode verwirft den ersten Observer-Callback. Also nachmessen.
+    let frame = requestAnimationFrame(() => {
+      if (isOnScreen()) {
+        setInView(true);
+        observer.disconnect();
+      }
+    });
+    const timer = window.setTimeout(() => {
+      if (isOnScreen()) {
+        setInView(true);
+        observer.disconnect();
+      }
+    }, 400);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [node, threshold, rootMargin, reduceMotion]);
 
   const defaultFrom = useMemo(
     () =>
@@ -97,9 +138,7 @@ const BlurText: React.FC<BlurTextProps> = ({
 
   return (
     <Component
-      ref={node => {
-        ref.current = node;
-      }}
+      ref={setNode}
       className={className}
       style={{ display: 'flex', flexWrap: 'wrap' }}
     >

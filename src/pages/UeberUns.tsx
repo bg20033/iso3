@@ -25,7 +25,7 @@ export default function UeberUns() {
         <div className="shell editorial-grid">
           <div>
             <span className="eyebrow">Unser Ansatz</span>
-            <BlurText text="Individuell konstruiert. Für den Betrieb gemacht." />
+            <BlurText as="h2" text="Individuell konstruiert. Für den Betrieb gemacht." />
           </div>
           <div className="prose prose--large">
             <p>
@@ -47,7 +47,7 @@ export default function UeberUns() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">Leistung</span>
-              <BlurText text="Vier Prinzipien für jede Lösung." />
+              <BlurText as="h2" text="Vier Prinzipien für jede Lösung." />
             </div>
           </div>
           <BenefitGrid benefits={coreBenefits} />
@@ -58,7 +58,7 @@ export default function UeberUns() {
         <div className="shell editorial-grid">
           <div>
             <span className="eyebrow">Arbeitsweise</span>
-            <BlurText text="Ein klarer Weg zur Massanfertigung." />
+            <BlurText as="h2" text="Ein klarer Weg zur Massanfertigung." />
           </div>
           <ProcessStory steps={processSteps} />
         </div>
@@ -69,7 +69,7 @@ export default function UeberUns() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">Archiv</span>
-              <BlurText text="Lösungen aus realen Anlagen." />
+              <BlurText as="h2" text="Lösungen aus realen Anlagen." />
             </div>
             <p>Ein Querschnitt durch verschiedene Komponenten und Einbausituationen.</p>
           </div>

@@ -2,15 +2,19 @@ import { ArrowUpRight, MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BenefitGrid } from '../components/BenefitGrid'
 import BlurText from '../components/BlurText'
+import { FaqAccordion } from '../components/FaqAccordion'
 import { IndustrialVelocity } from '../components/IndustrialVelocity'
+import { IndustryGrid } from '../components/IndustryGrid'
 import { ProcessStory } from '../components/ProcessStory'
 import { ProjectQuickBrief } from '../components/ProjectQuickBrief'
 import { ReferenceDome } from '../components/ReferenceDome'
 import ScrollReveal from '../components/ScrollReveal'
 import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
+import { ValveInsulation } from '../components/ValveInsulation'
 import {
   coreBenefits,
   featuredReferences,
+  generalFaqs,
   processSteps,
   solutions,
 } from '../data/site'
@@ -76,12 +80,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section section--metal">
+      <ValveInsulation />
+
+      <section className="section section--light">
         <div className="shell">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">02 · Warum IsoMat</span>
-              <BlurText text="Dämmung, die im Betrieb mitdenkt." />
+              <span className="eyebrow">03 · Warum IsoMat</span>
+              <BlurText as="h2" text="Dämmung, die im Betrieb mitdenkt." />
             </div>
             <p>
               Die Isolierung bleibt nicht nur dauerhaft an der Anlage – sie
@@ -95,8 +101,8 @@ export default function Home() {
       <section className="section section--graphite">
         <div className="shell process-layout">
           <div className="process-intro">
-            <span className="eyebrow">03 · Prozess</span>
-            <BlurText text="Vom Bauteil zum passgenauen Dämmkissen." />
+            <span className="eyebrow">04 · Prozess</span>
+            <BlurText as="h2" text="Vom Bauteil zum passgenauen Dämmkissen." />
             <p>
               Jede Lösung entsteht aus den realen Betriebsbedingungen und der
               Geometrie Ihrer Anlage.
@@ -111,12 +117,29 @@ export default function Home() {
 
       <ProjectQuickBrief />
 
+      <section className="section section--metal">
+        <div className="shell">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">06 · Einsatzfelder</span>
+              <BlurText as="h2" text="Wo IsoMat-Kissen im Einsatz stehen." />
+            </div>
+            <p>
+              Die Anforderungen unterscheiden sich je nach Anlage: Temperatur,
+              Medium, Reinigungszyklus und Revisionsintervall bestimmen den
+              Aufbau.
+            </p>
+          </div>
+          <IndustryGrid />
+        </div>
+      </section>
+
       <section className="section section--black">
         <div className="shell">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">05 · Referenzen</span>
-              <BlurText text="In Anlagen. Im Einsatz. Für Wartung bereit." />
+              <span className="eyebrow">07 · Referenzen</span>
+              <BlurText as="h2" text="In Anlagen. Im Einsatz. Für Wartung bereit." />
             </div>
             <p>
               Reale Anwendungen aus Heizungszentralen, Energieanlagen und
@@ -124,6 +147,20 @@ export default function Home() {
             </p>
           </div>
           <ReferenceDome images={featuredReferences} />
+        </div>
+      </section>
+
+      <section className="section section--light">
+        <div className="shell faq-layout">
+          <div className="faq-intro">
+            <span className="eyebrow">08 · Häufige Fragen</span>
+            <BlurText as="h2" text="Was Betreiber vor der Anfrage wissen wollen." />
+            <p>
+              Fehlt eine Antwort? Ein Anruf unter {'056 245 16 28'} klärt die
+              meisten Fälle in wenigen Minuten.
+            </p>
+          </div>
+          <FaqAccordion entries={generalFaqs} />
         </div>
       </section>
 

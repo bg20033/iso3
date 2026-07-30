@@ -4529,3 +4529,903 @@ p {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Aufbau: 3D-Ventilisolierung
+   ========================================================================== */
+.valve-section {
+  min-height: 300vh;
+  padding-bottom: 0;
+}
+
+.valve-section__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.7fr);
+  align-items: end;
+  gap: clamp(2rem, 7vw, 8rem);
+}
+
+.valve-section__head h2 {
+  max-width: 14ch;
+}
+
+.valve-section__head > p {
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.valve-stage {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  display: grid;
+  align-items: center;
+}
+
+.valve-stage__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+}
+
+.valve-stage__viewport {
+  position: relative;
+  height: min(62vh, 560px);
+  border: 1px solid var(--edge);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(14, 17, 18, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 17, 18, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.valve-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.valve-scene:active {
+  cursor: grabbing;
+}
+
+.valve-scene canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Beschriftungen werden pro Frame aus der 3D-Position projiziert */
+.valve-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.valve-label__dot {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--signal);
+  background: var(--paper);
+}
+
+.valve-label__text {
+  position: absolute;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Verbindungslinie vom Punkt zur Schrifttafel */
+.valve-label__text::before {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 1px;
+  background: var(--edge-strong);
+  content: '';
+}
+
+/* Seite folgt der Bildmitte (per JS gesetzt), damit nichts über den Rand läuft */
+.valve-label[data-side='right'] .valve-label__text {
+  left: 20px;
+}
+
+.valve-label[data-side='right'] .valve-label__text::before {
+  left: -18px;
+}
+
+.valve-label[data-side='left'] .valve-label__text {
+  right: 20px;
+}
+
+.valve-label[data-side='left'] .valve-label__text::before {
+  right: -18px;
+}
+
+/* Höhenversatz je Lage, damit sich die Tafeln nicht überdecken */
+.valve-label[data-index='0'] .valve-label__text {
+  top: -76px;
+}
+
+.valve-label[data-index='1'] .valve-label__text {
+  top: -12px;
+}
+
+.valve-label[data-index='2'] .valve-label__text {
+  top: 52px;
+}
+
+.valve-label[data-index='3'] .valve-label__text {
+  top: -138px;
+}
+
+.valve-label__text b {
+  color: var(--signal);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+}
+
+.valve-stage__hint {
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--edge);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.valve-diagram {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+/* Legende der vier Lagen */
+.valve-legend {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--edge);
+  list-style: none;
+}
+
+.valve-legend__item {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: clamp(0.85rem, 1.6vw, 1.15rem);
+  border-bottom: 1px solid var(--edge);
+  opacity: 0.42;
+  transition:
+    opacity 320ms var(--ease),
+    border-color 320ms var(--ease);
+}
+
+.valve-legend__item.is-active {
+  border-bottom-color: var(--ink);
+  opacity: 1;
+}
+
+.valve-legend__no {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  transition: color 320ms var(--ease);
+}
+
+.valve-legend__item.is-active .valve-legend__no {
+  color: var(--signal);
+}
+
+.valve-legend h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 1.3rem;
+}
+
+.valve-legend h3 small {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.valve-legend p {
+  margin-top: 0.35rem;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+/* ==========================================================================
+   Einsatzfelder
+   ========================================================================== */
+.industry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--edge);
+  background: var(--edge);
+}
+
+.industry-card {
+  position: relative;
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  padding: clamp(1.4rem, 2.6vw, 2.1rem);
+  background: var(--paper);
+  transition: background 220ms var(--ease);
+}
+
+.industry-card:hover {
+  background: var(--foil);
+}
+
+.industry-card__no {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.industry-card h3 {
+  margin-top: 1.75rem;
+  font-size: 1.65rem;
+}
+
+.industry-card p {
+  margin-top: 0.7rem;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+.industry-card__components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: auto 0 0;
+  padding: 1.5rem 0 0;
+  list-style: none;
+}
+
+.industry-card__components li {
+  padding: 0.32rem 0.55rem;
+  border: 1px solid var(--edge-strong);
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Häufige Fragen
+   ========================================================================== */
+.faq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: clamp(2rem, 6vw, 6rem);
+}
+
+.faq-intro {
+  position: sticky;
+  top: calc(var(--header-h) + 2.5rem);
+}
+
+.faq-intro h2 {
+  max-width: 12ch;
+}
+
+.faq-intro p {
+  margin-top: 1.4rem;
+  color: var(--ink-soft);
+}
+
+.faq-accordion {
+  border-top: 1px solid var(--ink);
+}
+
+.faq-accordion .faq-item {
+  border-bottom: 1px solid var(--edge);
+}
+
+.faq-accordion .faq-item summary {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 1.35rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-accordion .faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-accordion .faq-item summary:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+}
+
+.faq-accordion .faq-item__no {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.faq-accordion .faq-item__question {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.faq-accordion .faq-item__icon {
+  color: var(--signal);
+  transition: transform 260ms var(--ease);
+}
+
+.faq-accordion .faq-item[open] .faq-item__icon {
+  transform: rotate(45deg);
+}
+
+.faq-accordion .faq-item[open] summary {
+  padding-bottom: 0.6rem;
+}
+
+.faq-accordion .faq-item > p {
+  max-width: 62ch;
+  margin-left: 4rem;
+  padding-bottom: 1.5rem;
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+}
+
+@media (max-width: 1040px) {
+  .industry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .valve-section {
+    min-height: 0;
+    padding-bottom: clamp(4.5rem, 9vw, 8.5rem);
+  }
+
+  .valve-section__head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .valve-stage {
+    position: static;
+    height: auto;
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+
+  .valve-stage__inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* Zeichnung bekommt unten Luft, der Hinweis sitzt darunter statt darauf */
+  .valve-stage__viewport {
+    height: min(72vw, 420px);
+    margin-bottom: 3rem;
+  }
+
+  .valve-stage__hint {
+    bottom: -2.5rem;
+    left: 0;
+    justify-content: center;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    transform: none;
+  }
+
+  .valve-legend__item {
+    opacity: 1;
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-intro {
+    position: static;
+  }
+}
+
+@media (max-width: 620px) {
+  .industry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .industry-card {
+    min-height: 0;
+  }
+
+  .faq-accordion .faq-item summary {
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  }
+
+  .faq-accordion .faq-item > p {
+    margin-left: 3.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .valve-section {
+    min-height: 0;
+  }
+
+  .valve-stage {
+    position: static;
+    height: auto;
+  }
+
+  .valve-legend__item {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Lösungen: Kennzahlenband, Blattaufbau, Kategorienliste
+   ========================================================================== */
+.spec-strip {
+  border-bottom: 1px solid var(--edge);
+  background: var(--foil);
+}
+
+.spec-strip__inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--edge);
+  border-inline: 1px solid var(--edge);
+}
+
+.spec-strip__inner > div {
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(0.9rem, 2vw, 1.5rem);
+  background: var(--foil);
+}
+
+.spec-strip dt {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.spec-strip dd {
+  margin: 0.3rem 0 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.solutions-page__body {
+  display: grid;
+  gap: clamp(3.5rem, 7vw, 6.5rem);
+  min-width: 0;
+}
+
+.page-block {
+  min-width: 0;
+  scroll-margin-top: calc(var(--header-h) + 2rem);
+}
+
+.page-block__head {
+  margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  padding-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+  border-bottom: 1px solid var(--ink);
+}
+
+.page-block__head h2 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+}
+
+.page-block__head > p {
+  max-width: 58ch;
+  margin-top: 1rem;
+  color: var(--ink-soft);
+}
+
+/* Drei Konstruktionsschritte */
+.build-steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--edge);
+  list-style: none;
+}
+
+.build-steps li {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+  padding-block: clamp(1.35rem, 2.6vw, 2rem);
+  border-bottom: 1px solid var(--edge);
+}
+
+.build-steps__no {
+  color: var(--signal);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.build-steps h3 {
+  font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+}
+
+.build-steps p {
+  max-width: 60ch;
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+}
+
+/* Vorteilsraster */
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border: 1px solid var(--edge);
+  background: var(--edge);
+}
+
+.value-grid__item {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 140px;
+  align-content: start;
+  padding: clamp(1.2rem, 2.4vw, 1.75rem);
+  background: var(--paper);
+}
+
+.value-grid__item span {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.value-grid__item p {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Komponentenliste */
+.component-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--edge);
+  background: var(--edge);
+  list-style: none;
+}
+
+.component-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 1.1rem 1.15rem;
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.component-list li span {
+  color: var(--signal);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+/* Weitere Kategorien */
+.category-rows {
+  display: grid;
+  border-top: 1px solid var(--ink);
+}
+
+.category-row {
+  display: grid;
+  grid-template-columns: 3rem 96px minmax(0, 1fr) auto 20px;
+  align-items: center;
+  gap: clamp(0.85rem, 2vw, 1.5rem);
+  width: 100%;
+  padding: 0.85rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--edge);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 200ms var(--ease);
+}
+
+.category-row:hover,
+.category-row:focus-visible {
+  background: var(--foil);
+}
+
+.category-row__no {
+  padding-left: 0.5rem;
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.category-row__media {
+  display: block;
+  overflow: hidden;
+  height: 64px;
+  border: 1px solid var(--edge);
+  background: var(--foil);
+}
+
+.category-row__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 420ms var(--ease);
+}
+
+.category-row:hover .category-row__media img {
+  transform: scale(1.06);
+}
+
+.category-row__body {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.category-row__body strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.category-row__body small {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.category-row__count {
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-row__arrow {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+  color: var(--signal);
+  transition: transform 200ms var(--ease);
+}
+
+.category-row:hover .category-row__arrow {
+  transform: translate(3px, -3px);
+}
+
+@media (max-width: 900px) {
+  .spec-strip__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-row {
+    grid-template-columns: 2.5rem 72px minmax(0, 1fr) 20px;
+  }
+
+  .category-row__count {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .value-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .build-steps li {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .category-row {
+    grid-template-columns: 2rem minmax(0, 1fr) 18px;
+    gap: 0.75rem;
+  }
+
+  .category-row__media {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Feinschliff: Mobile, Anker und ruhigere Raster
+   ========================================================================== */
+
+/* Ankersprünge landen nicht mehr unter der fixen Kopfzeile */
+html {
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+}
+
+/* Das Konstruktionsraster im Seitenkopf tritt zurück */
+.page-head {
+  background-image:
+    linear-gradient(90deg, rgba(14, 17, 18, 0.028) 1px, transparent 1px),
+    linear-gradient(rgba(14, 17, 18, 0.028) 1px, transparent 1px);
+  background-size: 96px 96px;
+}
+
+@media (max-width: 900px) {
+  .page-head {
+    background-size: 64px 64px;
+  }
+}
+
+@media (max-width: 560px) {
+  .spec-strip__inner > div {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .spec-strip dt {
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+  }
+
+  .spec-strip dd {
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .page-block__head {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.1rem;
+  }
+
+  .component-list li {
+    font-size: 1rem;
+  }
+
+  .value-grid__item {
+    min-height: 0;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Vereinheitlichung: Sektionsköpfe lesen sich wie Blattköpfe einer Zeichnung
+   ========================================================================== */
+.section-heading {
+  padding-bottom: clamp(1.1rem, 2.2vw, 1.6rem);
+  border-bottom: 1px solid var(--ink);
+}
+
+.section-heading > p {
+  align-self: end;
+}
+
+/* Gedrückter Zustand für alle Schaltflächen */
+.button:active {
+  transform: translateY(0);
+}
+
+/* Karten reagieren einheitlich */
+.value-grid__item,
+.component-list li {
+  transition: background 200ms var(--ease);
+}
+
+.value-grid__item:hover,
+.component-list li:hover {
+  background: var(--foil);
+}
+
+@media (max-width: 560px) {
+  .eyebrow {
+    letter-spacing: 0.16em;
+  }
+
+  .section-heading {
+    padding-bottom: 1rem;
+  }
+}
+
+.solutions-page {
+  overflow: hidden;
+}
+
+.page-block__note {
+  max-width: 56ch;
+  margin-top: 1.5rem;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+.page-block__note a {
+  color: var(--signal-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.page-block__note a:hover {
+  color: var(--signal);
+}

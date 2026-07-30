@@ -47,24 +47,21 @@ describe('routing', () => {
     expect(screen.getByLabelText('Betriebstemperatur')).toHaveValue('320 °C')
   })
 
-  it('shows only the Ventile focus and keeps its controls keyboard accessible', async () => {
+  it('keeps the Ventile focus and category controls keyboard accessible', async () => {
     render(
       <MemoryRouter initialEntries={['/loesungen']}>
         <App />
       </MemoryRouter>,
     )
 
-    const moreButton = await screen.findByRole('button', {
-      name: 'Mehr erfahren: Ventile & Armaturen',
+    const galleryButton = await screen.findByRole('button', {
+      name: 'Alle Aufnahmen: Ventile & Armaturen',
     })
-    moreButton.focus()
-    expect(moreButton).toHaveFocus()
+    galleryButton.focus()
+    expect(galleryButton).toHaveFocus()
     expect(
-      screen.queryByRole('button', { name: /Turbinen/ }),
-    ).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: /Kompensatoren/ }),
-    ).not.toBeInTheDocument()
+      screen.getByRole('button', { name: 'Turbinen öffnen' }),
+    ).toBeInTheDocument()
 
     const cta = screen.getByRole('link', { name: 'Projekt anfragen' })
     cta.focus()
@@ -107,11 +104,11 @@ describe('routing', () => {
       </MemoryRouter>,
     )
 
-    const moreButton = await screen.findByRole('button', {
-      name: 'Mehr erfahren: Ventile & Armaturen',
+    const galleryButton = await screen.findByRole('button', {
+      name: 'Alle Aufnahmen: Ventile & Armaturen',
     })
-    moreButton.focus()
-    fireEvent.click(moreButton)
+    galleryButton.focus()
+    fireEvent.click(galleryButton)
 
     const dialog = screen.getByRole('dialog', {
       name: 'Ventile & Armaturen',
@@ -125,7 +122,7 @@ describe('routing', () => {
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(moreButton).toHaveFocus()
+    expect(galleryButton).toHaveFocus()
   })
 
   it('redirects a legacy solution URL to its full quickview modal', async () => {

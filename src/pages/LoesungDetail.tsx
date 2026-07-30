@@ -132,7 +132,7 @@ export default function LoesungDetail() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">Referenzen</span>
-              <BlurText text={`Einblicke: ${solution.title}`} />
+              <BlurText as="h2" text={`Einblicke: ${solution.title}`} />
             </div>
             <p>{solution.gallery.length} reale Aufnahmen aus dem IsoMat-Archiv.</p>
           </div>

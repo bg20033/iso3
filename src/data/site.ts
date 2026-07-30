@@ -395,3 +395,128 @@ export const productPath = (solution: Solution) =>
 
 export const solutionQuickviewPath = (solution: Solution) =>
   `/loesungen?solution=${encodeURIComponent(solution.productSlug)}`
+
+/* ==========================================================================
+   ZU PRÜFEN – die folgenden Blöcke beschreiben den branchenüblichen Aufbau
+   einer Isoliermatratze und typische Einsatzfelder. Sie stammen NICHT aus
+   der IsoMat-Präsentation. Vor der Live-Schaltung mit der Fertigung
+   abgleichen und Materialbezeichnungen konkretisieren.
+   ========================================================================== */
+
+export type JacketLayer = {
+  id: string
+  no: string
+  title: string
+  role: string
+  text: string
+}
+
+/** Schichten des Dämmkissens – Beschriftung der 3D-Explosionsansicht. */
+export const jacketLayers: JacketLayer[] = [
+  {
+    id: 'shell',
+    no: '01',
+    title: 'Aussenhülle',
+    role: 'Schutz',
+    text: 'Mechanisch belastbares Gewebe, das den Dämmkern gegen Abrieb, Feuchtigkeit und Betriebsmedien abschirmt.',
+  },
+  {
+    id: 'core',
+    no: '02',
+    title: 'Dämmkern',
+    role: 'Isolation',
+    text: 'Temperaturbeständiges Vlies in der für die Betriebstemperatur passenden Stärke. Bestimmt Dämmwirkung und Aufbaudicke.',
+  },
+  {
+    id: 'liner',
+    no: '03',
+    title: 'Innenhülle',
+    role: 'Kontaktfläche',
+    text: 'Liegt direkt am heissen Bauteil an und hält den Kern in Form, auch nach vielen Montagezyklen.',
+  },
+  {
+    id: 'closure',
+    no: '04',
+    title: 'Verschlüsse & Steppung',
+    role: 'Montage',
+    text: 'Spannverschlüsse und durchgesteppte Kreuzpunkte fixieren die Segmente und verhindern ein Verrutschen des Kerns.',
+  },
+]
+
+export type Industry = {
+  no: string
+  title: string
+  text: string
+  components: string[]
+}
+
+/** Einsatzfelder, abgeleitet aus den Referenzaufnahmen. */
+export const industries: Industry[] = [
+  {
+    no: '01',
+    title: 'Energie & Fernwärme',
+    text: 'Heizzentralen, Verteiler und Turbinen, bei denen jeder Wärmeverlust direkt auf den Wirkungsgrad schlägt.',
+    components: ['Turbinen', 'Verteiler', 'Pumpen'],
+  },
+  {
+    no: '02',
+    title: 'Verbrennung & Biomasse',
+    text: 'Kessel, Trichter und Ascheaustrag – Bereiche mit Staub, Feuchtigkeit und regelmässigen Revisionen.',
+    components: ['Kessel', 'Trichter', 'Zellenradschleusen'],
+  },
+  {
+    no: '03',
+    title: 'Chemie & Prozesstechnik',
+    text: 'Prozessleitungen mit dichter Armaturenfolge, wo jede Komponente einzeln zugänglich bleiben muss.',
+    components: ['Ventile', 'Flansche', 'Wärmetauscher'],
+  },
+  {
+    no: '04',
+    title: 'Lebensmittel & Getränke',
+    text: 'Anlagen mit häufiger Reinigung und wiederkehrender Demontage der Isolierung.',
+    components: ['Rohrleitungen', 'Behälter', 'Armaturen'],
+  },
+  {
+    no: '05',
+    title: 'Gebäudetechnik',
+    text: 'Heizungszentralen in Gewerbe- und Industriebauten mit begrenztem Platz um die Armaturen.',
+    components: ['Pumpen', 'Verteiler', 'Kompensatoren'],
+  },
+  {
+    no: '06',
+    title: 'Anlagen- & Sonderbau',
+    text: 'Baugruppen ohne Standardgeometrie, die als Einzelstück aufgemessen und gefertigt werden.',
+    components: ['Ventilatoren', 'Baugruppen', 'Sonderbauteile'],
+  },
+]
+
+export type FaqEntry = { question: string; answer: string }
+
+/** Allgemeine Fragen zur Isoliermatratze. */
+export const generalFaqs: FaqEntry[] = [
+  {
+    question: 'Wie oft lässt sich ein Dämmkissen abnehmen und wieder montieren?',
+    answer:
+      'Die Kissen sind für den wiederkehrenden Einsatz konstruiert: Verschlüsse und Steppung halten den Aufbau in Form, sodass dieselben Elemente nach einer Revision wieder montiert werden können. Wie viele Zyklen konkret erreicht werden, hängt von Betriebsmedium, Temperatur und Handhabung ab.',
+  },
+  {
+    question: 'Was braucht IsoMat für eine Offerte?',
+    answer:
+      'Am schnellsten geht es mit Fotos der eingebauten Komponente, den Hauptabmessungen und der Betriebstemperatur. Zeichnungen oder CAD-Dateien sind willkommen, aber keine Voraussetzung – oft genügt ein Aufmass vor Ort.',
+  },
+  {
+    question: 'Werden Antriebe, Sensoren und Anschlüsse ausgespart?',
+    answer:
+      'Ja. Aussparungen für Stellantriebe, Messstellen, Entlüftungen und Anschlüsse werden in der Konstruktion festgelegt und nicht nachträglich ins fertige Kissen geschnitten.',
+  },
+  {
+    question: 'Kann bestehende Dämmung ersetzt werden, ohne die Anlage abzustellen?',
+    answer:
+      'In vielen Fällen ja, sofern das Bauteil im Betrieb zugänglich ist. Das Aufmass erfolgt an der laufenden Anlage, die Fertigung im Werk, und die Montage beschränkt sich auf ein kurzes Zeitfenster.',
+  },
+  {
+    question: 'Wie werden die Kissen nach der Demontage wieder zugeordnet?',
+    answer:
+      'Jedes Element wird gekennzeichnet. So findet das Wartungsteam nach dem Serviceeinsatz die passende Position wieder, ohne die Segmente durchprobieren zu müssen.',
+  },
+]
