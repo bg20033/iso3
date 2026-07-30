@@ -17,6 +17,13 @@ type Env = {
 
 const redirects: Record<string, string> = {
   '/produkte': '/loesungen',
+  '/produkte/ventile': '/loesungen?solution=ventile',
+  '/produkte/heizungszentralen': '/loesungen?solution=heizungszentralen',
+  '/produkte/ascheaustragssysteme': '/loesungen?solution=ascheaustragssysteme',
+  '/produkte/revisionstueren': '/loesungen?solution=revisionstueren',
+  '/produkte/kompensatoren': '/loesungen?solution=kompensatoren',
+  '/produkte/turbinen': '/loesungen?solution=turbinen',
+  '/produkte/sonderbau': '/loesungen?solution=sonderbau',
   '/sonderbau': '/loesungen?solution=sonderbau',
   '/loesungen/ventile-armaturen': '/loesungen?solution=ventile',
   '/loesungen/heizungszentralen': '/loesungen?solution=heizungszentralen',

@@ -1,4 +1,11 @@
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import {
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { solutionBySlug, solutionQuickviewPath } from './data/site'
 import Datenschutz from './pages/Datenschutz'
@@ -21,6 +28,21 @@ function LegacySolutionRedirect() {
   )
 }
 
+function ProductQuickviewRedirect() {
+  const { slug } = useParams()
+  const navigate = useNavigate()
+  const solution = solutionBySlug(slug)
+
+  useEffect(() => {
+    navigate(
+      solution ? solutionQuickviewPath(solution) : '/nicht-gefunden',
+      { replace: true },
+    )
+  }, [navigate, solution])
+
+  return <LoesungDetail />
+}
+
 export default function App() {
   return (
     <Routes>
@@ -29,7 +51,7 @@ export default function App() {
         <Route path="loesungen" element={<Loesungen />} />
         <Route path="loesungen/:slug" element={<LegacySolutionRedirect />} />
         <Route path="produkte" element={<Navigate to="/loesungen" replace />} />
-        <Route path="produkte/:slug" element={<LoesungDetail />} />
+        <Route path="produkte/:slug" element={<ProductQuickviewRedirect />} />
         <Route
           path="sonderbau"
           element={<Navigate to="/produkte/sonderbau" replace />}

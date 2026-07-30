@@ -18,7 +18,7 @@ describe('routing', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders a solution detail route and the mobile dock labels', async () => {
+  it('redirects a product detail URL to the full quickview modal', async () => {
     render(
       <MemoryRouter initialEntries={['/produkte/turbinen']}>
         <App />
@@ -26,7 +26,7 @@ describe('routing', () => {
     )
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Turbinen' }),
+      await screen.findByRole('dialog', { name: 'Turbinen' }),
     ).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Schnellnavigation' })).toBeInTheDocument()
   })

@@ -85,6 +85,17 @@ describe('contact Worker endpoint', () => {
     )
   })
 
+  it('redirects old product detail pages into the full modal', async () => {
+    const response = await worker.fetch(
+      new Request('https://example.test/produkte/kompensatoren'),
+      { ASSETS: assets },
+    )
+    expect(response.status).toBe(308)
+    expect(response.headers.get('location')).toBe(
+      'https://example.test/loesungen?solution=kompensatoren',
+    )
+  })
+
   it('serves prerendered HTML when the asset binding retains the dist prefix', async () => {
     const prefixedAssets = {
       fetch: vi.fn(async (request: Request) => {
