@@ -102,8 +102,6 @@ export default function Home() {
           </div>
           <Category3DExplorer mode="hub" solutions={solutions} />
         </div>
-
-        <ReferenceMarquee solutions={solutions} />
       </section>
 
       <section className="section section--light comparison-section">
@@ -126,6 +124,13 @@ export default function Home() {
           </div>
           <BeforeAfterSlider before={beforeImage} after={afterImage} />
         </div>
+
+        {/*
+          Ausserhalb der Schale, damit der Streifen über die volle Breite
+          läuft – er schliesst denselben Abschnitt ab, statt einen eigenen
+          aufzumachen.
+        */}
+        <ReferenceMarquee solutions={solutions} />
       </section>
 
       <section className="section section--metal">

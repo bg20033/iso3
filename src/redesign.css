@@ -469,6 +469,17 @@ body {
   aspect-ratio: 4 / 3;
 }
 
+/*
+ * Der Aufnahmenlauf gehört jetzt in denselben Abschnitt wie der Vergleich und
+ * schliesst ihn ab. Er braucht Luft nach oben, sitzt aber bündig am unteren
+ * Rand – so wirkt er als Band des Abschnitts und nicht als eigener Block.
+ */
+.comparison-section .ref-marquee {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  margin-bottom: calc(-1 * clamp(4.5rem, 9vw, 8.5rem));
+  border-bottom: 0;
+}
+
 .home-benefits {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
