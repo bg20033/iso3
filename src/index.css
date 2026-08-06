@@ -872,7 +872,7 @@ p {
 }
 
 .static-solution-card span,
-.static-solution-card h3 {
+.static-solution-card strong {
   position: relative;
   z-index: 1;
 }
@@ -885,9 +885,12 @@ p {
   letter-spacing: 0.16em;
 }
 
-.static-solution-card h3 {
+.static-solution-card strong {
   color: var(--ink);
+  font-family: var(--font-display);
   font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.1;
 }
 
 /* --- Vorteile ------------------------------------------------------------- */

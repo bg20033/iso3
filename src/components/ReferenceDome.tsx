@@ -9,12 +9,14 @@ import {
 } from 'react'
 import type { GalleryImage } from '../data/site'
 import { useNearViewport } from '../hooks/useNearViewport'
-import { useInteractiveVisuals } from './useInteractiveVisuals'
+import { useSceneVisuals } from './useInteractiveVisuals'
 
 const DomeGallery = lazy(() => import('./DomeGallery'))
 
 export function ReferenceDome({ images }: { images: GalleryImage[] }) {
-  const interactive = useInteractiveVisuals()
+  // Der Globus läuft jetzt auch auf dem Telefon – dort ist er der Inhalt,
+  // nicht nur Zierde.
+  const interactive = useSceneVisuals()
   const shellRef = useRef<HTMLDivElement>(null)
   const nearby = useNearViewport(shellRef)
   const galleryEnabled = interactive && nearby

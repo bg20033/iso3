@@ -2,8 +2,10 @@ import { ArrowUpRight, Check, MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider'
 import { Category3DExplorer } from '../components/Category3DExplorer'
+import { ReferenceDome } from '../components/ReferenceDome'
+import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
+import { ReferenceMarquee } from '../components/ReferenceMarquee'
 import { FaqAccordion } from '../components/FaqAccordion'
-import { ResponsiveImage } from '../components/ResponsiveImage'
 import {
   coreBenefits,
   featuredReferences,
@@ -70,11 +72,27 @@ export default function Home() {
         <div><dt>Erfahrung</dt><dd>15+ Jahre</dd></div>
       </dl>
 
+      <section className="section section--light">
+        <div className="shell">
+          <div className="section-heading section-heading--redesign">
+            <div>
+              <span className="eyebrow">01 · Kategorien</span>
+              <h2>Für jede Anlage die passende Form.</h2>
+            </div>
+            <p>
+              Von einzelnen Ventilen bis zu kompletten Turbinen: ziehen Sie
+              durch die Kategorien und öffnen Sie die Aufnahmen dazu.
+            </p>
+          </div>
+          <SolutionCircularGallery solutions={solutions} bend={3} />
+        </div>
+      </section>
+
       <section className="section explorer-section" id="modelle">
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">01 · Lösungen in 3D</span>
+              <span className="eyebrow">02 · Lösungen in 3D</span>
               <h2>Sieben Bauteile. Eine klare Konstruktion.</h2>
             </div>
             <p>
@@ -84,12 +102,14 @@ export default function Home() {
           </div>
           <Category3DExplorer mode="hub" solutions={solutions} />
         </div>
+
+        <ReferenceMarquee solutions={solutions} />
       </section>
 
       <section className="section section--light comparison-section">
         <div className="shell comparison-section__grid">
           <div className="comparison-section__copy">
-            <span className="eyebrow">02 · Vorher / Nachher</span>
+            <span className="eyebrow">03 · Vorher / Nachher</span>
             <h2>Weniger Verlust. Derselbe Zugang.</h2>
             <p>
               Die Isolierung folgt dem Bauteil – nicht umgekehrt. Aussparungen,
@@ -112,7 +132,7 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">03 · Warum IsoMat</span>
+              <span className="eyebrow">04 · Warum IsoMat</span>
               <h2>Für den Betrieb gebaut.</h2>
             </div>
             <p>
@@ -135,7 +155,7 @@ export default function Home() {
       <section className="section process-section">
         <div className="shell process-section__grid">
           <div className="process-section__intro">
-            <span className="eyebrow">04 · Prozess</span>
+            <span className="eyebrow">05 · Prozess</span>
             <h2>Vom Aufmass zum fertigen Dämmkissen.</h2>
             <p>Fünf klare Schritte führen von der realen Anlage zur passgenauen Lösung.</p>
             <Link className="text-link" to="/ueber-uns">
@@ -157,26 +177,19 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign section-heading--dark">
             <div>
-              <span className="eyebrow">05 · Referenzen</span>
+              <span className="eyebrow">06 · Referenzen</span>
               <h2>Reale Anlagen. Reale Ausführungen.</h2>
             </div>
             <p>Einblicke aus Energieanlagen, Heizungszentralen und Sonderbau.</p>
           </div>
-          <div className="reference-grid-redesign">
-            {featuredReferences.slice(0, 6).map((image, index) => (
-              <a href={image.src} target="_blank" rel="noreferrer" key={image.src}>
-                <ResponsiveImage image={image} />
-                <span>{String(index + 1).padStart(2, '0')} · Aufnahme öffnen</span>
-              </a>
-            ))}
-          </div>
+          <ReferenceDome images={featuredReferences} />
         </div>
       </section>
 
       <section className="section section--light">
         <div className="shell faq-layout faq-layout--redesign">
           <div className="faq-intro">
-            <span className="eyebrow">06 · Häufige Fragen</span>
+            <span className="eyebrow">07 · Häufige Fragen</span>
             <h2>Was Betreiber vor der Anfrage wissen wollen.</h2>
             <p>Ein Anruf unter 056 245 16 28 klärt viele Fälle in wenigen Minuten.</p>
           </div>

@@ -1,8 +1,17 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { Link } from 'react-router-dom'
 import { solutionQuickviewPath, type Solution } from '../data/site'
 import { ResponsiveImage } from './ResponsiveImage'
-import { useInteractiveVisuals } from './useInteractiveVisuals'
+import { useNearViewport } from '../hooks/useNearViewport'
+import { useSceneVisuals } from './useInteractiveVisuals'
 
 const CircularGallery = lazy(() => import('./CircularGallery'))
 
@@ -15,7 +24,12 @@ export function SolutionCircularGallery({
   solutions,
   bend = 3,
 }: SolutionCircularGalleryProps) {
-  const interactive = useInteractiveVisuals()
+  // Läuft jetzt auch auf Touchgeräten – die Galerie hört ihre Eingaben am
+  // eigenen Container ab und stört das Scrollen der Seite nicht mehr.
+  const blockRef = useRef<HTMLDivElement>(null)
+  const scenes = useSceneVisuals()
+  const nearby = useNearViewport(blockRef, 600)
+  const interactive = scenes && nearby
   const [ready, setReady] = useState(false)
   const items = useMemo(
     () =>
@@ -41,14 +55,14 @@ export function SolutionCircularGallery({
         >
           <ResponsiveImage image={solution.featuredImage} />
           <span>{solution.no}</span>
-          <h3>{solution.shortTitle}</h3>
+          <strong>{solution.shortTitle}</strong>
         </Link>
       ))}
     </div>
   )
 
   return (
-    <div className="reactbits-circular-block">
+    <div className="reactbits-circular-block" ref={blockRef}>
       <div className="reactbits-circular-shell">
         <div className={`gallery-swap${ready ? ' is-ready' : ''}`}>
           <div

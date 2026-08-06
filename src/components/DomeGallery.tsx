@@ -205,6 +205,7 @@ export default function DomeGallery({
     if (!root) return;
     let cancelled = false;
     let frame = 0;
+    let timer = 0;
     const uniqueImages = Array.from(root.querySelectorAll('img')).filter(
       (image, index, all) =>
         all.findIndex(candidate => candidate.currentSrc === image.currentSrc) === index
@@ -219,14 +220,22 @@ export default function DomeGallery({
 
     Promise.all(uniqueImages.map(waitForImage)).then(() => {
       if (cancelled) return;
-      frame = requestAnimationFrame(() => {
-        if (!cancelled) onReady?.();
-      });
+      // requestAnimationFrame ruht in inaktiven Tabs. Ohne den Timer daneben
+      // bliebe die Kuppel unsichtbar hinter dem statischen Raster liegen.
+      let announced = false;
+      const announce = () => {
+        if (announced || cancelled) return;
+        announced = true;
+        onReady?.();
+      };
+      frame = requestAnimationFrame(announce);
+      timer = window.setTimeout(announce, 400);
     });
 
     return () => {
       cancelled = true;
       if (frame) cancelAnimationFrame(frame);
+      if (timer) clearTimeout(timer);
     };
   }, [items, onReady]);
 

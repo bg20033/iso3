@@ -1293,3 +1293,145 @@ body {
     font-size: 0.66rem;
   }
 }
+
+/* ==========================================================================
+   Endlose Aufnahmenreihe
+   ========================================================================== */
+
+.ref-marquee {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid var(--edge);
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  /* Die Kanten laufen weich aus, damit der Streifen nicht abgeschnitten wirkt */
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+
+.ref-marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 1px;
+  animation: ref-marquee-run calc(var(--count, 21) * 2.6s) linear infinite;
+}
+
+.ref-marquee:hover .ref-marquee__track,
+.ref-marquee:focus-within .ref-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes ref-marquee-run {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ref-marquee__card {
+  display: grid;
+  width: clamp(200px, 22vw, 280px);
+  gap: 0;
+  background: var(--paper);
+}
+
+.ref-marquee__media {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--edge);
+  background: var(--foil);
+}
+
+.ref-marquee__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85);
+  transition:
+    transform 520ms var(--ease),
+    filter 260ms ease;
+}
+
+.ref-marquee__card:hover .ref-marquee__media img,
+.ref-marquee__card:focus-visible .ref-marquee__media img {
+  filter: saturate(1);
+  transform: scale(1.05);
+}
+
+.ref-marquee__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.6rem 0.2rem 0;
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ref-marquee__label b {
+  color: var(--signal);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+}
+
+@media (max-width: 620px) {
+  .ref-marquee__card {
+    width: 62vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Kein Selbstlauf – der Streifen wird von Hand geschoben */
+  .ref-marquee {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .ref-marquee__track {
+    animation: none;
+  }
+
+  .ref-marquee__card {
+    scroll-snap-align: start;
+  }
+}
+
+/* ==========================================================================
+   Dock am unteren Rand: Platz freihalten und Globus auf dem Telefon
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  /* Der Dock schwebt über dem Inhalt – ohne diesen Freiraum verdeckt er die
+     letzten Zeilen des Footers und das Kontaktband. */
+  .footer {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .contact-band {
+    padding-bottom: clamp(3rem, 8vw, 5rem);
+  }
+
+  /* Der Bildglobus läuft jetzt auch auf Touch: etwas flacher, damit er neben
+     dem Dock noch ins Bild passt. */
+  .reactbits-dome-shell {
+    height: min(560px, 108vw);
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 560px) {
+  .reactbits-dome-shell {
+    height: min(480px, 118vw);
+    min-height: 340px;
+  }
+}
