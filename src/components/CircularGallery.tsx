@@ -250,6 +250,7 @@ interface MediaProps {
   borderRadius?: number;
   font?: string;
   reducedMotion?: boolean;
+  cardScale?: number;
 }
 
 class Media {
@@ -269,6 +270,7 @@ class Media {
   borderRadius: number;
   font?: string;
   reducedMotion: boolean;
+  cardScale: number;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -296,7 +298,8 @@ class Media {
     textColor,
     borderRadius = 0,
     font,
-    reducedMotion = false
+    reducedMotion = false,
+    cardScale = 1
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -313,6 +316,7 @@ class Media {
     this.borderRadius = borderRadius;
     this.font = font;
     this.reducedMotion = reducedMotion;
+    this.cardScale = cardScale;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -468,11 +472,16 @@ class Media {
         this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height];
       }
     }
+    // screen.height kürzt sich heraus: Die Karte hat auf jedem Gerät dieselbe
+    // Weltgrösse. Auf dem schmalen Telefon füllt sie damit fast die ganze
+    // Breite – cardScale nimmt sie dort zurück, samt Abstand.
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    this.plane.scale.y =
+      (this.viewport.height * (900 * this.scale * this.cardScale)) / this.screen.height;
+    this.plane.scale.x =
+      (this.viewport.width * (700 * this.scale * this.cardScale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
-    this.padding = 2;
+    this.padding = 2 * this.cardScale;
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
@@ -488,12 +497,14 @@ interface AppConfig {
   scrollSpeed?: number;
   scrollEase?: number;
   reducedMotion?: boolean;
+  cardScale?: number;
 }
 
 class App {
   container: HTMLElement;
   scrollSpeed: number;
   reducedMotion: boolean = false;
+  cardScale: number = 1;
   scroll: {
     ease: number;
     current: number;
@@ -533,13 +544,15 @@ class App {
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
       scrollEase = 0.05,
-      reducedMotion = false
+      reducedMotion = false,
+      cardScale = 1
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.reducedMotion = reducedMotion;
+    this.cardScale = cardScale;
     // ease = 1 heisst: die Karten stehen sofort dort, wo gezogen wurde – kein
     // Nachlauf, der sich wie eine Eigenbewegung anfühlt.
     this.scroll = { ease: reducedMotion ? 1 : scrollEase, current: 0, target: 0, last: 0 };
@@ -657,7 +670,8 @@ class App {
         textColor,
         borderRadius,
         font,
-        reducedMotion: this.reducedMotion
+        reducedMotion: this.reducedMotion,
+        cardScale: this.cardScale
       });
     });
   }
@@ -801,6 +815,8 @@ interface CircularGalleryProps {
   scrollSpeed?: number;
   scrollEase?: number;
   reducedMotion?: boolean;
+  /** <1 verkleinert Karten und Abstand – für schmale Telefonbildschirme. */
+  cardScale?: number;
   onReady?: () => void;
 }
 
@@ -814,6 +830,7 @@ export default function CircularGallery({
   scrollSpeed = 2,
   scrollEase = 0.05,
   reducedMotion = false,
+  cardScale = 1,
   onReady
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -846,7 +863,8 @@ export default function CircularGallery({
         font: resolvedFont,
         scrollSpeed,
         scrollEase,
-        reducedMotion
+        reducedMotion,
+        cardScale
       });
       // requestAnimationFrame ruht in inaktiven Tabs – ohne den Timer daneben
       // bliebe das statische Raster für immer über der Galerie liegen.
@@ -875,6 +893,7 @@ export default function CircularGallery({
     scrollSpeed,
     scrollEase,
     reducedMotion,
+    cardScale,
     onReady
   ]);
   return (

@@ -11,7 +11,19 @@ import { Link } from 'react-router-dom'
 import { solutionQuickviewPath, type Solution } from '../data/site'
 import { ResponsiveImage } from './ResponsiveImage'
 import { useNearViewport } from '../hooks/useNearViewport'
-import { useReducedMotion, useWebGLSupport } from './useInteractiveVisuals'
+import {
+  useCompactLayout,
+  useReducedMotion,
+  useWebGLSupport,
+} from './useInteractiveVisuals'
+
+/*
+ * Auf dem Telefon ist der Bildausschnitt schmal, die Karten haben aber überall
+ * dieselbe Weltgrösse. Ohne Korrektur füllt eine Karte dort fast die ganze
+ * Breite und kippt am Rand doppelt so stark wie am Desktop.
+ */
+const COMPACT_CARD_SCALE = 0.62
+const COMPACT_BEND = 1.2
 
 const CircularGallery = lazy(() => import('./CircularGallery'))
 
@@ -32,6 +44,7 @@ export function SolutionCircularGallery({
   const blockRef = useRef<HTMLDivElement>(null)
   const webgl = useWebGLSupport()
   const reducedMotion = useReducedMotion()
+  const compact = useCompactLayout()
   const nearby = useNearViewport(blockRef, 600)
   const interactive = webgl && nearby
   const [ready, setReady] = useState(false)
@@ -85,7 +98,8 @@ export function SolutionCircularGallery({
               <Suspense fallback={null}>
                 <CircularGallery
                   items={items}
-                  bend={bend}
+                  bend={compact ? COMPACT_BEND : bend}
+                  cardScale={compact ? COMPACT_CARD_SCALE : 1}
                   textColor="#0e1112"
                   borderRadius={0.035}
                   font="700 30px Arial"
