@@ -26,7 +26,7 @@ const COMPACT_CARD_SCALE = 0.62
 // Grösserer Wert = engerer Bogen = stärkere Neigung am Rand.
 // 1.6 ergibt rund 26 Grad – etwas mehr Rundung als am Desktop (22), weit weg
 // von den 53 Grad, mit denen die Galerie vorher aus dem Bild kippte.
-const COMPACT_BEND = 1.6
+const COMPACT_BEND = 1
 
 const CircularGallery = lazy(() => import('./CircularGallery'))
 
