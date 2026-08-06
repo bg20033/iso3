@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ResponsiveImage } from './ResponsiveImage'
+import { BeforeAfterSlider } from './BeforeAfterSlider'
 import {
   comparisons,
   solutionBySlug,
@@ -18,14 +18,18 @@ const MIN_CARDS = 6
 type Pair = { comparison: Comparison; solution: Solution }
 
 /**
- * Endlos laufende Reihe von Vorher/Nachher-Karten. Jede Karte zeigt beide
- * Zustände nebeneinander – ein fester Schnitt statt eines Reglers, weil in
- * einem laufenden Streifen niemand ziehen kann und 40 Regler nebeneinander
- * weder zu bedienen noch zu rendern wären.
+ * Laufende Reihe von Vorher/Nachher-Karten. Jede Karte trägt ihren eigenen
+ * Regler: Die Trennlinie lässt sich ziehen und schiebt die Dämmung vom
+ * Bauteil.
+ *
+ * Damit das bedienbar bleibt, hält der Lauf an, sobald jemand die Karte
+ * berührt (Zeiger darüber oder Fokus im Streifen). Auf Tastgeräten läuft er
+ * gar nicht erst von selbst – dort wird gewischt.
  *
  * Der Streifen wird doppelt gerendert und um genau die halbe Breite
  * verschoben, damit das Ende der ersten Kopie auf den Anfang der zweiten
- * trifft und der Lauf nahtlos wirkt.
+ * trifft und der Lauf nahtlos wirkt. Die zweite Kopie ist inert, damit ihre
+ * Regler nicht doppelt in die Bedienreihenfolge geraten.
  */
 export function ComparisonMarquee() {
   const pairs = comparisons.reduce<Pair[]>((acc, comparison) => {
@@ -49,30 +53,31 @@ export function ComparisonMarquee() {
         className="ref-marquee__track"
         style={{ '--count': cards.length } as React.CSSProperties}
       >
-        {track.map(({ comparison, solution }, index) => (
-          <Link
-            className="ref-marquee__card compare-card"
-            to={solutionQuickviewPath(solution)}
-            key={`${comparison.slug}-${index}`}
-            aria-hidden={index >= cards.length}
-            tabIndex={index >= cards.length ? -1 : undefined}
-          >
-            <span className="compare-card__pair">
-              <span className="compare-card__half">
-                <ResponsiveImage image={comparison.before} />
-                <b>Vorher</b>
-              </span>
-              <span className="compare-card__half">
-                <ResponsiveImage image={comparison.after} />
-                <b>Nachher</b>
-              </span>
-            </span>
-            <span className="ref-marquee__label">
-              <b>{solution.no}</b>
-              {solution.shortTitle}
-            </span>
-          </Link>
-        ))}
+        {track.map(({ comparison, solution }, index) => {
+          const duplicate = index >= cards.length
+          return (
+            <div
+              className="ref-marquee__card compare-card"
+              key={`${comparison.slug}-${index}`}
+              aria-hidden={duplicate}
+              inert={duplicate}
+            >
+              <BeforeAfterSlider
+                compact
+                before={comparison.before}
+                after={comparison.after}
+                name={solution.shortTitle}
+              />
+              <Link
+                className="ref-marquee__label"
+                to={solutionQuickviewPath(solution)}
+              >
+                <b>{solution.no}</b>
+                {solution.shortTitle}
+              </Link>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

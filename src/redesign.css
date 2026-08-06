@@ -1393,43 +1393,34 @@ body {
   width: clamp(280px, 34vw, 420px);
 }
 
-.compare-card__pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  background: var(--edge);
-}
-
-.compare-card__half {
-  position: relative;
-  display: block;
-  overflow: hidden;
-}
-
-.compare-card__half img {
+.compare-card .before-after--compact {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  aspect-ratio: 4 / 5;
+  margin: 0;
 }
 
-.compare-card__half b {
-  position: absolute;
-  inset: auto auto 0.5rem 0.5rem;
-  padding: 0.25rem 0.5rem;
-  background: rgba(14, 17, 18, 0.78);
-  color: var(--white);
-  font-family: var(--font-display);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+.compare-card .before-after--compact .before-after__label {
+  padding: 0.22rem 0.45rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
 }
 
-/* Der Nachher-Zustand ist die Aussage – er bekommt die Signalfarbe. */
-.compare-card__half:last-child b {
-  background: var(--signal);
+/* Der Griff sitzt in einer schmalen Karte sonst zu wuchtig auf dem Bild. */
+.compare-card .before-after--compact .before-after__handle {
+  width: 34px;
+  height: 34px;
+}
+
+.compare-card .before-after--compact .before-after__handle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.compare-card .ref-marquee__label {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding-top: 0.75rem;
 }
 
 @media (max-width: 620px) {
@@ -1439,6 +1430,27 @@ body {
 
   .ref-marquee--compare .ref-marquee__card {
     width: 84vw;
+  }
+}
+
+/*
+ * Auf Tastgeräten gibt es kein Darüberfahren, mit dem sich der Lauf anhalten
+ * liesse – ein Regler, der unter dem Finger wegfährt, wäre unbedienbar.
+ * Dort wird deshalb von Hand gewischt statt automatisch gelaufen.
+ */
+@media (hover: none), (pointer: coarse) {
+  .ref-marquee--compare {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ref-marquee--compare .ref-marquee__track {
+    animation: none;
+  }
+
+  .ref-marquee--compare .compare-card {
+    scroll-snap-align: center;
   }
 }
 
