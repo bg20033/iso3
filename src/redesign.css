@@ -1390,12 +1390,19 @@ body {
    Mitte ersetzt den Regler: In einem laufenden Streifen lässt sich nichts
    ziehen, die Gegenüberstellung muss auf einen Blick lesbar sein. */
 .ref-marquee--compare .ref-marquee__card {
-  width: clamp(280px, 34vw, 420px);
+  width: clamp(340px, 46vw, 640px);
 }
 
+/*
+ * Breit und flach statt hochkant: Der Streifen ist ein Band im Seitenlauf,
+ * kein eigener Abschnitt – er darf die Seite nicht in die Länge ziehen.
+ * Die Aufnahmen liegen hochkant vor, der Ausschnitt greift also mittig ins
+ * Bild; das Bauteil steht dort.
+ */
 .compare-card .before-after--compact {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  max-height: none;
+  aspect-ratio: 3 / 2;
   margin: 0;
 }
 
@@ -1429,7 +1436,12 @@ body {
   }
 
   .ref-marquee--compare .ref-marquee__card {
-    width: 84vw;
+    width: 92vw;
+  }
+
+  /* Am Telefon fehlt die Breite – dort bleibt der Ausschnitt etwas höher. */
+  .compare-card .before-after--compact {
+    aspect-ratio: 4 / 3;
   }
 }
 
