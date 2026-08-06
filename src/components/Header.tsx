@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { nav } from '../data/site'
@@ -6,9 +6,30 @@ import { Logo } from './Logo'
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLElement>(null)
   const location = useLocation()
 
   useEffect(() => setOpen(false), [location.pathname])
+
+  useEffect(() => {
+    if (!open) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const firstLink = menuRef.current?.querySelector<HTMLElement>('a[href]')
+    firstLink?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      menuButtonRef.current?.focus()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
 
   return (
     <header className="header">
@@ -48,6 +69,7 @@ export function Header() {
         <button
           type="button"
           className="menu-button"
+          ref={menuButtonRef}
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -58,7 +80,12 @@ export function Header() {
       </div>
 
       {open && (
-        <nav id="mobile-menu" className="mobile-menu" aria-label="Mobile Navigation">
+        <nav
+          id="mobile-menu"
+          className="mobile-menu"
+          aria-label="Mobile Navigation"
+          ref={menuRef}
+        >
           {nav.map((item) => (
             <NavLink
               to={item.to}

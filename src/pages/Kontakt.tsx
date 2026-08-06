@@ -6,8 +6,9 @@ import {
   MapPin,
   Paperclip,
   Phone,
+  X,
 } from 'lucide-react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
 import { company, solutions } from '../data/site'
@@ -208,6 +209,23 @@ export default function Kontakt() {
                       <Paperclip size={15} aria-hidden="true" />
                       <span>{file.name}</span>
                       <small>{formatFileSize(file.size)}</small>
+                      <button
+                        type="button"
+                        className="file-list__remove"
+                        aria-label={`Datei entfernen: ${file.name}`}
+                        onClick={() => {
+                          setFiles(
+                            files.filter(
+                              (entry) =>
+                                entry.name !== file.name ||
+                                entry.size !== file.size,
+                            ),
+                          )
+                          setStatus({ kind: 'idle' })
+                        }}
+                      >
+                        <X size={15} aria-hidden="true" />
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -216,8 +234,9 @@ export default function Kontakt() {
             <label className="consent">
               <input name="consent" type="checkbox" value="accepted" required />
               <span>
-                Ich habe den Datenschutzhinweis gelesen und stimme der
-                Übermittlung meiner Anfrage und Anhänge zu.
+                Ich habe den{' '}
+                <Link to="/datenschutz">Datenschutzhinweis</Link> gelesen und
+                stimme der Übermittlung meiner Anfrage und Anhänge zu.
               </span>
             </label>
             <button

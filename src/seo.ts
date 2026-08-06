@@ -32,7 +32,7 @@ const staticRoutes: RouteSeo[] = [
     path: '/ueber-uns',
     title: 'Über IsoMat | Individuelle Isoliertechnik',
     description:
-      'IsoMat entwickelt passgenaue, abnehmbare Isolierungen von der Beratung und dem Aufmass bis zur Fertigung und Montage.',
+      'IsoMat GmbH aus Spreitenbach fertigt massgeschneiderte Dämmkissen und flexible Isolierungssysteme – über 15 Jahre Erfahrung in der industriellen Isolierung.',
     image: '/hero-industrial.webp',
     crumb: 'Über uns',
   },

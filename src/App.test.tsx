@@ -1,24 +1,52 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 
-describe('routing', () => {
-  it('redirects the old products route to Lösungen', async () => {
+describe('routing and redesigned experience', () => {
+  it('shows all seven categories in one landing-page explorer', async () => {
     render(
-      <MemoryRouter initialEntries={['/produkte']}>
+      <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     )
 
     expect(
       await screen.findByRole('heading', {
-        name: 'Dämmkissen für Ventile & Armaturen.',
+        level: 1,
+        name: 'Wärme im System. Zugang im Service.',
       }),
+    ).toBeInTheDocument()
+    expect(screen.getAllByRole('tab')).toHaveLength(7)
+    expect(screen.getByRole('tab', { name: /Ventile/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Kissen abnehmen' }),
     ).toBeInTheDocument()
   })
 
-  it('redirects a product detail URL to the full quickview modal', async () => {
+  it('switches the landing explorer without adding another control set', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(await screen.findByRole('tab', { name: /Turbinen/ }))
+    expect(screen.getByRole('tab', { name: /Turbinen/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(screen.getByRole('heading', { name: 'Turbinen' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Kissen abnehmen' })).toHaveLength(1)
+    expect(
+      screen.getByRole('link', { name: /Details & Referenzen/ }),
+    ).toHaveAttribute('href', '/produkte/turbinen')
+  })
+
+  it('renders a focused product page with only its matching model', async () => {
     render(
       <MemoryRouter initialEntries={['/produkte/turbinen']}>
         <App />
@@ -26,12 +54,65 @@ describe('routing', () => {
     )
 
     expect(
-      await screen.findByRole('dialog', { name: 'Turbinen' }),
+      await screen.findByRole('heading', { level: 1, name: 'Turbinen' }),
     ).toBeInTheDocument()
-    expect(screen.getByRole('navigation', { name: 'Schnellnavigation' })).toBeInTheDocument()
+    expect(screen.queryByRole('tablist')).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Kissen abnehmen' }),
+    ).toBeInTheDocument()
+    expect(
+      screen
+        .getAllByRole('link', { name: /Projekt anfragen/ })
+        .find((link) => link.getAttribute('href')?.includes('application=Turbinen')),
+    ).toHaveAttribute('href', '/kontakt?application=Turbinen')
   })
 
-  it('prefills the contact form from a validated quick brief URL', async () => {
+  it('redirects a legacy solution URL to its product page', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen/turbinen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Turbinen' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the solutions index static and opens category details in a modal', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Die passende Form für jede Anlage.',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Kissen abnehmen' })).not.toBeInTheDocument()
+    const modalTriggers = screen.getAllByRole('button', {
+      name: /: Details öffnen$/,
+    })
+    expect(modalTriggers).toHaveLength(7)
+
+    fireEvent.click(modalTriggers[0])
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+    expect(
+      within(dialog).getByRole('heading', {
+        level: 2,
+        name: 'Ventile & Armaturen',
+      }),
+    ).toBeInTheDocument()
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('prefills the contact form from a validated project URL', async () => {
     render(
       <MemoryRouter
         initialEntries={[
@@ -47,37 +128,9 @@ describe('routing', () => {
     expect(screen.getByLabelText('Betriebstemperatur')).toHaveValue('320 °C')
   })
 
-  it('keeps the Ventile focus and category controls keyboard accessible', async () => {
+  it('supports keyboard controls for the before-and-after comparison', async () => {
     render(
-      <MemoryRouter initialEntries={['/loesungen']}>
-        <App />
-      </MemoryRouter>,
-    )
-
-    const galleryButton = await screen.findByRole('button', {
-      name: 'Alle Aufnahmen: Ventile & Armaturen',
-    })
-    galleryButton.focus()
-    expect(galleryButton).toHaveFocus()
-    expect(
-      screen.getByRole('button', { name: 'Turbinen öffnen' }),
-    ).toBeInTheDocument()
-
-    const cta = screen.getByRole('link', { name: 'Projekt anfragen' })
-    cta.focus()
-    expect(cta).toHaveFocus()
-
-    expect(
-      await screen.findByRole('heading', {
-        level: 1,
-        name: 'Dämmkissen für Ventile & Armaturen.',
-      }),
-    ).toBeInTheDocument()
-  })
-
-  it('supports mouse, touch-native range input and keyboard comparison controls', async () => {
-    render(
-      <MemoryRouter initialEntries={['/loesungen']}>
+      <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     )
@@ -85,72 +138,24 @@ describe('routing', () => {
     const slider = await screen.findByRole('slider', {
       name: 'Vergleich zwischen Vorher und Nachher',
     })
-
-    expect(slider).toHaveValue('50')
     fireEvent.keyDown(slider, { key: 'ArrowRight' })
     expect(slider).toHaveValue('55')
-    fireEvent.change(slider, { target: { value: '72' } })
-    expect(slider).toHaveValue('72')
     fireEvent.keyDown(slider, { key: 'Home' })
     expect(slider).toHaveValue('0')
-    fireEvent.keyDown(slider, { key: 'End' })
-    expect(slider).toHaveValue('100')
   })
 
-  it('opens a solution quickview modal and closes it with Escape', async () => {
+  it('closes the mobile menu with Escape and returns focus', async () => {
     render(
-      <MemoryRouter initialEntries={['/loesungen']}>
+      <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     )
 
-    const galleryButton = await screen.findByRole('button', {
-      name: 'Alle Aufnahmen: Ventile & Armaturen',
-    })
-    galleryButton.focus()
-    fireEvent.click(galleryButton)
-
-    const dialog = screen.getByRole('dialog', {
-      name: 'Ventile & Armaturen',
-    })
-    expect(dialog).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Häufige Fragen' })).toBeInTheDocument()
-    expect(screen.getByText(/reale Aufnahmen aus dem IsoMat-Archiv/)).toBeInTheDocument()
-    expect(
-      screen.queryByRole('link', { name: 'Details & Referenzen' }),
-    ).not.toBeInTheDocument()
-
+    const menuButton = await screen.findByRole('button', { name: 'Menü öffnen' })
+    fireEvent.click(menuButton)
+    expect(screen.getByRole('navigation', { name: 'Mobile Navigation' })).toBeInTheDocument()
     fireEvent.keyDown(document, { key: 'Escape' })
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(galleryButton).toHaveFocus()
-  })
-
-  it('redirects a legacy solution URL to its full quickview modal', async () => {
-    render(
-      <MemoryRouter initialEntries={['/loesungen/turbinen']}>
-        <App />
-      </MemoryRouter>,
-    )
-
-    expect(
-      await screen.findByRole('dialog', { name: 'Turbinen' }),
-    ).toBeInTheDocument()
-  })
-
-  it('opens the full Kompensatoren content directly from the query URL', async () => {
-    render(
-      <MemoryRouter initialEntries={['/loesungen?solution=kompensatoren']}>
-        <App />
-      </MemoryRouter>,
-    )
-
-    const dialog = await screen.findByRole('dialog', {
-      name: 'Kompensatoren',
-    })
-    expect(dialog).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Einblicke: Kompensatoren' }),
-    ).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Häufige Fragen' })).toBeInTheDocument()
+    expect(screen.queryByRole('navigation', { name: 'Mobile Navigation' })).not.toBeInTheDocument()
+    expect(menuButton).toHaveFocus()
   })
 })

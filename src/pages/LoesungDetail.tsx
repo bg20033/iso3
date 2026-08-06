@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import BlurText from '../components/BlurText'
+import { Category3DExplorer } from '../components/Category3DExplorer'
 import GlareHover from '../components/GlareHover'
 import ReflectiveCard from '../components/ReflectiveCard'
 import { ResponsiveImage } from '../components/ResponsiveImage'
@@ -49,6 +50,27 @@ export default function LoesungDetail() {
               ISO · {solution.no} / MASSANFERTIGUNG
             </span>
           </div>
+        </div>
+      </section>
+
+      <section className="section product-model-section">
+        <div className="shell">
+          <div className="section-heading section-heading--redesign">
+            <div>
+              <span className="eyebrow">3D · Aufbau</span>
+              <h2>Bauteil und Dämmkissen im Zusammenspiel.</h2>
+            </div>
+            <p>
+              Drehen Sie das Bauteil und nehmen Sie die Isolierung ab. Die
+              Darstellung zeigt das Konstruktionsprinzip dieser Kategorie.
+            </p>
+          </div>
+          <Category3DExplorer
+            mode="single"
+            solutions={[solution]}
+            initialSolution={solution}
+            label={`Interaktives 3D-Modell: ${solution.title}`}
+          />
         </div>
       </section>
 

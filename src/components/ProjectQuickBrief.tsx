@@ -50,7 +50,7 @@ export function ProjectQuickBrief() {
       <div className="shell">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">04 · Projekt Quick Brief</span>
+            <span className="eyebrow">06 · Projekt Quick Brief</span>
             <h2 id="quick-brief-title">Drei Angaben für den ersten Schritt.</h2>
           </div>
           <p>
