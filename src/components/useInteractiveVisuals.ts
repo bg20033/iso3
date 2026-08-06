@@ -37,30 +37,41 @@ export function useInteractiveVisuals() {
   return enabled
 }
 
+/** True, sobald der Browser WebGL2 mitbringt. */
+export function useWebGLSupport() {
+  const [supported, setSupported] = useState(false)
+
+  useEffect(() => {
+    setSupported(typeof window.WebGL2RenderingContext !== 'undefined')
+  }, [])
+
+  return supported
+}
+
+/** True, solange der Nutzer weniger Bewegung wünscht. */
+export function useReducedMotion() {
+  const [reduced, setReduced] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduced(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  return reduced
+}
+
 /**
  * Die 3D-Bauteile laufen auch auf dem Telefon: Sie ersetzen dort kein Bild,
  * sondern sind der Inhalt. Voraussetzung ist nur WebGL2 und der Wunsch nach
  * Bewegung.
  */
 export function useSceneVisuals() {
-  const [enabled, setEnabled] = useState(false)
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-
-    const update = () => {
-      setEnabled(
-        typeof window.WebGL2RenderingContext !== 'undefined' &&
-          !reducedMotion.matches,
-      )
-    }
-
-    update()
-    reducedMotion.addEventListener('change', update)
-    return () => reducedMotion.removeEventListener('change', update)
-  }, [])
-
-  return enabled
+  const supported = useWebGLSupport()
+  const reduced = useReducedMotion()
+  return supported && !reduced
 }
 
 /** True, solange die kompakte Darstellung gilt (Telefon, schmales Fenster). */

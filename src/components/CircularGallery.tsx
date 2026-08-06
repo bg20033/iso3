@@ -249,6 +249,7 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
+  reducedMotion?: boolean;
 }
 
 class Media {
@@ -267,6 +268,7 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
+  reducedMotion: boolean;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -293,7 +295,8 @@ class Media {
     bend,
     textColor,
     borderRadius = 0,
-    font
+    font,
+    reducedMotion = false
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -309,6 +312,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.reducedMotion = reducedMotion;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -330,11 +334,12 @@ class Media {
         uniform mat4 projectionMatrix;
         uniform float uTime;
         uniform float uSpeed;
+        uniform float uWobble;
         varying vec2 vUv;
         void main() {
           vUv = uv;
           vec3 p = position;
-          p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5);
+          p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5) * uWobble;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
         }
       `,
@@ -375,7 +380,8 @@ class Media {
         uPlaneSizes: { value: [0, 0] },
         uImageSizes: { value: [0, 0] },
         uSpeed: { value: 0 },
-        uTime: { value: 100 * Math.random() },
+        uTime: { value: this.reducedMotion ? 0 : 100 * Math.random() },
+        uWobble: { value: this.reducedMotion ? 0 : 1 },
         uBorderRadius: { value: this.borderRadius }
       },
       transparent: true
@@ -433,8 +439,12 @@ class Media {
     }
 
     this.speed = scroll.current - scroll.last;
-    this.program.uniforms.uTime.value += 0.04;
-    this.program.uniforms.uSpeed.value = this.speed;
+    // Bei reduzierter Bewegung bleibt die Fläche ruhig: kein fortlaufender
+    // Wellenlauf, keine Verformung aus der Zuggeschwindigkeit.
+    if (!this.reducedMotion) {
+      this.program.uniforms.uTime.value += 0.04;
+      this.program.uniforms.uSpeed.value = this.speed;
+    }
 
     const planeOffset = this.plane.scale.x / 2;
     const viewportOffset = this.viewport.width / 2;
@@ -477,11 +487,13 @@ interface AppConfig {
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  reducedMotion?: boolean;
 }
 
 class App {
   container: HTMLElement;
   scrollSpeed: number;
+  reducedMotion: boolean = false;
   scroll: {
     ease: number;
     current: number;
@@ -520,13 +532,17 @@ class App {
       borderRadius = 0,
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
-      scrollEase = 0.05
+      scrollEase = 0.05,
+      reducedMotion = false
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
     this.scrollSpeed = scrollSpeed;
-    this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    this.reducedMotion = reducedMotion;
+    // ease = 1 heisst: die Karten stehen sofort dort, wo gezogen wurde – kein
+    // Nachlauf, der sich wie eine Eigenbewegung anfühlt.
+    this.scroll = { ease: reducedMotion ? 1 : scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -640,7 +656,8 @@ class App {
         bend,
         textColor,
         borderRadius,
-        font
+        font,
+        reducedMotion: this.reducedMotion
       });
     });
   }
@@ -783,6 +800,7 @@ interface CircularGalleryProps {
   fontUrl?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  reducedMotion?: boolean;
   onReady?: () => void;
 }
 
@@ -795,6 +813,7 @@ export default function CircularGallery({
   fontUrl,
   scrollSpeed = 2,
   scrollEase = 0.05,
+  reducedMotion = false,
   onReady
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -826,7 +845,8 @@ export default function CircularGallery({
         borderRadius,
         font: resolvedFont,
         scrollSpeed,
-        scrollEase
+        scrollEase,
+        reducedMotion
       });
       // requestAnimationFrame ruht in inaktiven Tabs – ohne den Timer daneben
       // bliebe das statische Raster für immer über der Galerie liegen.
@@ -845,7 +865,18 @@ export default function CircularGallery({
       if (readyTimer) clearTimeout(readyTimer);
       if (app) app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, onReady]);
+  }, [
+    items,
+    bend,
+    textColor,
+    borderRadius,
+    font,
+    fontUrl,
+    scrollSpeed,
+    scrollEase,
+    reducedMotion,
+    onReady
+  ]);
   return (
     <div
       className="circular-gallery"

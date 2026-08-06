@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom'
 import { solutionQuickviewPath, type Solution } from '../data/site'
 import { ResponsiveImage } from './ResponsiveImage'
 import { useNearViewport } from '../hooks/useNearViewport'
-import { useSceneVisuals } from './useInteractiveVisuals'
+import { useReducedMotion, useWebGLSupport } from './useInteractiveVisuals'
 
 const CircularGallery = lazy(() => import('./CircularGallery'))
 
@@ -26,10 +26,14 @@ export function SolutionCircularGallery({
 }: SolutionCircularGalleryProps) {
   // Läuft jetzt auch auf Touchgeräten – die Galerie hört ihre Eingaben am
   // eigenen Container ab und stört das Scrollen der Seite nicht mehr.
+  // Reduzierte Bewegung heisst «nichts bewegt sich von selbst», nicht «die
+  // Galerie verschwindet». Sie läuft weiter, nur ohne Eigenleben: kein Wellen-
+  // effekt und kein Nachlauf beim Ziehen.
   const blockRef = useRef<HTMLDivElement>(null)
-  const scenes = useSceneVisuals()
+  const webgl = useWebGLSupport()
+  const reducedMotion = useReducedMotion()
   const nearby = useNearViewport(blockRef, 600)
-  const interactive = scenes && nearby
+  const interactive = webgl && nearby
   const [ready, setReady] = useState(false)
   const items = useMemo(
     () =>
@@ -87,6 +91,7 @@ export function SolutionCircularGallery({
                   font="700 30px Arial"
                   scrollSpeed={1.7}
                   scrollEase={0.055}
+                  reducedMotion={reducedMotion}
                   onReady={markReady}
                 />
               </Suspense>
