@@ -83,8 +83,8 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
                 overlayBlurColor="#eceeef"
                 dragSensitivity={18}
                 dragDampening={0.8}
-                openedImageWidth="min(860px, 84vw)"
-                openedImageHeight="min(620px, 72vh)"
+                openedImageWidth="min(860px, 92vw)"
+                openedImageHeight="min(620px, 66vh)"
                 imageBorderRadius="12px"
                 openedImageBorderRadius="4px"
                 grayscale={false}

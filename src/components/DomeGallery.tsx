@@ -84,6 +84,29 @@ const getDataNumber = (el: HTMLElement, name: string, fallback: number) => {
   return Number.isFinite(n) ? n : fallback;
 };
 
+/**
+ * Verkleinert den erlaubten Rahmen auf das Seitenverhältnis der Aufnahme.
+ * Quer- und Hochformat bekommen so beide ihre volle Fläche – ohne Beschnitt
+ * und ohne leeren Rand neben dem Bild.
+ */
+function fitBoxToAspect(width: number, height: number, aspect: number) {
+  if (!Number.isFinite(aspect) || aspect <= 0 || width <= 0 || height <= 0) {
+    return { width, height };
+  }
+  return width / height > aspect
+    ? { width: height * aspect, height }
+    : { width, height: width / aspect };
+}
+
+/** Seitenverhältnis der bereits geladenen Kachel, 0 wenn noch unbekannt. */
+function tileAspect(el: HTMLElement): number {
+  const img = el.querySelector('img') as HTMLImageElement | null;
+  if (img?.naturalWidth && img.naturalHeight) {
+    return img.naturalWidth / img.naturalHeight;
+  }
+  return 0;
+}
+
 function buildItems(pool: ImageItem[], seg: number): ItemDef[] {
   const xCols = Array.from({ length: seg }, (_, i) => -37 + i * 2);
   const evenYs = [-4, -2, 0, 2, 4];
@@ -303,11 +326,20 @@ export default function DomeGallery({
           const tempRect = tempDiv.getBoundingClientRect();
           document.body.removeChild(tempDiv);
 
-          const centeredLeft = frameR.left - mainR.left + (frameR.width - tempRect.width) / 2;
-          const centeredTop = frameR.top - mainR.top + (frameR.height - tempRect.height) / 2;
+          // Nach dem Drehen des Geräts gilt derselbe Zuschnitt wie beim
+          // Öffnen, sonst passt der Rahmen plötzlich nicht mehr zum Bild.
+          const fitted = fitBoxToAspect(
+            tempRect.width,
+            tempRect.height,
+            tileAspect(enlargedOverlay)
+          );
+          const centeredLeft = frameR.left - mainR.left + (frameR.width - fitted.width) / 2;
+          const centeredTop = frameR.top - mainR.top + (frameR.height - fitted.height) / 2;
 
           enlargedOverlay.style.left = `${centeredLeft}px`;
           enlargedOverlay.style.top = `${centeredTop}px`;
+          enlargedOverlay.style.width = `${fitted.width}px`;
+          enlargedOverlay.style.height = `${fitted.height}px`;
         } else {
           enlargedOverlay.style.left = `${frameR.left - mainR.left}px`;
           enlargedOverlay.style.top = `${frameR.top - mainR.top}px`;
@@ -508,6 +540,7 @@ export default function DomeGallery({
     overlay.style.transition = `transform ${enlargeTransitionMs}ms ease, opacity ${enlargeTransitionMs}ms ease`;
 
     const rawSrc = parent.dataset.src || (el.querySelector('img') as HTMLImageElement)?.src || '';
+    const aspect = tileAspect(el) || tileAspect(parent);
     const img = document.createElement('img');
     img.src = rawSrc;
     overlay.appendChild(img);
@@ -537,17 +570,21 @@ export default function DomeGallery({
         overlay.removeEventListener('transitionend', onFirstEnd);
         const prevTransition = overlay.style.transition;
         overlay.style.transition = 'none';
-        const tempWidth = openedImageWidth || `${frameR.width}px`;
-        const tempHeight = openedImageHeight || `${frameR.height}px`;
-        overlay.style.width = tempWidth;
-        overlay.style.height = tempHeight;
-        const newRect = overlay.getBoundingClientRect();
+        // Erst den erlaubten Rahmen ausmessen, dann auf das Format der
+        // Aufnahme zurechtstutzen – sonst steht ein Querformat in einem
+        // hochkanten Rahmen (Telefon) und verliert die halbe Breite.
+        overlay.style.width = openedImageWidth || `${frameR.width}px`;
+        overlay.style.height = openedImageHeight || `${frameR.height}px`;
+        const allowed = overlay.getBoundingClientRect();
+        const fitted = fitBoxToAspect(allowed.width, allowed.height, aspect);
+        const tempWidth = `${fitted.width}px`;
+        const tempHeight = `${fitted.height}px`;
         overlay.style.width = frameR.width + 'px';
         overlay.style.height = frameR.height + 'px';
         void overlay.offsetWidth;
         overlay.style.transition = `left ${enlargeTransitionMs}ms ease, top ${enlargeTransitionMs}ms ease, width ${enlargeTransitionMs}ms ease, height ${enlargeTransitionMs}ms ease`;
-        const centeredLeft = frameR.left - mainR.left + (frameR.width - newRect.width) / 2;
-        const centeredTop = frameR.top - mainR.top + (frameR.height - newRect.height) / 2;
+        const centeredLeft = frameR.left - mainR.left + (frameR.width - fitted.width) / 2;
+        const centeredTop = frameR.top - mainR.top + (frameR.height - fitted.height) / 2;
         requestAnimationFrame(() => {
           overlay.style.left = `${centeredLeft}px`;
           overlay.style.top = `${centeredTop}px`;
@@ -655,6 +692,7 @@ export default function DomeGallery({
         border-radius: var(--enlarge-radius, 32px);
         overflow: hidden;
         box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        background: var(--overlay-blur-color, #120f17);
         transition: all ${enlargeTransitionMs}ms ease-out;
         pointer-events: none;
         margin: 0;
@@ -664,7 +702,9 @@ export default function DomeGallery({
       const originalImg = overlay.querySelector('img');
       if (originalImg) {
         const img = originalImg.cloneNode() as HTMLImageElement;
-        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+        // Muss zur geöffneten Ansicht passen, sonst springt das Bild im
+        // Moment des Schliessens auf einen anderen Ausschnitt.
+        img.style.cssText = 'width: 100%; height: 100%; object-fit: contain;';
         animatingOverlay.appendChild(img);
       }
 
