@@ -384,6 +384,40 @@ export const featuredReferences = solutions.flatMap((solution) =>
   solution.gallery.slice(0, 3),
 )
 
+export type Comparison = {
+  slug: SolutionSlug
+  before: GalleryImage
+  after: GalleryImage
+}
+
+/*
+ * Vorher/Nachher-Paare für den Vergleichslauf.
+ *
+ * Bisher liegt nur für Ventile eine Aufnahme des ungedämmten Zustands vor.
+ * Für jede weitere Kategorie genügt es, das Paar unter
+ * /media/<slug>/before-after/ abzulegen und hier einzutragen – der Lauf nimmt
+ * es dann automatisch auf und wiederholt sich entsprechend seltener.
+ */
+export const comparisons: Comparison[] = [
+  {
+    slug: 'ventile-armaturen',
+    before: {
+      src: '/media/ventile/before-after/ventil-vorher-1280.webp',
+      thumb: '/media/ventile/before-after/ventil-vorher-640.webp',
+      alt: 'Ungedämmtes blaues Industrieventil vor der IsoMat-Ausführung',
+      width: 1280,
+      height: 1714,
+    },
+    after: {
+      src: '/media/ventile/before-after/ventil-nachher-1280.webp',
+      thumb: '/media/ventile/before-after/ventil-nachher-640.webp',
+      alt: 'Dasselbe Industrieventil mit passgenauem IsoMat-Dämmkissen',
+      width: 1280,
+      height: 1714,
+    },
+  },
+]
+
 export function solutionBySlug(slug?: string) {
   return solutions.find(
     (solution) => solution.slug === slug || solution.productSlug === slug,

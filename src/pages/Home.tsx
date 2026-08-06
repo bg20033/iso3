@@ -1,10 +1,9 @@
-import { ArrowUpRight, Check, MoveRight } from 'lucide-react'
+import { ArrowUpRight, MoveRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { BeforeAfterSlider } from '../components/BeforeAfterSlider'
 import { Category3DExplorer } from '../components/Category3DExplorer'
 import { ReferenceDome } from '../components/ReferenceDome'
 import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
-import { ReferenceMarquee } from '../components/ReferenceMarquee'
+import { ComparisonMarquee } from '../components/ComparisonMarquee'
 import { FaqAccordion } from '../components/FaqAccordion'
 import {
   coreBenefits,
@@ -13,18 +12,6 @@ import {
   processSteps,
   solutions,
 } from '../data/site'
-
-const beforeImage = {
-  src: '/media/ventile/before-after/ventil-vorher-1280.webp',
-  thumb: '/media/ventile/before-after/ventil-vorher-640.webp',
-  alt: 'Ungedämmtes blaues Industrieventil vor der IsoMat-Ausführung',
-}
-
-const afterImage = {
-  src: '/media/ventile/before-after/ventil-nachher-1280.webp',
-  thumb: '/media/ventile/before-after/ventil-nachher-640.webp',
-  alt: 'Dasselbe Industrieventil mit passgenauem IsoMat-Dämmkissen',
-}
 
 export default function Home() {
   return (
@@ -104,40 +91,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section section--light comparison-section">
-        <div className="shell comparison-section__grid">
-          <div className="comparison-section__copy">
-            <span className="eyebrow">03 · Vorher / Nachher</span>
-            <h2>Weniger Verlust. Derselbe Zugang.</h2>
-            <p>
-              Die Isolierung folgt dem Bauteil – nicht umgekehrt. Aussparungen,
-              Teilungen und Verschlüsse bleiben dort, wo sie im Service erreichbar sind.
-            </p>
-            <ul>
-              {solutions[0].benefits.slice(0, 3).map((benefit) => (
-                <li key={benefit}><Check aria-hidden="true" />{benefit}</li>
-              ))}
-            </ul>
-            <Link className="text-link" to="/produkte/ventile">
-              Ventile & Armaturen <MoveRight aria-hidden="true" />
-            </Link>
-          </div>
-          <BeforeAfterSlider before={beforeImage} after={afterImage} />
-        </div>
-
-        {/*
-          Ausserhalb der Schale, damit der Streifen über die volle Breite
-          läuft – er schliesst denselben Abschnitt ab, statt einen eigenen
-          aufzumachen.
-        */}
-        <ReferenceMarquee solutions={solutions} />
-      </section>
+      {/*
+        Kein eigener Abschnitt mehr: Der Vergleich steht als durchlaufendes
+        Band zwischen den Abschnitten und trägt sich über die Bilder selbst.
+      */}
+      <ComparisonMarquee />
 
       <section className="section section--metal">
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">04 · Warum IsoMat</span>
+              <span className="eyebrow">03 · Warum IsoMat</span>
               <h2>Für den Betrieb gebaut.</h2>
             </div>
             <p>
@@ -160,7 +124,7 @@ export default function Home() {
       <section className="section process-section">
         <div className="shell process-section__grid">
           <div className="process-section__intro">
-            <span className="eyebrow">05 · Prozess</span>
+            <span className="eyebrow">04 · Prozess</span>
             <h2>Vom Aufmass zum fertigen Dämmkissen.</h2>
             <p>Fünf klare Schritte führen von der realen Anlage zur passgenauen Lösung.</p>
             <Link className="text-link" to="/ueber-uns">
@@ -182,7 +146,7 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign section-heading--dark">
             <div>
-              <span className="eyebrow">06 · Referenzen</span>
+              <span className="eyebrow">05 · Referenzen</span>
               <h2>Reale Anlagen. Reale Ausführungen.</h2>
             </div>
             <p>Einblicke aus Energieanlagen, Heizungszentralen und Sonderbau.</p>
@@ -194,7 +158,7 @@ export default function Home() {
       <section className="section section--light">
         <div className="shell faq-layout faq-layout--redesign">
           <div className="faq-intro">
-            <span className="eyebrow">07 · Häufige Fragen</span>
+            <span className="eyebrow">06 · Häufige Fragen</span>
             <h2>Was Betreiber vor der Anfrage wissen wollen.</h2>
             <p>Ein Anruf unter 056 245 16 28 klärt viele Fälle in wenigen Minuten.</p>
           </div>

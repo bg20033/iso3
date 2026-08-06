@@ -2,6 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import App from './App'
+import { BeforeAfterSlider } from './components/BeforeAfterSlider'
 
 describe('routing and redesigned experience', () => {
   it('shows all seven categories in one landing-page explorer', async () => {
@@ -128,20 +129,38 @@ describe('routing and redesigned experience', () => {
     expect(screen.getByLabelText('Betriebstemperatur')).toHaveValue('320 °C')
   })
 
-  it('supports keyboard controls for the before-and-after comparison', async () => {
+  // Der Vergleich steht nicht mehr auf der Startseite, sondern im
+  // Kategorie-Fokus. Geprüft wird deshalb die Tastaturbedienung selbst.
+  it('supports keyboard controls for the before-and-after comparison', () => {
+    const image = (label: string) => ({
+      src: `/media/ventile/before-after/ventil-${label}-1280.webp`,
+      thumb: `/media/ventile/before-after/ventil-${label}-640.webp`,
+      alt: label,
+    })
+
     render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>,
+      <BeforeAfterSlider before={image('vorher')} after={image('nachher')} />,
     )
 
-    const slider = await screen.findByRole('slider', {
+    const slider = screen.getByRole('slider', {
       name: 'Vergleich zwischen Vorher und Nachher',
     })
     fireEvent.keyDown(slider, { key: 'ArrowRight' })
     expect(slider).toHaveValue('55')
     fireEvent.keyDown(slider, { key: 'Home' })
     expect(slider).toHaveValue('0')
+  })
+
+  it('runs the before-and-after strip on the landing page', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const strip = await screen.findByLabelText('Vorher und nachher im Vergleich')
+    expect(within(strip).getAllByText('Vorher').length).toBeGreaterThan(0)
+    expect(within(strip).getAllByText('Nachher').length).toBeGreaterThan(0)
   })
 
   it('closes the mobile menu with Escape and returns focus', async () => {

@@ -469,16 +469,6 @@ body {
   aspect-ratio: 4 / 3;
 }
 
-/*
- * Der Aufnahmenlauf gehört jetzt in denselben Abschnitt wie der Vergleich und
- * schliesst ihn ab. Er braucht Luft nach oben, sitzt aber bündig am unteren
- * Rand – so wirkt er als Band des Abschnitts und nicht als eigener Block.
- */
-.comparison-section .ref-marquee {
-  margin-top: clamp(3rem, 6vw, 5rem);
-  margin-bottom: calc(-1 * clamp(4.5rem, 9vw, 8.5rem));
-  border-bottom: 0;
-}
 
 .home-benefits {
   display: grid;
@@ -1395,9 +1385,60 @@ body {
   letter-spacing: 0.18em;
 }
 
+/* --- Vorher/Nachher als laufendes Band -----------------------------------
+   Jede Karte trägt beide Zustände nebeneinander. Der feste Schnitt in der
+   Mitte ersetzt den Regler: In einem laufenden Streifen lässt sich nichts
+   ziehen, die Gegenüberstellung muss auf einen Blick lesbar sein. */
+.ref-marquee--compare .ref-marquee__card {
+  width: clamp(280px, 34vw, 420px);
+}
+
+.compare-card__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--edge);
+}
+
+.compare-card__half {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.compare-card__half img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compare-card__half b {
+  position: absolute;
+  inset: auto auto 0.5rem 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(14, 17, 18, 0.78);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Der Nachher-Zustand ist die Aussage – er bekommt die Signalfarbe. */
+.compare-card__half:last-child b {
+  background: var(--signal);
+}
+
 @media (max-width: 620px) {
   .ref-marquee__card {
     width: 62vw;
+  }
+
+  .ref-marquee--compare .ref-marquee__card {
+    width: 84vw;
   }
 }
 
