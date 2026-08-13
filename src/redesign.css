@@ -1334,13 +1334,28 @@ body {
  * durchs Bauteil schneiden, deshalb gibt die Aufnahme die Breite vor.
  */
 .ref-marquee--compare .ref-marquee__card {
-  width: auto;
-  max-width: 90vw;
+  flex: 0 0 auto;
+  width: min(calc(100vw - (2 * var(--gutter))), 350px);
+  scroll-snap-align: center;
+}
+
+.ref-marquee--compare {
+  overflow-x: auto;
+  mask-image: none;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-strong) transparent;
+}
+
+.ref-marquee--compare .ref-marquee__track {
+  gap: clamp(1rem, 2vw, 2rem);
+  padding-inline: var(--gutter);
+  animation: none;
 }
 
 .compare-card .before-after--compact {
-  width: auto;
-  height: clamp(240px, 30vw, 360px);
+  width: 100%;
+  height: clamp(240px, 25vw, 320px);
   max-height: none;
   aspect-ratio: var(--comparison-aspect, 3 / 2);
   margin: 0;
@@ -1405,8 +1420,7 @@ body {
 
   /* Am Telefon gibt die Breite den Takt vor, nicht die Höhe. */
   .compare-card .before-after--compact {
-    width: 88vw;
-    height: auto;
+    height: min(112vw, 440px);
   }
 }
 

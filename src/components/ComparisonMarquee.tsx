@@ -9,20 +9,12 @@ import {
 } from '../data/site'
 import { findLocalizedSolution, useLanguage, useLocalizedSite } from '../i18n'
 
-/*
- * Ab dieser Anzahl Paaren trägt ein durchlaufendes Band. Darunter wirkt der
- * Lauf leer oder – schlimmer – er wiederholt dieselbe Aufnahme mehrfach.
- * Dann steht stattdessen ein ruhiges Raster.
- */
-const MARQUEE_THRESHOLD = 3
-
 type Pair = { comparison: Comparison; solution: Solution }
 
 function CompareCard({
   comparison,
   solution,
-  duplicate = false,
-}: Pair & { duplicate?: boolean }) {
+}: Pair) {
   const { language } = useLanguage()
   const englishCaption: Record<string, string> = {
     'ventile-armaturen-ventil-blau': 'Shut-off valve with removable insulation jacket',
@@ -35,8 +27,6 @@ function CompareCard({
   return (
     <div
       className="ref-marquee__card compare-card"
-      aria-hidden={duplicate}
-      inert={duplicate}
     >
       <BeforeAfterSlider
         compact
@@ -53,17 +43,8 @@ function CompareCard({
 }
 
 /**
- * Vorher/Nachher-Vergleiche. Jede Karte trägt ihren eigenen Regler: Die
- * Trennlinie lässt sich ziehen und schiebt die Dämmung vom Bauteil.
- *
- * Liegen genug Paare vor, laufen sie als Band. Der Streifen wird dafür genau
- * einmal dupliziert und um die halbe Breite verschoben, damit das Ende der
- * ersten Kopie auf den Anfang der zweiten trifft. Die zweite Kopie ist inert,
- * damit ihre Regler nicht doppelt in die Bedienreihenfolge geraten.
- *
- * Damit das bedienbar bleibt, hält der Lauf an, sobald jemand die Karte
- * berührt. Auf Tastgeräten läuft er gar nicht erst von selbst – dort wird
- * gewischt.
+ * Vorher/Nachher-Vergleiche. Der Streifen bleibt bewusst stehen, damit sich
+ * jeder Regler zuverlässig mit Maus, Tastatur und Touch bedienen lässt.
  */
 export function ComparisonMarquee() {
   const { pick } = useLanguage()
@@ -76,23 +57,6 @@ export function ComparisonMarquee() {
 
   if (pairs.length === 0) return null
 
-  /* Wenige Paare: Raster statt Lauf – keine Aufnahme wird wiederholt. */
-  if (pairs.length < MARQUEE_THRESHOLD) {
-    return (
-      <div
-        className="compare-grid"
-        data-count={pairs.length}
-        aria-label={pick('Vorher und nachher im Vergleich', 'Before and after comparison')}
-      >
-        {pairs.map((pair) => (
-          <CompareCard key={comparisonKey(pair.comparison)} {...pair} />
-        ))}
-      </div>
-    )
-  }
-
-  const track = [...pairs, ...pairs]
-
   return (
     <div
       className="ref-marquee ref-marquee--compare"
@@ -100,12 +64,10 @@ export function ComparisonMarquee() {
     >
       <div
         className="ref-marquee__track"
-        style={{ '--count': pairs.length } as React.CSSProperties}
       >
-        {track.map((pair, index) => (
+        {pairs.map((pair) => (
           <CompareCard
-            key={`${comparisonKey(pair.comparison)}-${index}`}
-            duplicate={index >= pairs.length}
+            key={comparisonKey(pair.comparison)}
             {...pair}
           />
         ))}
