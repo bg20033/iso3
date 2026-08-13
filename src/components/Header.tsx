@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { nav } from '../data/site'
+import { useLanguage } from '../i18n'
 import { Logo } from './Logo'
 
 export function Header() {
@@ -9,6 +10,14 @@ export function Header() {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLElement>(null)
   const location = useLocation()
+  const { language, setLanguage, pick } = useLanguage()
+  const localizedNav = nav.map((item) => ({
+    ...item,
+    label: item.to === '/' ? pick('Start', 'Home')
+      : item.to === '/loesungen' ? pick('Lösungen', 'Solutions')
+      : item.to === '/ueber-uns' ? pick('Über uns', 'About us')
+      : pick('Kontakt', 'Contact'),
+  }))
 
   useEffect(() => setOpen(false), [location.pathname])
 
@@ -34,12 +43,12 @@ export function Header() {
   return (
     <header className="header">
       <div className="shell header__bar">
-        <Link to="/" aria-label="IsoMat Startseite">
+        <Link to="/" aria-label={pick('IsoMat Startseite', 'IsoMat home')}>
           <Logo />
         </Link>
 
-        <nav className="header__nav" aria-label="Hauptnavigation">
-          {nav.map((item) => (
+        <nav className="header__nav" aria-label={pick('Hauptnavigation', 'Main navigation')}>
+          {localizedNav.map((item) => (
             <NavLink
               to={item.to}
               end={item.to === '/'}
@@ -58,11 +67,24 @@ export function Header() {
         </nav>
 
         <div className="header__actions">
+          <div className="language-switch" role="group" aria-label={pick('Sprache', 'Language')}>
+            {(['de', 'en'] as const).map((item) => (
+              <button
+                type="button"
+                className={language === item ? 'is-active' : ''}
+                aria-pressed={language === item}
+                onClick={() => setLanguage(item)}
+                key={item}
+              >
+                {item.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <a className="header__phone" href="tel:+41562451628">
             056 245 16 28
           </a>
           <Link className="button button--compact header__cta" to="/kontakt">
-            Projekt anfragen
+            {pick('Projekt anfragen', 'Request a project')}
           </Link>
         </div>
 
@@ -73,7 +95,7 @@ export function Header() {
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="mobile-menu"
-          aria-label={open ? 'Menü schliessen' : 'Menü öffnen'}
+          aria-label={open ? pick('Menü schliessen', 'Close menu') : pick('Menü öffnen', 'Open menu')}
         >
           {open ? <X /> : <Menu />}
         </button>
@@ -83,10 +105,17 @@ export function Header() {
         <nav
           id="mobile-menu"
           className="mobile-menu"
-          aria-label="Mobile Navigation"
+          aria-label={pick('Mobile Navigation', 'Mobile navigation')}
           ref={menuRef}
         >
-          {nav.map((item) => (
+          <div className="language-switch language-switch--mobile" role="group" aria-label={pick('Sprache', 'Language')}>
+            {(['de', 'en'] as const).map((item) => (
+              <button type="button" className={language === item ? 'is-active' : ''} aria-pressed={language === item} onClick={() => setLanguage(item)} key={item}>
+                {item.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          {localizedNav.map((item) => (
             <NavLink
               to={item.to}
               end={item.to === '/'}
@@ -104,7 +133,7 @@ export function Header() {
           ))}
           <a href="tel:+41562451628">056 245 16 28</a>
           <Link className="button" to="/kontakt">
-            Projekt anfragen <span aria-hidden="true">↗</span>
+            {pick('Projekt anfragen', 'Request a project')} <span aria-hidden="true">↗</span>
           </Link>
         </nav>
       )}

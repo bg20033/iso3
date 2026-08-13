@@ -9,6 +9,7 @@ import type {
   CategoryKind,
   CategorySceneControl,
 } from './CategoryScene'
+import { useLanguage } from '../i18n'
 
 const CategoryScene = lazy(() => import('./CategoryScene'))
 
@@ -24,9 +25,10 @@ export function Category3DExplorer({
   mode,
   solutions,
   initialSolution,
-  label = 'Interaktiver 3D-Explorer der IsoMat-Lösungen',
+  label,
   onCategoryChange,
 }: Category3DExplorerProps) {
+  const { pick } = useLanguage()
   const sectionRef = useRef<HTMLDivElement>(null)
   const progressRef = useRef(0)
   const controlRef = useRef<CategorySceneControl['current']>({
@@ -77,10 +79,10 @@ export function Category3DExplorer({
     <div
       className={`model-explorer model-explorer--${mode}`}
       ref={sectionRef}
-      aria-label={label}
+      aria-label={label ?? pick('Interaktiver 3D-Explorer der IsoMat-Lösungen', 'Interactive 3D explorer for IsoMat solutions')}
     >
       {mode === 'hub' ? (
-        <div className="model-explorer__selector" role="tablist" aria-label="Bauteilkategorie wählen">
+        <div className="model-explorer__selector" role="tablist" aria-label={pick('Bauteilkategorie wählen', 'Choose a component category')}>
           {solutions.map((solution) => (
             <button
               key={solution.slug}
@@ -117,10 +119,10 @@ export function Category3DExplorer({
 
           <div className="model-explorer__status" aria-live="polite">
             <span>{active.no}</span>
-            {open ? 'Dämmkissen abgenommen' : 'Dämmkissen angelegt'}
+            {open ? pick('Dämmkissen abgenommen', 'Insulation removed') : pick('Dämmkissen angelegt', 'Insulation fitted')}
           </div>
 
-          <div className="model-explorer__controls" aria-label="3D-Modell steuern">
+          <div className="model-explorer__controls" aria-label={pick('3D-Modell steuern', 'Control 3D model')}>
             <button
               className="model-explorer__toggle"
               type="button"
@@ -128,15 +130,15 @@ export function Category3DExplorer({
               onClick={toggleOpen}
             >
               <Layers aria-hidden="true" />
-              {open ? 'Kissen anlegen' : 'Kissen abnehmen'}
+              {open ? pick('Kissen anlegen', 'Fit jacket') : pick('Kissen abnehmen', 'Remove jacket')}
             </button>
-            <button type="button" onClick={() => rotate(-1)} aria-label="Modell nach links drehen">
+            <button type="button" onClick={() => rotate(-1)} aria-label={pick('Modell nach links drehen', 'Rotate model left')}>
               <Undo2 aria-hidden="true" />
             </button>
-            <button type="button" onClick={reset} aria-label="Ansicht zurücksetzen">
+            <button type="button" onClick={reset} aria-label={pick('Ansicht zurücksetzen', 'Reset view')}>
               <RotateCcw aria-hidden="true" />
             </button>
-            <button type="button" onClick={() => rotate(1)} aria-label="Modell nach rechts drehen">
+            <button type="button" onClick={() => rotate(1)} aria-label={pick('Modell nach rechts drehen', 'Rotate model right')}>
               <RotateCw aria-hidden="true" />
             </button>
           </div>
@@ -147,7 +149,7 @@ export function Category3DExplorer({
           <h3>{active.title}</h3>
           <p>{active.summary}</p>
 
-          <ul className="model-explorer__applications" aria-label="Typische Anwendungen">
+          <ul className="model-explorer__applications" aria-label={pick('Typische Anwendungen', 'Typical applications')}>
             {active.applications.slice(0, 4).map((application) => (
               <li key={application}>{application}</li>
             ))}
@@ -156,21 +158,20 @@ export function Category3DExplorer({
           <div className="model-explorer__actions">
             {mode === 'hub' ? (
               <Link className="text-link" to={productPath(active)}>
-                Details & Referenzen <ArrowUpRight aria-hidden="true" />
+                {pick('Details & Referenzen', 'Details & references')} <ArrowUpRight aria-hidden="true" />
               </Link>
             ) : (
               <Link
                 className="text-link"
                 to={`/kontakt?application=${encodeURIComponent(active.title)}`}
               >
-                Projekt anfragen <ArrowUpRight aria-hidden="true" />
+                {pick('Projekt anfragen', 'Request a project')} <ArrowUpRight aria-hidden="true" />
               </Link>
             )}
           </div>
 
           <p className="model-explorer__note">
-            Technische Visualisierung · Ziehen dreht das Modell · Kissen
-            abnehmen zeigt das Bauteil darunter
+            {pick('Technische Visualisierung · Ziehen dreht das Modell · Kissen abnehmen zeigt das Bauteil darunter', 'Technical visualisation · Drag to rotate · Remove the jacket to reveal the component')}
           </p>
         </div>
       </div>

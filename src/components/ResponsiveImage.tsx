@@ -1,4 +1,8 @@
-import type { GalleryImage } from '../data/site'
+import {
+  responsiveImageSizes,
+  responsiveImageSrcSet,
+  type GalleryImage,
+} from '../data/site'
 
 type ResponsiveImageProps = {
   image: GalleryImage
@@ -14,8 +18,8 @@ export function ResponsiveImage({
   return (
     <img
       src={image.src}
-      srcSet={`${image.thumb} 480w, ${image.src} 1280w`}
-      sizes="(max-width: 720px) 92vw, (max-width: 1200px) 48vw, 720px"
+      srcSet={responsiveImageSrcSet(image)}
+      sizes={responsiveImageSizes}
       width={image.width}
       height={image.height}
       alt={image.alt}

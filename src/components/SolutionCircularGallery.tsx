@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { solutionQuickviewPath, type Solution } from '../data/site'
 import { ResponsiveImage } from './ResponsiveImage'
 import { useNearViewport } from '../hooks/useNearViewport'
@@ -16,6 +17,7 @@ import {
   useReducedMotion,
   useWebGLSupport,
 } from './useInteractiveVisuals'
+import { useLanguage } from '../i18n'
 
 /*
  * Auf dem Telefon ist der Bildausschnitt schmal, die Karten haben aber überall
@@ -39,6 +41,8 @@ export function SolutionCircularGallery({
   solutions,
   bend = 3,
 }: SolutionCircularGalleryProps) {
+  const navigate = useNavigate()
+  const { pick } = useLanguage()
   // Läuft jetzt auch auf Touchgeräten – die Galerie hört ihre Eingaben am
   // eigenen Container ab und stört das Scrollen der Seite nicht mehr.
   // Reduzierte Bewegung heisst «nichts bewegt sich von selbst», nicht «die
@@ -110,20 +114,24 @@ export function SolutionCircularGallery({
                   scrollEase={0.055}
                   reducedMotion={reducedMotion}
                   onReady={markReady}
+                  onSelect={(index) => {
+                    const solution = solutions[index]
+                    if (solution) navigate(solutionQuickviewPath(solution))
+                  }}
                 />
               </Suspense>
             </div>
           )}
         </div>
       </div>
-      <nav className="reactbits-gallery-links" aria-label="Lösungen auswählen">
+      <div className="reactbits-gallery-links" aria-label={pick('Lösungskategorien', 'Solution categories')}>
         {solutions.map((solution) => (
-          <Link to={solutionQuickviewPath(solution)} key={solution.slug}>
+          <div className="reactbits-gallery-label" key={solution.slug}>
             <span>{solution.no}</span>
             {solution.shortTitle}
-          </Link>
+          </div>
         ))}
-      </nav>
+      </div>
     </div>
   )
 }

@@ -1,8 +1,17 @@
 import { Link } from 'react-router-dom'
 import { company, nav } from '../data/site'
 import { Logo } from './Logo'
+import { useLanguage } from '../i18n'
 
 export function Footer() {
+  const { pick } = useLanguage()
+  const localizedNav = nav.map((item) => ({
+    ...item,
+    label: item.to === '/' ? pick('Start', 'Home')
+      : item.to === '/loesungen' ? pick('Lösungen', 'Solutions')
+      : item.to === '/ueber-uns' ? pick('Über uns', 'About us')
+      : pick('Kontakt', 'Contact'),
+  }))
   return (
     <footer className="footer">
       <div className="shell">
@@ -10,13 +19,13 @@ export function Footer() {
           <div>
             <Logo />
             <p className="footer__claim">
-              Massgefertigte, abnehmbare Isolierungen für industrielle Anlagen.
+              {pick('Massgefertigte, abnehmbare Isolierungen für industrielle Anlagen.', 'Custom-made, removable insulation for industrial plants.')}
             </p>
           </div>
 
           <div>
             <span className="footer__label">Navigation</span>
-            {nav.map((item) => (
+            {localizedNav.map((item) => (
               <Link to={item.to} key={item.to}>
                 {item.label}
               </Link>
@@ -24,7 +33,7 @@ export function Footer() {
           </div>
 
           <address>
-            <span className="footer__label">Direktkontakt</span>
+            <span className="footer__label">{pick('Direktkontakt', 'Direct contact')}</span>
             {company.name}
             <br />
             {company.street}
@@ -40,8 +49,8 @@ export function Footer() {
         <div className="footer__bottom">
           <span>© {new Date().getFullYear()} IsoMat GmbH</span>
           <span>
-            <Link to="/impressum">Impressum</Link>
-            <Link to="/datenschutz">Datenschutz</Link>
+            <Link to="/impressum">{pick('Impressum', 'Legal notice')}</Link>
+            <Link to="/datenschutz">{pick('Datenschutz', 'Privacy')}</Link>
           </span>
         </div>
       </div>

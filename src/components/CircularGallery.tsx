@@ -498,6 +498,7 @@ interface AppConfig {
   scrollEase?: number;
   reducedMotion?: boolean;
   cardScale?: number;
+  onSelect?: (index: number) => void;
 }
 
 class App {
@@ -505,6 +506,8 @@ class App {
   scrollSpeed: number;
   reducedMotion: boolean = false;
   cardScale: number = 1;
+  onSelect?: (index: number) => void;
+  originalItemCount: number = 0;
   scroll: {
     ease: number;
     current: number;
@@ -530,9 +533,11 @@ class App {
   boundOnTouchMove!: (e: MouseEvent | TouchEvent) => void;
   boundOnTouchUp!: () => void;
   boundOnKeyDown!: (e: KeyboardEvent) => void;
+  boundOnClick!: (e: MouseEvent) => void;
 
   isDown: boolean = false;
   start: number = 0;
+  moved: boolean = false;
 
   constructor(
     container: HTMLElement,
@@ -545,7 +550,8 @@ class App {
       scrollSpeed = 2,
       scrollEase = 0.05,
       reducedMotion = false,
-      cardScale = 1
+      cardScale = 1,
+      onSelect
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
@@ -553,6 +559,7 @@ class App {
     this.scrollSpeed = scrollSpeed;
     this.reducedMotion = reducedMotion;
     this.cardScale = cardScale;
+    this.onSelect = onSelect;
     // ease = 1 heisst: die Karten stehen sofort dort, wo gezogen wurde – kein
     // Nachlauf, der sich wie eine Eigenbewegung anfühlt.
     this.scroll = { ease: reducedMotion ? 1 : scrollEase, current: 0, target: 0, last: 0 };
@@ -653,6 +660,7 @@ class App {
       }
     ];
     const galleryItems = items && items.length ? items : defaultItems;
+    this.originalItemCount = galleryItems.length;
     this.mediasImages = galleryItems.concat(galleryItems);
     this.medias = this.mediasImages.map((data, index) => {
       return new Media({
@@ -680,12 +688,14 @@ class App {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
     this.start = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    this.moved = false;
   }
 
   onTouchMove(e: MouseEvent | TouchEvent) {
     if (!this.isDown) return;
     const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
+    if (Math.abs(x - this.start) > 7) this.moved = true;
     this.scroll.target = (this.scroll.position ?? 0) + distance;
   }
 
@@ -695,10 +705,25 @@ class App {
   }
 
   onWheel(e: Event) {
+    this.moved = true;
     const wheelEvent = e as WheelEvent;
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
+  }
+
+  onClick(e: MouseEvent) {
+    if (this.moved || !this.onSelect || this.originalItemCount === 0) return;
+    const rect = this.container.getBoundingClientRect();
+    const clickX = ((e.clientX - rect.left) / rect.width - 0.5) * this.viewport.width;
+    const closest = this.medias.reduce<Media | null>((best, media) => {
+      if (Math.abs(clickX - media.plane.position.x) > media.plane.scale.x / 2) return best;
+      if (!best) return media;
+      return Math.abs(clickX - media.plane.position.x) < Math.abs(clickX - best.plane.position.x)
+        ? media
+        : best;
+    }, null);
+    if (closest) this.onSelect(closest.index % this.originalItemCount);
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -764,6 +789,7 @@ class App {
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
     this.boundOnKeyDown = this.onKeyDown.bind(this);
+    this.boundOnClick = this.onClick.bind(this);
 
     /*
      * Eingaben hören am Container, nicht am Fenster. Vorher drehte jedes
@@ -783,6 +809,7 @@ class App {
     this.container?.addEventListener('touchstart', this.boundOnTouchDown, { passive: true });
     this.container?.addEventListener('touchmove', this.boundOnTouchMove, { passive: true });
     this.container?.addEventListener('keydown', this.boundOnKeyDown);
+    this.container?.addEventListener('click', this.boundOnClick);
   }
 
   destroy() {
@@ -801,6 +828,7 @@ class App {
     }
     if (this.container) {
       this.container.removeEventListener('keydown', this.boundOnKeyDown);
+      this.container.removeEventListener('click', this.boundOnClick);
     }
   }
 }
@@ -818,6 +846,7 @@ interface CircularGalleryProps {
   /** <1 verkleinert Karten und Abstand – für schmale Telefonbildschirme. */
   cardScale?: number;
   onReady?: () => void;
+  onSelect?: (index: number) => void;
 }
 
 export default function CircularGallery({
@@ -831,7 +860,8 @@ export default function CircularGallery({
   scrollEase = 0.05,
   reducedMotion = false,
   cardScale = 1,
-  onReady
+  onReady,
+  onSelect,
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -864,7 +894,8 @@ export default function CircularGallery({
         scrollSpeed,
         scrollEase,
         reducedMotion,
-        cardScale
+        cardScale,
+        onSelect,
       });
       // requestAnimationFrame ruht in inaktiven Tabs – ohne den Timer daneben
       // bliebe das statische Raster für immer über der Galerie liegen.
@@ -894,7 +925,8 @@ export default function CircularGallery({
     scrollEase,
     reducedMotion,
     cardScale,
-    onReady
+    onReady,
+    onSelect,
   ]);
   return (
     <div
@@ -902,7 +934,7 @@ export default function CircularGallery({
       ref={containerRef}
       tabIndex={0}
       role="region"
-      aria-label="Circular image gallery. Use Left and Right Arrow keys to navigate."
+      aria-label="Circular image gallery. Drag to browse, click an image to open it, or use the arrow keys."
     />
   );
 }

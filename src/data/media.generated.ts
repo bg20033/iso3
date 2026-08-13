@@ -225,12 +225,19 @@ export const mediaBySlug = {
       "thumb": "/media/heizungszentralen/07-480.webp",
       "alt": "Dämmkissen in einer Heizungszentrale – Referenz 07",
       "width": 1280,
-      "height": 1707
+      "height": 956
     },
     {
       "src": "/media/heizungszentralen/08-1280.webp",
       "thumb": "/media/heizungszentralen/08-480.webp",
       "alt": "Dämmkissen in einer Heizungszentrale – Referenz 08",
+      "width": 1280,
+      "height": 1707
+    },
+    {
+      "src": "/media/heizungszentralen/09-1280.webp",
+      "thumb": "/media/heizungszentralen/09-480.webp",
+      "alt": "Dämmkissen in einer Heizungszentrale – Referenz 09",
       "width": 1280,
       "height": 960
     }

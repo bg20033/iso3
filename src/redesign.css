@@ -323,12 +323,17 @@ body {
   color: var(--signal);
 }
 
+/* Die Leiste darf nie über den Bildrand hinauslaufen – auf schmalen Geräten
+   bricht sie deshalb um, statt links abgeschnitten zu werden. */
 .model-explorer__controls {
   position: absolute;
   z-index: 5;
   right: 1rem;
   bottom: 1rem;
   display: flex;
+  max-width: calc(100% - 2rem);
+  flex-wrap: wrap;
+  justify-content: flex-end;
   border: 1px solid var(--edge-strong);
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 8px 24px rgba(14, 17, 18, 0.1);
@@ -366,6 +371,8 @@ body {
 
 .model-explorer__content h3 {
   font-size: clamp(2.6rem, 4.5vw, 4.7rem);
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 .model-explorer__content > p:not(.model-explorer__note) {
@@ -421,46 +428,14 @@ body {
 }
 
 /* Homepage sections */
-.comparison-section__grid {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.7fr) minmax(0, 1.3fr);
-  align-items: center;
-  gap: clamp(2rem, 7vw, 7rem);
-}
-
-.comparison-section__copy h2,
 .process-section__intro h2,
 .faq-layout--redesign h2 {
   max-width: 11ch;
 }
-
-.comparison-section__copy > p,
 .process-section__intro > p {
   margin-top: 1.35rem;
   color: var(--ink-soft);
   font-size: 1.04rem;
-}
-
-.comparison-section__copy ul {
-  display: grid;
-  margin: 1.5rem 0;
-  padding: 0;
-  border-top: 1px solid var(--edge);
-  list-style: none;
-}
-
-.comparison-section__copy li {
-  display: grid;
-  grid-template-columns: 20px minmax(0, 1fr);
-  gap: 0.75rem;
-  padding-block: 0.85rem;
-  border-bottom: 1px solid var(--edge);
-  color: var(--ink-soft);
-}
-
-.comparison-section__copy li svg {
-  width: 18px;
-  color: var(--signal);
 }
 
 .comparison-section .before-after {
@@ -468,7 +443,6 @@ body {
   max-height: 680px;
   aspect-ratio: 4 / 3;
 }
-
 
 .home-benefits {
   display: grid;
@@ -901,21 +875,19 @@ body {
 }
 
 @media (max-width: 800px) {
-  body {
-    padding-bottom: 0;
-  }
-
   .mobile-menu {
-    position: absolute;
-    top: 100%;
+    position: fixed;
+    top: var(--header-h);
     right: 0;
-    bottom: auto;
-    left: 0;
-    width: 100%;
+    bottom: 0;
+    left: auto;
+    width: min(360px, 100%);
     height: calc(100svh - var(--header-h));
     max-height: none;
     align-content: start;
     overflow-y: auto;
+    border-left: 1px solid var(--edge);
+    box-shadow: -24px 24px 60px rgba(14, 17, 18, 0.18);
   }
 
   .landing-hero,
@@ -954,7 +926,6 @@ body {
   }
 
   .section-heading--redesign,
-  .comparison-section__grid,
   .process-section__grid,
   .solutions-overview__intro,
   .about-story__grid {
@@ -1057,10 +1028,6 @@ body {
 
   .model-explorer__content h3 {
     font-size: clamp(2.6rem, 12vw, 4.2rem);
-  }
-
-  .comparison-section__copy {
-    order: 2;
   }
 
   .comparison-section .before-after {
@@ -1287,11 +1254,25 @@ body {
   .model-explorer__controls {
     right: 0.6rem;
     bottom: 0.6rem;
+    max-width: calc(100% - 1.2rem);
   }
 
   .model-explorer__toggle {
     padding: 0 0.7rem;
     font-size: 0.66rem;
+  }
+}
+
+/* Unter dieser Breite trägt allein das Symbol – der Text sprengt die Leiste. */
+@media (max-width: 400px) {
+  .model-explorer__toggle {
+    width: 48px !important;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .model-explorer__toggle svg {
+    font-size: 1rem;
   }
 }
 
@@ -1342,24 +1323,6 @@ body {
   background: var(--paper);
 }
 
-.ref-marquee__media {
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-  border: 1px solid var(--edge);
-  background: var(--foil);
-}
-
-.ref-marquee__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.85);
-  transition:
-    transform 520ms var(--ease),
-    filter 260ms ease;
-}
-
 .ref-marquee__card:hover .ref-marquee__media img,
 .ref-marquee__card:focus-visible .ref-marquee__media img {
   filter: saturate(1);
@@ -1389,20 +1352,21 @@ body {
    Jede Karte trägt beide Zustände nebeneinander. Der feste Schnitt in der
    Mitte ersetzt den Regler: In einem laufenden Streifen lässt sich nichts
    ziehen, die Gegenüberstellung muss auf einen Blick lesbar sein. */
+/*
+ * Einheitliche Bandhöhe, Breite nach Aufnahme: Hoch- und Querformate stehen
+ * gemischt im Archiv. Ein fixer Kartenrahmen würde bei Hochformaten quer
+ * durchs Bauteil schneiden, deshalb gibt die Aufnahme die Breite vor.
+ */
 .ref-marquee--compare .ref-marquee__card {
-  width: clamp(340px, 46vw, 640px);
+  width: auto;
+  max-width: 90vw;
 }
 
-/*
- * Breit und flach statt hochkant: Der Streifen ist ein Band im Seitenlauf,
- * kein eigener Abschnitt – er darf die Seite nicht in die Länge ziehen.
- * Die Aufnahmen liegen hochkant vor, der Ausschnitt greift also mittig ins
- * Bild; das Bauteil steht dort.
- */
 .compare-card .before-after--compact {
-  width: 100%;
+  width: auto;
+  height: clamp(240px, 30vw, 360px);
   max-height: none;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: var(--comparison-aspect, 3 / 2);
   margin: 0;
 }
 
@@ -1430,18 +1394,43 @@ body {
   padding-top: 0.75rem;
 }
 
+/* --- Vorher/Nachher als ruhiges Raster ------------------------------------
+   Solange erst ein oder zwei Paare vorliegen, wäre ein Endlosband entweder
+   leer oder es müsste dieselbe Aufnahme wiederholen. Dann stehen die Karten
+   mittig nebeneinander – ohne Lauf, ohne Dopplung. */
+.compare-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1.75rem, 4vw, 3rem) var(--gutter);
+  border-block: 1px solid var(--edge);
+}
+
+.compare-grid .ref-marquee__card {
+  width: min(100%, clamp(320px, 46vw, 620px));
+  flex: 1 1 clamp(320px, 40vw, 560px);
+  max-width: 720px;
+}
+
+.compare-grid[data-count='1'] .ref-marquee__card {
+  flex: 0 1 min(100%, 720px);
+}
+
 @media (max-width: 620px) {
+  .compare-grid .ref-marquee__card {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
   .ref-marquee__card {
     width: 62vw;
   }
 
-  .ref-marquee--compare .ref-marquee__card {
-    width: 92vw;
-  }
-
-  /* Am Telefon fehlt die Breite – dort bleibt der Ausschnitt etwas höher. */
+  /* Am Telefon gibt die Breite den Takt vor, nicht die Höhe. */
   .compare-card .before-after--compact {
-    aspect-ratio: 4 / 3;
+    width: 88vw;
+    height: auto;
   }
 }
 

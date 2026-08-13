@@ -1,4 +1,10 @@
-import { company, productPath, solutionBySlug, solutions } from './data/site'
+import {
+  company,
+  heroImage,
+  productPath,
+  solutionBySlug,
+  solutions,
+} from './data/site'
 
 export const siteOrigin = 'https://isomat.ch'
 
@@ -216,6 +222,25 @@ export function structuredDataForRoute(pathname: string) {
   }
 }
 
+/*
+ * Das Heldenbild wird sonst erst entdeckt, wenn das Markup geparst ist – als
+ * grösstes Element über dem Falz bestimmt es aber, wann die Startseite als
+ * geladen gilt. Der Preload zieht es an den Anfang der Warteschlange.
+ *
+ * Nur die Startseite braucht das von Hand: Auf den Produktseiten steht das
+ * Aufmacherbild als einfaches <img> und React stellt den Preload selbst
+ * voran. Im Helden steckt es in einem <picture> (die Verlaufsmaske hängt als
+ * Pseudo-Element daran) – dort hält React sich zurück, weil es die gewählte
+ * Quelle nicht kennt.
+ *
+ * Die Kandidaten müssen mit dem <img> übereinstimmen, sonst lädt der Browser
+ * zwei Fassungen desselben Motivs.
+ */
+function renderLcpPreload(pathname: string) {
+  if (pathname !== '/') return ''
+  return `<link rel="preload" as="image" href="${heroImage.src}" imagesrcset="${heroImage.srcSet}" imagesizes="${heroImage.sizes}" fetchpriority="high">`
+}
+
 export function renderSeoHead(pathname: string) {
   const seo = getRouteSeo(pathname)
   const canonical = absoluteUrl(seo.path)
@@ -227,6 +252,7 @@ export function renderSeoHead(pathname: string) {
   )
 
   return [
+    renderLcpPreload(pathname),
     `<title>${escapeHtml(seo.title)}</title>`,
     `<meta name="description" content="${escapeHtml(seo.description)}">`,
     `<meta name="robots" content="${robots}">`,

@@ -14,6 +14,7 @@ import LoesungDetail from './pages/LoesungDetail'
 import Loesungen from './pages/Loesungen'
 import NichtGefunden from './pages/NichtGefunden'
 import UeberUns from './pages/UeberUns'
+import { LanguageProvider } from './i18n'
 
 function LegacySolutionRedirect() {
   const { slug } = useParams()
@@ -28,8 +29,9 @@ function LegacySolutionRedirect() {
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
+    <LanguageProvider>
+      <Routes>
+        <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="loesungen" element={<Loesungen />} />
         <Route path="loesungen/:slug" element={<LegacySolutionRedirect />} />
@@ -45,7 +47,8 @@ export default function App() {
         <Route path="datenschutz" element={<Datenschutz />} />
         <Route path="nicht-gefunden" element={<NichtGefunden />} />
         <Route path="*" element={<NichtGefunden />} />
-      </Route>
-    </Routes>
+        </Route>
+      </Routes>
+    </LanguageProvider>
   )
 }

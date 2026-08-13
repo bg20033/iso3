@@ -1,19 +1,42 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ArrowUpRight, Check } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import LineSidebar from '../components/LineSidebar'
 import { PageHead } from '../components/PageHead'
 import { ResponsiveImage } from '../components/ResponsiveImage'
 import { SolutionModal } from '../components/SolutionModal'
-import { solutions, type Solution } from '../data/site'
+import { type Solution } from '../data/site'
+import { findLocalizedSolution, useLanguage, useLocalizedSite } from '../i18n'
 
 export default function Loesungen() {
+  const { pick } = useLanguage()
+  const { solutions } = useLocalizedSite()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedSolution, setSelectedSolution] = useState<Solution | null>(null)
   const [activeCategory, setActiveCategory] = useState(0)
   const openModal = useCallback((solution: Solution) => {
     setSelectedSolution(solution)
-  }, [])
-  const closeModal = useCallback(() => setSelectedSolution(null), [])
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current)
+      next.set('solution', solution.productSlug)
+      return next
+    }, { replace: true })
+  }, [setSearchParams])
+  const closeModal = useCallback(() => {
+    setSelectedSolution(null)
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current)
+      next.delete('solution')
+      return next
+    }, { replace: true })
+  }, [setSearchParams])
+
+  useEffect(() => {
+    const requested = searchParams.get('solution')
+    if (!requested) return
+    const match = findLocalizedSolution(solutions, requested)
+    if (match) setSelectedSolution(match)
+  }, [searchParams, solutions])
 
   useEffect(() => {
     let frame = 0
@@ -49,24 +72,24 @@ export default function Loesungen() {
       window.removeEventListener('scroll', updateActiveCategory)
       window.removeEventListener('resize', updateActiveCategory)
     }
-  }, [])
+  }, [solutions])
 
   return (
     <>
       <PageHead
-        index="01 · Lösungen"
-        crumb="Lösungen"
-        title="Die passende Form für jede Anlage."
-        lead="Sieben typische Kategorien, individuell konstruiert und für Wartung, Inspektion und Reparatur wieder abnehmbar."
+        index={pick('01 · Lösungen', '01 · Solutions')}
+        crumb={pick('Lösungen', 'Solutions')}
+        title={pick('Die passende Form für jede Anlage.', 'The right shape for every plant.')}
+        lead={pick('Sieben typische Kategorien, individuell konstruiert und für Wartung, Inspektion und Reparatur wieder abnehmbar.', 'Seven typical categories, individually designed and removable for maintenance, inspection and repair.')}
       />
 
       <section className="section section--light solutions-overview">
         <div className="shell solutions-overview__layout">
           <aside className="solutions-line-sidebar">
-            <span className="solutions-line-sidebar__label">Kategorien</span>
+            <span className="solutions-line-sidebar__label">{pick('Kategorien', 'Categories')}</span>
             <LineSidebar
               items={solutions.map((solution) => solution.shortTitle)}
-              ariaLabel="Lösungskategorien"
+              ariaLabel={pick('Lösungskategorien', 'Solution categories')}
               accentColor="#d62622"
               textColor="#5c6366"
               markerColor="#a9afb2"
@@ -90,10 +113,9 @@ export default function Loesungen() {
 
           <div className="solutions-overview__content">
             <div className="solutions-overview__intro">
-              <span className="eyebrow">Bauteile & Anwendungen</span>
+              <span className="eyebrow">{pick('Bauteile & Anwendungen', 'Components & applications')}</span>
               <p>
-                Wählen Sie die Kategorie, die Ihrer Komponente am nächsten kommt.
-                Ist keine passende Form dabei, entwickelt IsoMat eine Sonderlösung.
+                {pick('Wählen Sie die Kategorie, die Ihrer Komponente am nächsten kommt. Ist keine passende Form dabei, entwickelt IsoMat eine Sonderlösung.', 'Choose the category closest to your component. If none matches, IsoMat will develop a custom solution.')}
               </p>
             </div>
 
@@ -108,7 +130,7 @@ export default function Loesungen() {
                     className="solution-index__media"
                     type="button"
                     aria-haspopup="dialog"
-                    aria-label={`${solution.title}: Details öffnen`}
+                    aria-label={`${solution.title}: ${pick('Details öffnen', 'open details')}`}
                     onClick={() => openModal(solution)}
                   >
                     <ResponsiveImage image={solution.featuredImage} />
@@ -134,7 +156,7 @@ export default function Loesungen() {
                       aria-haspopup="dialog"
                       onClick={() => openModal(solution)}
                     >
-                      Details ansehen <ArrowUpRight aria-hidden="true" />
+                      {pick('Details ansehen', 'View details')} <ArrowUpRight aria-hidden="true" />
                     </button>
                   </div>
                 </article>
@@ -146,10 +168,10 @@ export default function Loesungen() {
 
       <section className="contact-band contact-band--redesign">
         <div className="shell contact-band__inner">
-          <span className="eyebrow eyebrow--light">Keine Kategorie passt?</span>
-          <h2>Zeigen Sie uns die Komponente.</h2>
+          <span className="eyebrow eyebrow--light">{pick('Keine Kategorie passt?', 'No category fits?')}</span>
+          <h2>{pick('Zeigen Sie uns die Komponente.', 'Show us the component.')}</h2>
           <Link className="button button--light" to="/kontakt">
-            Projekt beschreiben <ArrowUpRight aria-hidden="true" />
+            {pick('Projekt beschreiben', 'Describe your project')} <ArrowUpRight aria-hidden="true" />
           </Link>
         </div>
       </section>

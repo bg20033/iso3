@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowUpRight, Check, X } from 'lucide-react'
+import { ArrowUpRight, Check, Maximize2, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Solution } from '../data/site'
-import { solutionBySlug } from '../data/site'
+import { findLocalizedSolution, useLanguage, useLocalizedSite } from '../i18n'
+import { ImageLightbox } from './ImageLightbox'
 import { ResponsiveImage } from './ResponsiveImage'
 
 type SolutionModalProps = {
@@ -26,8 +27,18 @@ export function SolutionModal({
   onClose,
   onSelectSolution,
 }: SolutionModalProps) {
+  const { pick } = useLanguage()
+  const { solutions } = useLocalizedSite()
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const lightboxOpenRef = useRef(false)
+  lightboxOpenRef.current = lightboxIndex !== null
+
+  /* Beim Wechsel der Lösung darf keine alte Grossansicht offen bleiben. */
+  useEffect(() => {
+    setLightboxIndex(null)
+  }, [solution])
 
   useEffect(() => {
     if (!solution) return
@@ -39,6 +50,9 @@ export function SolutionModal({
     dialogRef.current?.scrollTo?.({ top: 0 })
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      /* Liegt die Grossansicht darüber, gehört die Tastatur ihr. */
+      if (lightboxOpenRef.current) return
+
       if (event.key === 'Escape') {
         event.preventDefault()
         onClose()
@@ -72,7 +86,7 @@ export function SolutionModal({
 
   if (!solution || typeof document === 'undefined') return null
   const related = solution.relatedSlugs
-    .map((slug) => solutionBySlug(slug))
+    .map((slug) => findLocalizedSolution(solutions, slug))
     .filter((item): item is Solution => item !== undefined)
   const contactPath = `/kontakt?application=${encodeURIComponent(solution.title)}`
 
@@ -99,7 +113,7 @@ export function SolutionModal({
             type="button"
             onClick={onClose}
             ref={closeRef}
-            aria-label="Dialog schliessen"
+            aria-label={pick('Dialog schliessen', 'Close dialog')}
           >
             <X aria-hidden="true" />
           </button>
@@ -109,7 +123,7 @@ export function SolutionModal({
           <figure className="solution-modal__media">
             <ResponsiveImage image={solution.featuredImage} eager />
             <figcaption>
-              {solution.gallery.length} reale Referenzaufnahmen
+              {solution.gallery.length} {pick('reale Referenzaufnahmen', 'real reference images')}
             </figcaption>
           </figure>
 
@@ -119,11 +133,11 @@ export function SolutionModal({
 
             <div className="solution-modal__split">
               <div>
-                <span>Ausgangslage</span>
+                <span>{pick('Ausgangslage', 'Challenge')}</span>
                 <p>{solution.problem}</p>
               </div>
               <div>
-                <span>IsoMat-Lösung</span>
+                <span>{pick('IsoMat-Lösung', 'IsoMat solution')}</span>
                 <p>{solution.approach}</p>
               </div>
             </div>
@@ -152,34 +166,31 @@ export function SolutionModal({
         >
           <div className="solution-modal__section-heading">
             <div>
-              <span className="eyebrow">Referenzen</span>
+              <span className="eyebrow">{pick('Referenzen', 'References')}</span>
               <h3 id={`solution-gallery-${solution.slug}`}>
-                Einblicke: {solution.title}
+                {pick('Einblicke', 'Examples')}: {solution.title}
               </h3>
             </div>
             <p>
-              {solution.gallery.length} reale Aufnahmen aus dem IsoMat-Archiv.
+              {solution.gallery.length} {pick('reale Aufnahmen aus dem IsoMat-Archiv.', 'real images from the IsoMat archive.')}
             </p>
           </div>
           <div className="solution-modal__photo-grid">
             {solution.gallery.map((image, index) => (
-              <a
-                href={image.src}
-                className={
-                  index % 8 === 0
-                    ? 'solution-modal__photo solution-modal__photo--wide'
-                    : 'solution-modal__photo'
-                }
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${image.alt} vergrössern`}
+              <button
+                type="button"
+                className="solution-modal__photo"
+                aria-haspopup="dialog"
+                aria-label={`${image.alt} ${pick('vergrössern', 'enlarge')}`}
+                onClick={() => setLightboxIndex(index)}
                 key={image.src}
               >
                 <ResponsiveImage image={image} />
                 <span>
-                  {String(index + 1).padStart(2, '0')} · Aufnahme öffnen ↗
+                  {String(index + 1).padStart(2, '0')} · {pick('Vergrössern', 'Enlarge')}
+                  <Maximize2 aria-hidden="true" />
                 </span>
-              </a>
+              </button>
             ))}
           </div>
         </section>
@@ -190,8 +201,8 @@ export function SolutionModal({
         >
           <div className="solution-modal__section-heading">
             <div>
-              <span className="eyebrow">Projektwissen</span>
-              <h3 id={`solution-faq-${solution.slug}`}>Häufige Fragen</h3>
+              <span className="eyebrow">{pick('Projektwissen', 'Project knowledge')}</span>
+              <h3 id={`solution-faq-${solution.slug}`}>{pick('Häufige Fragen', 'Frequently asked questions')}</h3>
             </div>
           </div>
           <div className="faq-list">
@@ -210,8 +221,8 @@ export function SolutionModal({
         <section className="solution-modal__section solution-modal__related">
           <div className="solution-modal__section-heading">
             <div>
-              <span className="eyebrow">Verwandte Lösungen</span>
-              <h3>Weitere Komponenten im System.</h3>
+              <span className="eyebrow">{pick('Verwandte Lösungen', 'Related solutions')}</span>
+              <h3>{pick('Weitere Komponenten im System.', 'More components in the system.')}</h3>
             </div>
           </div>
           <div className="solution-modal__related-grid">
@@ -224,7 +235,7 @@ export function SolutionModal({
                 <ResponsiveImage image={item.featuredImage} />
                 <span>{item.no}</span>
                 <strong>{item.title}</strong>
-                <small>Im Modal öffnen ↗</small>
+                <small>{pick('Im Modal öffnen', 'Open in modal')} ↗</small>
               </button>
             ))}
           </div>
@@ -233,19 +244,27 @@ export function SolutionModal({
         <footer className="solution-modal__footer">
           <div>
             <span className="eyebrow eyebrow--light">
-              Massanfertigung anfragen
+              {pick('Massanfertigung anfragen', 'Request a custom solution')}
             </span>
-            <h3>Zeigen Sie uns Ihre Komponente.</h3>
+            <h3>{pick('Zeigen Sie uns Ihre Komponente.', 'Show us your component.')}</h3>
           </div>
           <Link className="button button--light" to={contactPath}>
-            Projekt beschreiben
+            {pick('Projekt beschreiben', 'Describe your project')}
             <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
           <button type="button" onClick={onClose}>
-            Schliessen
+            {pick('Schliessen', 'Close')}
           </button>
         </footer>
       </div>
+
+      <ImageLightbox
+        images={solution.gallery}
+        index={lightboxIndex}
+        onNavigate={setLightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        layer="over-modal"
+      />
     </div>,
     document.body,
   )

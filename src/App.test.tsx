@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 import { BeforeAfterSlider } from './components/BeforeAfterSlider'
+import { comparisons } from './data/site'
 
 describe('routing and redesigned experience', () => {
   it('shows all seven categories in one landing-page explorer', async () => {
@@ -161,6 +162,75 @@ describe('routing and redesigned experience', () => {
     const strip = await screen.findByLabelText('Vorher und nachher im Vergleich')
     expect(within(strip).getAllByText('Vorher').length).toBeGreaterThan(0)
     expect(within(strip).getAllByText('Nachher').length).toBeGreaterThan(0)
+  })
+
+  /*
+   * Kein Paar darf mehrfach im Streifen stehen, nur um ihn zu füllen. Die
+   * Kopie, die den Lauf nahtlos schliesst, ist inert und zählt deshalb nicht
+   * in die Bedienreihenfolge.
+   */
+  it('never repeats a comparison pair to fill the strip', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const strip = await screen.findByLabelText('Vorher und nachher im Vergleich')
+    expect(within(strip).getAllByRole('slider')).toHaveLength(comparisons.length)
+  })
+
+  it('opens a photo in a zoom layer instead of a new page', async () => {
+    render(
+      <MemoryRouter initialEntries={['/produkte/turbinen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    await screen.findByRole('heading', { level: 1, name: 'Turbinen' })
+    const triggers = screen.getAllByRole('button', { name: /vergrössern$/ })
+    expect(triggers.length).toBeGreaterThan(0)
+    /* Kein target="_blank" mehr – die Aufnahme bleibt im Seitenkontext. */
+    expect(screen.queryByRole('link', { name: /vergrössern$/ })).toBeNull()
+
+    fireEvent.click(triggers[0])
+    const zoom = screen.getByRole('dialog', { name: /vergrösserte Ansicht$/ })
+    expect(
+      within(zoom).getByRole('button', { name: 'Bild vergrössern' }),
+    ).toBeInTheDocument()
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(
+      screen.queryByRole('dialog', { name: /vergrösserte Ansicht$/ }),
+    ).toBeNull()
+  })
+
+  it('keeps the category modal open while the zoom layer is closed', async () => {
+    render(
+      <MemoryRouter initialEntries={['/loesungen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    const modalTriggers = await screen.findAllByRole('button', {
+      name: /: Details öffnen$/,
+    })
+    fireEvent.click(modalTriggers[0])
+    const modal = screen.getByRole('dialog', { name: /Ventile & Armaturen/ })
+
+    fireEvent.click(within(modal).getAllByRole('button', { name: /vergrössern$/ })[0])
+    expect(
+      screen.getByRole('dialog', { name: /vergrösserte Ansicht$/ }),
+    ).toBeInTheDocument()
+
+    /* Escape schliesst nur die oberste Ebene. */
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(
+      screen.queryByRole('dialog', { name: /vergrösserte Ansicht$/ }),
+    ).toBeNull()
+    expect(
+      screen.getByRole('dialog', { name: /Ventile & Armaturen/ }),
+    ).toBeInTheDocument()
   })
 
   it('closes the mobile menu with Escape and returns focus', async () => {

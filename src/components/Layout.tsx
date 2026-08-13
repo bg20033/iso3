@@ -3,11 +3,12 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from './Footer'
 import { Header } from './Header'
-import { MobileDock } from './MobileDock'
 import { SeoHead } from './SeoHead'
+import { useLanguage } from '../i18n'
 
 export function Layout() {
   const { pathname } = useLocation()
+  const { pick } = useLanguage()
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -16,7 +17,7 @@ export function Layout() {
   return (
     <div className="site">
       <a className="skip-link" href="#inhalt">
-        Zum Inhalt springen
+        {pick('Zum Inhalt springen', 'Skip to content')}
       </a>
       <SeoHead />
       <Header />
@@ -35,7 +36,6 @@ export function Layout() {
         </AnimatePresence>
       </main>
       <Footer />
-      <MobileDock />
     </div>
   )
 }

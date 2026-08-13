@@ -1,8 +1,10 @@
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowLeft, ArrowUpRight, Maximize2 } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import BlurText from '../components/BlurText'
 import { Category3DExplorer } from '../components/Category3DExplorer'
 import GlareHover from '../components/GlareHover'
+import { ImageLightbox } from '../components/ImageLightbox'
 import ReflectiveCard from '../components/ReflectiveCard'
 import { ResponsiveImage } from '../components/ResponsiveImage'
 import ScrollReveal from '../components/ScrollReveal'
@@ -11,18 +13,20 @@ import SpotlightCard from '../components/SpotlightCard'
 import { useInteractiveVisuals } from '../components/useInteractiveVisuals'
 import {
   productPath,
-  solutionBySlug,
-  solutions,
 } from '../data/site'
+import { findLocalizedSolution, useLanguage, useLocalizedSite } from '../i18n'
 
 export default function LoesungDetail() {
   const { slug } = useParams()
-  const solution = solutionBySlug(slug)
+  const { pick } = useLanguage()
+  const { solutions } = useLocalizedSite()
+  const solution = findLocalizedSolution(solutions, slug)
   const interactive = useInteractiveVisuals()
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   if (!solution) return <Navigate to="/nicht-gefunden" replace />
   const related = solution.relatedSlugs
-    .map((relatedSlug) => solutionBySlug(relatedSlug))
+    .map((relatedSlug) => findLocalizedSolution(solutions, relatedSlug))
     .filter((item) => item !== undefined)
 
   return (
@@ -30,10 +34,10 @@ export default function LoesungDetail() {
       <section className="detail-hero">
         <div className="shell">
           <div className="detail-hero__content">
-            <nav className="crumbs detail-crumbs" aria-label="Brotkrumen">
-              <Link to="/">Start</Link>
+            <nav className="crumbs detail-crumbs" aria-label={pick('Brotkrumen', 'Breadcrumbs')}>
+              <Link to="/">{pick('Start', 'Home')}</Link>
               <span aria-hidden="true">/</span>
-              <Link to="/loesungen">Lösungen</Link>
+              <Link to="/loesungen">{pick('Lösungen', 'Solutions')}</Link>
               <span aria-hidden="true">/</span>
               <span>{solution.shortTitle}</span>
             </nav>
@@ -47,7 +51,7 @@ export default function LoesungDetail() {
             <ResponsiveImage image={solution.featuredImage} eager />
             <div className="detail-hero__scan" aria-hidden="true" />
             <span className="detail-hero__code" aria-hidden="true">
-              ISO · {solution.no} / MASSANFERTIGUNG
+              ISO · {solution.no} / {pick('MASSANFERTIGUNG', 'CUSTOM MADE')}
             </span>
           </div>
         </div>
@@ -57,19 +61,18 @@ export default function LoesungDetail() {
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">3D · Aufbau</span>
-              <h2>Bauteil und Dämmkissen im Zusammenspiel.</h2>
+              <span className="eyebrow">3D · {pick('Aufbau', 'Design')}</span>
+              <h2>{pick('Bauteil und Dämmkissen im Zusammenspiel.', 'Component and insulation working together.')}</h2>
             </div>
             <p>
-              Drehen Sie das Bauteil und nehmen Sie die Isolierung ab. Die
-              Darstellung zeigt das Konstruktionsprinzip dieser Kategorie.
+              {pick('Drehen Sie das Bauteil und nehmen Sie die Isolierung ab. Die Darstellung zeigt das Konstruktionsprinzip dieser Kategorie.', 'Rotate the component and remove the insulation. The model shows the design principle for this category.')}
             </p>
           </div>
           <Category3DExplorer
             mode="single"
             solutions={[solution]}
             initialSolution={solution}
-            label={`Interaktives 3D-Modell: ${solution.title}`}
+            label={`${pick('Interaktives 3D-Modell', 'Interactive 3D model')}: ${solution.title}`}
           />
         </div>
       </section>
@@ -80,31 +83,31 @@ export default function LoesungDetail() {
             <SolutionSidebar
               solutions={solutions}
               activeSlug={solution.slug}
-              label="Lösungen"
+              label={pick('Lösungen', 'Solutions')}
             />
           </aside>
           <div>
             <div className="detail-copy">
               <div>
-                <span className="eyebrow">Anwendung</span>
+                <span className="eyebrow">{pick('Anwendung', 'Application')}</span>
                 <ScrollReveal>
-                  Passend zur Anlage. Praktisch im Service.
+                  {pick('Passend zur Anlage. Praktisch im Service.', 'Made for the plant. Practical in service.')}
                 </ScrollReveal>
               </div>
               <div className="detail-story">
                 <article className="detail-story__block">
-                  <span>01 · Ausgangslage</span>
+                  <span>01 · {pick('Ausgangslage', 'Challenge')}</span>
                   <p>{solution.problem}</p>
                 </article>
                 <article className="detail-story__block">
-                  <span>02 · IsoMat Lösung</span>
+                  <span>02 · {pick('IsoMat Lösung', 'IsoMat solution')}</span>
                   <p>{solution.approach}</p>
                 </article>
               </div>
             </div>
 
             <div className="detail-benefits">
-              <span className="eyebrow">Vorteile</span>
+              <span className="eyebrow">{pick('Vorteile', 'Benefits')}</span>
               <div className="detail-benefit-grid">
                 {solution.benefits.map((benefit, index) => (
                   <SpotlightCard
@@ -120,7 +123,7 @@ export default function LoesungDetail() {
             </div>
 
             <article className="detail-applications">
-              <span className="eyebrow">Typische Komponenten</span>
+              <span className="eyebrow">{pick('Typische Komponenten', 'Typical components')}</span>
               <div className="tag-list">
                 {solution.applications.map((application) => (
                   <span key={application}>{application}</span>
@@ -130,8 +133,8 @@ export default function LoesungDetail() {
 
             <section className="detail-faq" aria-labelledby="faq-title">
               <div className="detail-faq__heading">
-                <span className="eyebrow">Projektwissen</span>
-                <h2 id="faq-title">Häufige Fragen</h2>
+                <span className="eyebrow">{pick('Projektwissen', 'Project knowledge')}</span>
+                <h2 id="faq-title">{pick('Häufige Fragen', 'Frequently asked questions')}</h2>
               </div>
               <div className="faq-list">
                 {solution.faqs.map((faq, index) => (
@@ -153,10 +156,10 @@ export default function LoesungDetail() {
         <div className="shell">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">Referenzen</span>
-              <BlurText as="h2" text={`Einblicke: ${solution.title}`} />
+              <span className="eyebrow">{pick('Referenzen', 'References')}</span>
+              <BlurText as="h2" text={`${pick('Einblicke', 'Examples')}: ${solution.title}`} />
             </div>
-            <p>{solution.gallery.length} reale Aufnahmen aus dem IsoMat-Archiv.</p>
+            <p>{solution.gallery.length} {pick('reale Aufnahmen aus dem IsoMat-Archiv.', 'real images from the IsoMat archive.')}</p>
           </div>
           <div className="photo-grid">
             {solution.gallery.map((image, index) => (
@@ -171,34 +174,43 @@ export default function LoesungDetail() {
                 glareAngle={-38}
                 glareSize={180}
                 transitionDuration={700}
-                className={index % 7 === 0 ? 'photo-grid__wide' : undefined}
                 key={image.src}
               >
-                <a
-                  href={image.src}
+                <button
+                  type="button"
                   className="photo-card"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`${image.alt} vergrössern`}
+                  aria-haspopup="dialog"
+                  aria-label={`${image.alt} ${pick('vergrössern', 'enlarge')}`}
+                  onClick={() => setLightboxIndex(index)}
                 >
                   <ResponsiveImage image={image} />
-                  <span>Aufnahme öffnen ↗</span>
-                </a>
+                  <span>
+                    {pick('Vergrössern', 'Enlarge')}
+                    <Maximize2 aria-hidden="true" />
+                  </span>
+                </button>
               </GlareHover>
             ))}
           </div>
         </div>
       </section>
 
+      <ImageLightbox
+        images={solution.gallery}
+        index={lightboxIndex}
+        onNavigate={setLightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+      />
+
       <section className="section section--metal related-section">
         <div className="shell">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">Verwandte Lösungen</span>
-              <h2>Weitere Komponenten im System.</h2>
+              <span className="eyebrow">{pick('Verwandte Lösungen', 'Related solutions')}</span>
+              <h2>{pick('Weitere Komponenten im System.', 'More components in the system.')}</h2>
             </div>
             <Link className="text-link" to="/loesungen">
-              Alle Lösungen <ArrowUpRight aria-hidden="true" />
+              {pick('Alle Lösungen', 'All solutions')} <ArrowUpRight aria-hidden="true" />
             </Link>
           </div>
           <div className="related-grid">
@@ -213,7 +225,7 @@ export default function LoesungDetail() {
                   <span>{item.no}</span>
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>
-                  <b>Details öffnen ↗</b>
+                  <b>{pick('Details öffnen', 'Open details')} ↗</b>
                 </Link>
               </ReflectiveCard>
             ))}
@@ -223,13 +235,13 @@ export default function LoesungDetail() {
 
       <section className="contact-band">
         <div className="shell contact-band__inner">
-          <span className="eyebrow eyebrow--light">Massanfertigung anfragen</span>
-          <h2>Zeigen Sie uns Ihre Komponente.</h2>
+          <span className="eyebrow eyebrow--light">{pick('Massanfertigung anfragen', 'Request a custom solution')}</span>
+          <h2>{pick('Zeigen Sie uns Ihre Komponente.', 'Show us your component.')}</h2>
           <Link className="button button--light" to="/kontakt">
-            Projekt beschreiben <ArrowUpRight size={18} aria-hidden="true" />
+            {pick('Projekt beschreiben', 'Describe your project')} <ArrowUpRight size={18} aria-hidden="true" />
           </Link>
           <Link className="detail-back detail-back--light" to="/loesungen">
-            <ArrowLeft size={17} aria-hidden="true" /> Alle Lösungen
+            <ArrowLeft size={17} aria-hidden="true" /> {pick('Alle Lösungen', 'All solutions')}
           </Link>
         </div>
       </section>

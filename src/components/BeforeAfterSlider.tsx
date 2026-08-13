@@ -5,6 +5,7 @@ import {
   type KeyboardEvent,
 } from 'react'
 import { MoveHorizontal } from 'lucide-react'
+import { useLanguage } from '../i18n'
 
 type ComparisonImage = {
   src: string
@@ -36,14 +37,15 @@ export function BeforeAfterSlider({
   name,
   sizes,
 }: BeforeAfterSliderProps) {
+  const { pick } = useLanguage()
   const [position, setPosition] = useState(50)
   const imageSizes =
     sizes ?? (compact ? '(max-width: 620px) 84vw, 34vw' : '(max-width: 900px) calc(100vw - 2rem), 52vw')
   const loading = priority ? 'eager' : 'lazy'
   const fetchPriority = priority ? 'high' : 'auto'
   const sliderLabel = name
-    ? `Vergleich zwischen Vorher und Nachher – ${name}`
-    : 'Vergleich zwischen Vorher und Nachher'
+    ? `${pick('Vergleich zwischen Vorher und Nachher', 'Before and after comparison')} – ${name}`
+    : pick('Vergleich zwischen Vorher und Nachher', 'Before and after comparison')
 
   const handleKeyDown = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
     let nextPosition: number | undefined
@@ -71,10 +73,22 @@ export function BeforeAfterSlider({
     setPosition(nextPosition)
   }, [])
 
+  /*
+   * Hoch- und Querformate liegen gemischt im Archiv. Ohne das eigene
+   * Seitenverhältnis schneidet ein fixer Kartenrahmen das Bauteil weg.
+   */
+  const aspect =
+    before.width && before.height ? `${before.width} / ${before.height}` : undefined
+
   return (
     <figure
       className={`before-after${compact ? ' before-after--compact' : ''}`}
-      style={{ '--comparison-position': `${position}%` } as CSSProperties}
+      style={
+        {
+          '--comparison-position': `${position}%`,
+          ...(aspect ? { '--comparison-aspect': aspect } : {}),
+        } as CSSProperties
+      }
     >
       <picture className="before-after__image before-after__image--before">
         <source
@@ -111,10 +125,10 @@ export function BeforeAfterSlider({
       </div>
 
       <span className="before-after__label before-after__label--before">
-        {compact ? 'Vorher' : 'Vorher · ungedämmt'}
+        {compact ? pick('Vorher', 'Before') : pick('Vorher · ungedämmt', 'Before · uninsulated')}
       </span>
       <span className="before-after__label before-after__label--after">
-        {compact ? 'Nachher' : 'Nachher · IsoMat-Dämmkissen'}
+        {compact ? pick('Nachher', 'After') : pick('Nachher · IsoMat-Dämmkissen', 'After · IsoMat jacket')}
       </span>
 
       <span className="before-after__divider" aria-hidden="true">
@@ -131,7 +145,7 @@ export function BeforeAfterSlider({
         step="1"
         value={position}
         aria-label={sliderLabel}
-        aria-valuetext={`${position} Prozent Vorher, ${100 - position} Prozent Nachher`}
+        aria-valuetext={`${position} ${pick('Prozent Vorher', 'percent before')}, ${100 - position} ${pick('Prozent Nachher', 'percent after')}`}
         onChange={(event) => setPosition(Number(event.currentTarget.value))}
         onKeyDown={handleKeyDown}
       />
@@ -139,7 +153,7 @@ export function BeforeAfterSlider({
       {!compact && (
         <figcaption>
           <MoveHorizontal aria-hidden="true" />
-          Ziehen, um die Ausführung zu vergleichen
+          {pick('Ziehen, um die Ausführung zu vergleichen', 'Drag to compare the installation')}
         </figcaption>
       )}
     </figure>

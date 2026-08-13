@@ -10,10 +10,14 @@ import {
 import type { GalleryImage } from '../data/site'
 import { useNearViewport } from '../hooks/useNearViewport'
 import { useSceneVisuals } from './useInteractiveVisuals'
+import { useLanguage } from '../i18n'
 
 const DomeGallery = lazy(() => import('./DomeGallery'))
 
 export function ReferenceDome({ images }: { images: GalleryImage[] }) {
+  const { language, pick } = useLanguage()
+  const imageAlt = (image: GalleryImage, index: number) =>
+    language === 'de' ? image.alt : `Installed IsoMat insulation – reference ${String(index + 1).padStart(2, '0')}`
   // Der Globus läuft jetzt auch auf dem Telefon – dort ist er der Inhalt,
   // nicht nur Zierde.
   const interactive = useSceneVisuals()
@@ -23,11 +27,13 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
   const [ready, setReady] = useState(false)
   const domeImages = useMemo(
     () =>
-      images.map((image) => ({
+      images.map((image, index) => ({
         src: image.thumb,
-        alt: image.alt,
+        alt: language === 'de'
+          ? image.alt
+          : `Installed IsoMat insulation – reference ${String(index + 1).padStart(2, '0')}`,
       })),
-    [images],
+    [images, language],
   )
   const markReady = useCallback(() => setReady(true), [])
 
@@ -37,19 +43,19 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
 
   const staticGallery = (
     <div className="reference-static-grid">
-      {images.slice(0, 12).map((image) => (
+      {images.slice(0, 12).map((image, index) => (
         <a
           href={image.src}
           target="_blank"
           rel="noreferrer"
-          aria-label={`${image.alt} vergrössern`}
+          aria-label={`${imageAlt(image, index)} ${pick('vergrössern', 'enlarge')}`}
           key={image.src}
         >
           <img
             src={image.thumb}
             width={image.width}
             height={image.height}
-            alt={image.alt}
+            alt={imageAlt(image, index)}
             loading="lazy"
             decoding="async"
           />

@@ -6,26 +6,30 @@ import { SolutionCircularGallery } from '../components/SolutionCircularGallery'
 import { ComparisonMarquee } from '../components/ComparisonMarquee'
 import { FaqAccordion } from '../components/FaqAccordion'
 import {
-  coreBenefits,
   featuredReferences,
-  generalFaqs,
-  processSteps,
-  solutions,
+  heroImage,
 } from '../data/site'
+import { useLanguage, useLocalizedSite } from '../i18n'
 
 export default function Home() {
+  const { pick } = useLanguage()
+  const { coreBenefits, generalFaqs, processSteps, solutions } = useLocalizedSite()
   return (
     <>
       <section className="landing-hero">
+        {/*
+          Breitendeskriptoren statt media-Quellen: Nur so wählt der Browser
+          dasselbe Bild wie der Preload im <head> (siehe seo.ts) – sonst lädt
+          er zwei Fassungen desselben Motivs.
+        */}
         <picture className="landing-hero__media">
-          <source media="(max-width: 640px)" srcSet="/hero-industrial-640.webp" />
-          <source media="(max-width: 900px)" srcSet="/hero-industrial-800.webp" />
-          <source media="(max-width: 1440px)" srcSet="/hero-industrial-1200.webp" />
           <img
-            src="/hero-industrial.webp"
-            alt="Industrieanlage mit Rohrleitungen, Armaturen und Metallkonstruktion"
-            width="1452"
-            height="1088"
+            src={heroImage.src}
+            srcSet={heroImage.srcSet}
+            sizes={heroImage.sizes}
+            alt={pick('Industrieanlage mit Rohrleitungen, Armaturen und Metallkonstruktion', 'Industrial plant with pipework, valves and steel structures')}
+            width={1451}
+            height={1084}
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -34,41 +38,39 @@ export default function Home() {
 
         <div className="shell landing-hero__inner">
           <div className="landing-hero__content">
-            <span className="landing-hero__kicker">IsoMat · Isoliertechnik nach Mass</span>
-            <h1>Wärme im System. Zugang im Service.</h1>
+            <span className="landing-hero__kicker">{pick('IsoMat · Isoliertechnik nach Mass', 'IsoMat · Made-to-measure insulation')}</span>
+            <h1>{pick('Wärme im System. Zugang im Service.', 'Heat stays in. Access stays open.')}</h1>
             <p>
-              Massgefertigte, abnehmbare Dämmkissen für industrielle Anlagen –
-              konstruiert für Ihre Geometrie, Temperatur und Wartung.
+              {pick('Massgefertigte, abnehmbare Dämmkissen für industrielle Anlagen – konstruiert für Ihre Geometrie, Temperatur und Wartung.', 'Custom-made, removable insulation jackets for industrial plants – designed for your geometry, temperature and maintenance needs.')}
             </p>
             <div className="button-row">
               <a className="button button--signal" href="#modelle">
-                Lösungen in 3D <ArrowUpRight aria-hidden="true" />
+                {pick('Lösungen in 3D', 'Explore in 3D')} <ArrowUpRight aria-hidden="true" />
               </a>
               <Link className="button landing-hero__secondary" to="/kontakt">
-                Projekt anfragen
+                {pick('Projekt anfragen', 'Request a project')}
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <dl className="landing-proof" aria-label="IsoMat auf einen Blick">
-        <div><dt>Fertigung</dt><dd>In Spreitenbach</dd></div>
-        <div><dt>Ausführung</dt><dd>Jedes Teil ein Unikat</dd></div>
-        <div><dt>Wartung</dt><dd>Abnehmbar & wiederverwendbar</dd></div>
-        <div><dt>Erfahrung</dt><dd>15+ Jahre</dd></div>
+      <dl className="landing-proof" aria-label={pick('IsoMat auf einen Blick', 'IsoMat at a glance')}>
+        <div><dt>{pick('Fertigung', 'Production')}</dt><dd>{pick('In Spreitenbach', 'In Spreitenbach')}</dd></div>
+        <div><dt>{pick('Ausführung', 'Design')}</dt><dd>{pick('Jedes Teil ein Unikat', 'Every part is unique')}</dd></div>
+        <div><dt>{pick('Wartung', 'Maintenance')}</dt><dd>{pick('Abnehmbar & wiederverwendbar', 'Removable & reusable')}</dd></div>
+        <div><dt>{pick('Erfahrung', 'Experience')}</dt><dd>15+ {pick('Jahre', 'years')}</dd></div>
       </dl>
 
       <section className="section section--light">
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">01 · Kategorien</span>
-              <h2>Für jede Anlage die passende Form.</h2>
+              <span className="eyebrow">01 · {pick('Kategorien', 'Categories')}</span>
+              <h2>{pick('Für jede Anlage die passende Form.', 'The right shape for every plant.')}</h2>
             </div>
             <p>
-              Von einzelnen Ventilen bis zu kompletten Turbinen: ziehen Sie
-              durch die Kategorien und öffnen Sie die Aufnahmen dazu.
+              {pick('Von einzelnen Ventilen bis zu kompletten Turbinen: ziehen Sie durch die Kategorien und öffnen Sie die Aufnahmen dazu.', 'From individual valves to complete turbines: drag through the categories and open the corresponding images.')}
             </p>
           </div>
           <SolutionCircularGallery solutions={solutions} bend={3} />
@@ -79,12 +81,11 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">02 · Lösungen in 3D</span>
-              <h2>Sieben Bauteile. Eine klare Konstruktion.</h2>
+              <span className="eyebrow">02 · {pick('Lösungen in 3D', 'Solutions in 3D')}</span>
+              <h2>{pick('Sieben Bauteile. Eine klare Konstruktion.', 'Seven components. One clear design principle.')}</h2>
             </div>
             <p>
-              Wählen Sie eine Kategorie, drehen Sie das Bauteil und nehmen Sie
-              das Dämmkissen ab. Jede Form basiert auf einer typischen Anwendung.
+              {pick('Wählen Sie eine Kategorie, drehen Sie das Bauteil und nehmen Sie das Dämmkissen ab. Jede Form basiert auf einer typischen Anwendung.', 'Choose a category, rotate the component and remove the insulation jacket. Every shape is based on a typical application.')}
             </p>
           </div>
           <Category3DExplorer mode="hub" solutions={solutions} />
@@ -101,12 +102,11 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign">
             <div>
-              <span className="eyebrow">03 · Warum IsoMat</span>
-              <h2>Für den Betrieb gebaut.</h2>
+              <span className="eyebrow">03 · {pick('Warum IsoMat', 'Why IsoMat')}</span>
+              <h2>{pick('Für den Betrieb gebaut.', 'Built for operation.')}</h2>
             </div>
             <p>
-              Eine technische Isolierung muss Energie sparen, Menschen schützen
-              und bei der nächsten Revision wieder an ihren Platz passen.
+              {pick('Eine technische Isolierung muss Energie sparen, Menschen schützen und bei der nächsten Revision wieder an ihren Platz passen.', 'Technical insulation must save energy, protect people and fit back into place after the next overhaul.')}
             </p>
           </div>
           <div className="home-benefits">
@@ -124,11 +124,11 @@ export default function Home() {
       <section className="section process-section">
         <div className="shell process-section__grid">
           <div className="process-section__intro">
-            <span className="eyebrow">04 · Prozess</span>
-            <h2>Vom Aufmass zum fertigen Dämmkissen.</h2>
-            <p>Fünf klare Schritte führen von der realen Anlage zur passgenauen Lösung.</p>
+            <span className="eyebrow">04 · {pick('Prozess', 'Process')}</span>
+            <h2>{pick('Vom Aufmass zum fertigen Dämmkissen.', 'From measurement to the finished jacket.')}</h2>
+            <p>{pick('Fünf klare Schritte führen von der realen Anlage zur passgenauen Lösung.', 'Five clear steps lead from the real plant to a precision-fit solution.')}</p>
             <Link className="text-link" to="/ueber-uns">
-              So arbeitet IsoMat <MoveRight aria-hidden="true" />
+              {pick('So arbeitet IsoMat', 'How IsoMat works')} <MoveRight aria-hidden="true" />
             </Link>
           </div>
           <ol className="process-steps">
@@ -146,10 +146,10 @@ export default function Home() {
         <div className="shell">
           <div className="section-heading section-heading--redesign section-heading--dark">
             <div>
-              <span className="eyebrow">05 · Referenzen</span>
-              <h2>Reale Anlagen. Reale Ausführungen.</h2>
+              <span className="eyebrow">05 · {pick('Referenzen', 'References')}</span>
+              <h2>{pick('Reale Anlagen. Reale Ausführungen.', 'Real plants. Real installations.')}</h2>
             </div>
-            <p>Einblicke aus Energieanlagen, Heizungszentralen und Sonderbau.</p>
+            <p>{pick('Einblicke aus Energieanlagen, Heizungszentralen und Sonderbau.', 'Examples from energy plants, heating plants and custom projects.')}</p>
           </div>
           <ReferenceDome images={featuredReferences} />
         </div>
@@ -158,9 +158,9 @@ export default function Home() {
       <section className="section section--light">
         <div className="shell faq-layout faq-layout--redesign">
           <div className="faq-intro">
-            <span className="eyebrow">06 · Häufige Fragen</span>
-            <h2>Was Betreiber vor der Anfrage wissen wollen.</h2>
-            <p>Ein Anruf unter 056 245 16 28 klärt viele Fälle in wenigen Minuten.</p>
+            <span className="eyebrow">06 · {pick('Häufige Fragen', 'Frequently asked questions')}</span>
+            <h2>{pick('Was Betreiber vor der Anfrage wissen wollen.', 'What operators want to know before enquiring.')}</h2>
+            <p>{pick('Ein Anruf unter 056 245 16 28 klärt viele Fälle in wenigen Minuten.', 'A call to 056 245 16 28 resolves many questions in just a few minutes.')}</p>
           </div>
           <FaqAccordion entries={generalFaqs} />
         </div>
@@ -168,10 +168,10 @@ export default function Home() {
 
       <section className="contact-band contact-band--redesign">
         <div className="shell contact-band__inner">
-          <span className="eyebrow eyebrow--light">Ihr Bauteil ist kein Standard?</span>
-          <h2>Dann sollte die Isolierung auch keine sein.</h2>
+          <span className="eyebrow eyebrow--light">{pick('Ihr Bauteil ist kein Standard?', 'Is your component anything but standard?')}</span>
+          <h2>{pick('Dann sollte die Isolierung auch keine sein.', 'Then its insulation should be too.')}</h2>
           <Link className="button button--light" to="/kontakt">
-            Projekt anfragen <ArrowUpRight aria-hidden="true" />
+            {pick('Projekt anfragen', 'Request a project')} <ArrowUpRight aria-hidden="true" />
           </Link>
         </div>
       </section>

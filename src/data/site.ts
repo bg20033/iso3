@@ -380,27 +380,79 @@ export const coreBenefits = [
   },
 ] as const
 
+/*
+ * Curated for the reference dome: only finished, visibly insulated
+ * installations. Bare components and before/after source images belong in
+ * the comparison strip, not in this gallery.
+ */
+const referenceImagePicks: Partial<Record<SolutionSlug, number[]>> = {
+  'ventile-armaturen': [0, 1, 2],
+  heizungszentralen: [0, 1, 2],
+  ascheaustragssysteme: [0, 2],
+  revisionstueren: [0, 1, 2],
+  kompensatoren: [0, 1],
+  turbinen: [1, 2],
+  sonderbau: [2],
+}
+
 export const featuredReferences = solutions.flatMap((solution) =>
-  solution.gallery.slice(0, 3),
+  (referenceImagePicks[solution.slug] ?? [])
+    .map((index) => solution.gallery[index])
+    .filter((image) => image !== undefined),
 )
+
+/*
+ * Das Heldenbild ist auf der Startseite das grösste Element über dem Falz und
+ * bestimmt damit, wann die Seite als geladen gilt. Der Preload im <head> und
+ * das <img> müssen exakt dieselben Kandidaten nennen – sonst lädt der Browser
+ * zwei Fassungen desselben Motivs.
+ */
+export const heroImage = {
+  src: '/hero-industrial.webp',
+  srcSet: [
+    '/hero-industrial-640.webp 640w',
+    '/hero-industrial-800.webp 800w',
+    '/hero-industrial-1200.webp 1200w',
+    '/hero-industrial.webp 1451w',
+  ].join(', '),
+  sizes: '100vw',
+} as const
+
+/** Bildgrössen von ResponsiveImage – Preload und <img> müssen sich decken. */
+export const responsiveImageSizes =
+  '(max-width: 720px) 92vw, (max-width: 1200px) 48vw, 720px'
+
+export const responsiveImageSrcSet = (image: GalleryImage) =>
+  `${image.thumb} 480w, ${image.src} 1280w`
 
 export type Comparison = {
   slug: SolutionSlug
+  /** Unterscheidet mehrere Paare derselben Kategorie. */
+  id?: string
+  /** Optionale Kurzbeschreibung des gezeigten Bauteils. */
+  caption?: string
   before: GalleryImage
   after: GalleryImage
 }
 
 /*
- * Vorher/Nachher-Paare für den Vergleichslauf.
+ * Vorher/Nachher-Paare.
  *
- * Bisher liegt nur für Ventile eine Aufnahme des ungedämmten Zustands vor.
- * Für jede weitere Kategorie genügt es, das Paar unter
- * /media/<slug>/before-after/ abzulegen und hier einzutragen – der Lauf nimmt
- * es dann automatisch auf und wiederholt sich entsprechend seltener.
+ * Es dürfen beliebig viele Einträge stehen – auch mehrere pro Kategorie.
+ * Vorgehen für ein neues Paar:
+ *   1. Aufnahmen unter public/media/<slug>/before-after/ ablegen
+ *      (je 1280er und 640er Variante, gleicher Bildausschnitt für beide
+ *      Zustände, damit der Regler sauber überblendet).
+ *   2. Hier einen Eintrag ergänzen; bei mehreren Paaren pro Kategorie eine
+ *      eigene `id` vergeben.
+ * Darstellung und Wiederholung passen sich automatisch an: ab drei Paaren
+ * läuft das Band, darunter steht ein ruhiges Raster ohne Dopplungen.
  */
 export const comparisons: Comparison[] = [
   {
     slug: 'ventile-armaturen',
+    id: 'ventil-blau',
+    caption: 'Absperrventil mit abnehmbarem Dämmkissen',
     before: {
       src: '/media/ventile/before-after/ventil-vorher-1280.webp',
       thumb: '/media/ventile/before-after/ventil-vorher-640.webp',
@@ -416,7 +468,49 @@ export const comparisons: Comparison[] = [
       height: 1714,
     },
   },
+  {
+    slug: 'heizungszentralen',
+    id: 'rohrknoten',
+    caption: 'Rohrknoten mit Flanschen und Messstelle',
+    before: {
+      src: '/media/heizungszentralen/before-after/rohrknoten-vorher-1280.webp',
+      thumb: '/media/heizungszentralen/before-after/rohrknoten-vorher-640.webp',
+      alt: 'Ungedämmter Rohrknoten mit freiliegenden Flanschen in einer Heizungszentrale',
+      width: 1280,
+      height: 1706,
+    },
+    after: {
+      src: '/media/heizungszentralen/before-after/rohrknoten-nachher-1280.webp',
+      thumb: '/media/heizungszentralen/before-after/rohrknoten-nachher-640.webp',
+      alt: 'Derselbe Rohrknoten mit geschlossener IsoMat-Isolierung und zugänglicher Messstelle',
+      width: 1280,
+      height: 1706,
+    },
+  },
+  {
+    slug: 'sonderbau',
+    id: 'armaturengruppe',
+    caption: 'Armaturengruppe mit Kombinationsisolierung',
+    before: {
+      src: '/media/sonderbau/before-after/armaturengruppe-vorher-1280.webp',
+      thumb: '/media/sonderbau/before-after/armaturengruppe-vorher-640.webp',
+      alt: 'Ungedämmte Armaturengruppe mit Flanschen und Handrädern entlang einer Wand',
+      width: 1280,
+      height: 956,
+    },
+    after: {
+      src: '/media/sonderbau/before-after/armaturengruppe-nachher-1280.webp',
+      thumb: '/media/sonderbau/before-after/armaturengruppe-nachher-640.webp',
+      alt: 'Dieselbe Armaturengruppe mit massgefertigten IsoMat-Sonderkissen, Handräder bleiben bedienbar',
+      width: 1280,
+      height: 956,
+    },
+  },
 ]
+
+/** Eindeutiger Schlüssel eines Paares – auch bei mehreren pro Kategorie. */
+export const comparisonKey = (comparison: Comparison) =>
+  comparison.id ? `${comparison.slug}-${comparison.id}` : comparison.slug
 
 export function solutionBySlug(slug?: string) {
   return solutions.find(
@@ -431,10 +525,18 @@ export const solutionQuickviewPath = (solution: Solution) =>
   `/loesungen?solution=${encodeURIComponent(solution.productSlug)}`
 
 /* ==========================================================================
-   ZU PRÜFEN – die folgenden Blöcke beschreiben den branchenüblichen Aufbau
-   einer Isoliermatratze und typische Einsatzfelder. Sie stammen NICHT aus
-   der IsoMat-Präsentation. Vor der Live-Schaltung mit der Fertigung
-   abgleichen und Materialbezeichnungen konkretisieren.
+   GEPARKT & ZU PRÜFEN – `jacketLayers` und `industries` beschreiben den
+   branchenüblichen Aufbau einer Isoliermatratze und typische Einsatzfelder.
+   Sie stammen NICHT aus der IsoMat-Präsentation.
+
+   Beide Blöcke werden derzeit nirgends angezeigt: Die Bauteile, die sie
+   gerendert haben (JacketDiagram, IndustryGrid), sind mit dem Redesign
+   entfallen. Sie bleiben hier stehen, damit die Inhalte nicht verloren gehen
+   – vor einer Wiederverwendung mit der Fertigung abgleichen.
+
+   Achtung: `generalFaqs` weiter unten steht NICHT unter diesem Vorbehalt-
+   Hinweis, ist aber ebenfalls ungeprüft und auf der Startseite sichtbar.
+   Siehe docs/INHALTE-ZU-PRUEFEN.md.
    ========================================================================== */
 
 export type JacketLayer = {
