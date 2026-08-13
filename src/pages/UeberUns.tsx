@@ -93,7 +93,7 @@ export default function UeberUns() {
 
       <section className="section section--black references-section">
         <div className="shell">
-          <div className="section-heading section-heading--redesign section-heading--dark">
+          <div className="section-heading section-heading--redesign">
             <div><span className="eyebrow">{pick('Aus der Fertigung', 'From production')}</span><h2>{pick('Lösungen aus realen Anlagen.', 'Solutions from real plants.')}</h2></div>
             <p>{pick('Ein Querschnitt durch Komponenten und Einbausituationen.', 'A selection of components and installation situations.')}</p>
           </div>

@@ -144,7 +144,7 @@ export default function Home() {
 
       <section className="section section--black references-section">
         <div className="shell">
-          <div className="section-heading section-heading--redesign section-heading--dark">
+          <div className="section-heading section-heading--redesign">
             <div>
               <span className="eyebrow">05 · {pick('Referenzen', 'References')}</span>
               <h2>{pick('Reale Anlagen. Reale Ausführungen.', 'Real plants. Real installations.')}</h2>

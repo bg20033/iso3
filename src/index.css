@@ -1702,7 +1702,7 @@ p {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .reactbits-gallery-links a:nth-child(4) {
+  .reactbits-gallery-links .reactbits-gallery-label:nth-child(4) {
     border-right: 0;
   }
 
@@ -1859,11 +1859,11 @@ p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .reactbits-gallery-links a:nth-child(4) {
+  .reactbits-gallery-links .reactbits-gallery-label:nth-child(4) {
     border-right: 1px solid var(--edge);
   }
 
-  .reactbits-gallery-links a:nth-child(2n) {
+  .reactbits-gallery-links .reactbits-gallery-label:nth-child(2n) {
     border-right: 0;
   }
 
