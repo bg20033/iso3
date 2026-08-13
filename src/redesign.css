@@ -14,7 +14,6 @@ body {
 }
 
 .button,
-.menu-button,
 .model-explorer button,
 .contact-form input,
 .contact-form select {
@@ -28,11 +27,6 @@ body {
 
 .header__bar {
   min-height: 72px;
-}
-
-.mobile-menu {
-  max-height: calc(100svh - var(--header-h));
-  overflow-y: auto;
 }
 
 /* Landing hero */
@@ -875,21 +869,6 @@ body {
 }
 
 @media (max-width: 800px) {
-  .mobile-menu {
-    position: fixed;
-    top: var(--header-h);
-    right: 0;
-    bottom: 0;
-    left: auto;
-    width: min(360px, 100%);
-    height: calc(100svh - var(--header-h));
-    max-height: none;
-    align-content: start;
-    overflow-y: auto;
-    border-left: 1px solid var(--edge);
-    box-shadow: -24px 24px 60px rgba(14, 17, 18, 0.18);
-  }
-
   .landing-hero,
   .landing-hero__inner {
     min-height: min(820px, 92svh);
@@ -1134,9 +1113,6 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .mobile-menu {
-    padding-top: 1.5rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

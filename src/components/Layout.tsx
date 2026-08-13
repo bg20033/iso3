@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from './Footer'
 import { Header } from './Header'
+import { MobileDock } from './MobileDock'
 import { SeoHead } from './SeoHead'
 import { useLanguage } from '../i18n'
 
@@ -36,6 +37,7 @@ export function Layout() {
         </AnimatePresence>
       </main>
       <Footer />
+      <MobileDock />
     </div>
   )
 }

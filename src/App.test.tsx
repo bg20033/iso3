@@ -233,18 +233,19 @@ describe('routing and redesigned experience', () => {
     ).toBeInTheDocument()
   })
 
-  it('closes the mobile menu with Escape and returns focus', async () => {
+  it('uses the mobile dock without a separate mobile menu', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     )
 
-    const menuButton = await screen.findByRole('button', { name: 'Menü öffnen' })
-    fireEvent.click(menuButton)
-    expect(screen.getByRole('navigation', { name: 'Mobile Navigation' })).toBeInTheDocument()
-    fireEvent.keyDown(document, { key: 'Escape' })
-    expect(screen.queryByRole('navigation', { name: 'Mobile Navigation' })).not.toBeInTheDocument()
-    expect(menuButton).toHaveFocus()
+    const dock = screen.getByRole('navigation', { name: 'Schnellnavigation' })
+    expect(within(dock).getByRole('button', { name: 'Start' })).toBeInTheDocument()
+    expect(within(dock).getByRole('button', { name: 'Lösungen' })).toBeInTheDocument()
+    expect(within(dock).getByRole('button', { name: 'IsoMat' })).toBeInTheDocument()
+    expect(within(dock).getByRole('button', { name: 'Anfrage' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Menü öffnen' })).toBeNull()
+    expect(screen.queryByRole('navigation', { name: 'Mobile Navigation' })).toBeNull()
   })
 })

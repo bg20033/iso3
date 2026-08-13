@@ -405,9 +405,8 @@ p {
   color: var(--white);
 }
 
-.language-switch--mobile {
-  width: max-content;
-  margin: 0.35rem 0 0.75rem;
+.mobile-language-switch {
+  display: none;
 }
 
 @media (max-width: 1240px) and (min-width: 801px) {
@@ -445,32 +444,6 @@ p {
 
 .header__cta {
   white-space: nowrap;
-}
-
-.menu-button {
-  display: none;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border: 1px solid var(--edge-strong);
-  background: transparent;
-  color: var(--ink);
-}
-
-.mobile-menu {
-  display: grid;
-  gap: 0.15rem;
-  padding: 1rem var(--gutter) 1.5rem;
-  border-top: 1px solid var(--edge);
-  background: var(--paper);
-}
-
-.mobile-menu > a:not(.button) {
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--edge);
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  text-transform: uppercase;
 }
 
 /* --- Hero ----------------------------------------------------------------- */
@@ -1628,6 +1601,60 @@ p {
   gap: 1.25rem;
 }
 
+/* --- Dock (mobile navigation) -------------------------------------------- */
+.mobile-dock {
+  position: fixed;
+  z-index: 150;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  height: 104px;
+  pointer-events: none;
+}
+
+.mobile-dock .dock-outer {
+  width: 100%;
+  margin: 0;
+  justify-content: center;
+}
+
+.mobile-dock .dock-panel {
+  bottom: 0.7rem;
+  gap: 0.3rem;
+  padding: 0.45rem;
+  border-color: var(--edge-strong);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 12px 40px rgba(14, 17, 18, 0.16);
+  backdrop-filter: blur(18px);
+  pointer-events: auto;
+}
+
+.mobile-dock .dock-item {
+  border-color: var(--edge);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+  color: var(--ink-soft);
+}
+
+.mobile-dock .dock-item.is-active {
+  border-color: var(--signal);
+  background: var(--signal);
+  color: var(--white);
+}
+
+.mobile-dock .dock-label {
+  border-color: var(--edge-strong);
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .benefit-card.card-spotlight:hover,
   .solution-card:hover {
@@ -1703,6 +1730,10 @@ p {
 }
 
 @media (max-width: 800px) {
+  body {
+    padding-bottom: 5.2rem;
+  }
+
   .header__nav,
   .header__actions {
     display: none;
@@ -1712,8 +1743,12 @@ p {
     grid-template-columns: 1fr auto;
   }
 
-  .menu-button {
-    display: grid;
+  .mobile-language-switch {
+    display: inline-flex;
+  }
+
+  .mobile-dock {
+    display: flex;
   }
 
   .brand__text {
@@ -1773,7 +1808,7 @@ p {
   }
 
   .footer {
-    padding-bottom: 3rem;
+    padding-bottom: 5.5rem;
   }
 }
 
