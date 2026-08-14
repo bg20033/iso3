@@ -14,7 +14,8 @@ type Pair = { comparison: Comparison; solution: Solution }
 function CompareCard({
   comparison,
   solution,
-}: Pair) {
+  duplicate = false,
+}: Pair & { duplicate?: boolean }) {
   const { language } = useLanguage()
   const englishCaption: Record<string, string> = {
     'ventile-armaturen-ventil-blau': 'Shut-off valve with removable insulation jacket',
@@ -27,6 +28,8 @@ function CompareCard({
   return (
     <div
       className="ref-marquee__card compare-card"
+      aria-hidden={duplicate}
+      inert={duplicate}
     >
       <BeforeAfterSlider
         compact
@@ -43,8 +46,16 @@ function CompareCard({
 }
 
 /**
- * Vorher/Nachher-Vergleiche. Der Streifen bleibt bewusst stehen, damit sich
- * jeder Regler zuverlässig mit Maus, Tastatur und Touch bedienen lässt.
+ * Vorher/Nachher-Vergleiche als endlos laufendes Band.
+ *
+ * Der Streifen wird genau einmal dupliziert und um die halbe Breite
+ * verschoben: Das Ende der ersten Kopie trifft dabei auf den Anfang der
+ * zweiten, der Übergang bleibt unsichtbar. Die zweite Kopie ist inert, damit
+ * ihre Regler nicht doppelt in die Bedienreihenfolge geraten.
+ *
+ * Damit sich die Regler ziehen lassen, hält der Lauf an, sobald der Zeiger
+ * über dem Streifen liegt oder der Fokus darin sitzt. Auf Tastgeräten gibt es
+ * kein Darüberfahren – dort wird von Hand gewischt statt gelaufen (siehe CSS).
  */
 export function ComparisonMarquee() {
   const { pick } = useLanguage()
@@ -64,10 +75,12 @@ export function ComparisonMarquee() {
     >
       <div
         className="ref-marquee__track"
+        style={{ '--count': pairs.length } as React.CSSProperties}
       >
-        {pairs.map((pair) => (
+        {[...pairs, ...pairs].map((pair, index) => (
           <CompareCard
-            key={comparisonKey(pair.comparison)}
+            key={`${comparisonKey(pair.comparison)}-${index}`}
+            duplicate={index >= pairs.length}
             {...pair}
           />
         ))}

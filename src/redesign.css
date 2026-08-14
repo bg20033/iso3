@@ -1256,11 +1256,17 @@ body {
    Endlose Aufnahmenreihe
    ========================================================================== */
 
+/*
+ * Der Streifen liegt zwischen zwei grosszügig gesetzten Abschnitten. Mit dem
+ * früheren knappen Innenabstand klemmte er dazwischen; jetzt atmet er, bleibt
+ * aber bewusst schmaler als ein voller Abschnitt – er ist ein Band, kein
+ * eigenes Kapitel.
+ */
 .ref-marquee {
   position: relative;
   overflow: hidden;
   border-block: 1px solid var(--edge);
-  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  padding-block: clamp(3rem, 6vw, 5rem);
   /* Die Kanten laufen weich aus, damit der Streifen nicht abgeschnitten wirkt */
   mask-image: linear-gradient(
     90deg,
@@ -1275,7 +1281,6 @@ body {
   display: flex;
   width: max-content;
   gap: 1px;
-  animation: ref-marquee-run calc(var(--count, 21) * 2.6s) linear infinite;
 }
 
 .ref-marquee:hover .ref-marquee__track,
@@ -1294,71 +1299,92 @@ body {
 
 .ref-marquee__card {
   display: grid;
-  width: clamp(200px, 22vw, 280px);
   gap: 0;
   background: var(--paper);
 }
 
-.ref-marquee__card:hover .ref-marquee__media img,
-.ref-marquee__card:focus-visible .ref-marquee__media img {
-  filter: saturate(1);
-  transform: scale(1.05);
-}
-
+/*
+ * Die Bildunterschrift steht bündig zur Bildkante – der frühere seitliche
+ * Innenabstand von 0.2rem verschob sie um drei Pixel und liess die Spalte
+ * schief wirken.
+ */
 .ref-marquee__label {
   display: flex;
   align-items: baseline;
-  gap: 0.55rem;
-  padding: 0.6rem 0.2rem 0;
+  gap: 0.6rem;
+  padding: 0.85rem 0 0;
   color: var(--ink-soft);
   font-family: var(--font-display);
   font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  transition: color 160ms ease;
+}
+
+.ref-marquee__label:hover,
+.ref-marquee__label:focus-visible {
+  color: var(--signal);
 }
 
 .ref-marquee__label b {
+  flex: none;
   color: var(--signal);
   font-size: 0.68rem;
   letter-spacing: 0.18em;
 }
 
-/* --- Vorher/Nachher als laufendes Band -----------------------------------
-   Jede Karte trägt beide Zustände nebeneinander. Der feste Schnitt in der
-   Mitte ersetzt den Regler: In einem laufenden Streifen lässt sich nichts
-   ziehen, die Gegenüberstellung muss auf einen Blick lesbar sein. */
-/*
+/* --- Vorher/Nachher als laufendes Band ------------------------------------
  * Einheitliche Bandhöhe, Breite nach Aufnahme: Hoch- und Querformate stehen
  * gemischt im Archiv. Ein fixer Kartenrahmen würde bei Hochformaten quer
- * durchs Bauteil schneiden, deshalb gibt die Aufnahme die Breite vor.
+ * durchs Bauteil schneiden, deshalb gibt die Aufnahme die Breite vor
+ * (siehe .before-after--compact).
  */
 .ref-marquee--compare .ref-marquee__card {
   flex: 0 0 auto;
-  width: min(calc(100vw - (2 * var(--gutter))), 350px);
-  scroll-snap-align: center;
+  width: auto;
+  max-width: calc(100vw - (2 * var(--gutter)));
 }
 
-.ref-marquee--compare {
-  overflow-x: auto;
-  mask-image: none;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-  scrollbar-color: var(--edge-strong) transparent;
-}
-
+/*
+ * Der Abstand steckt im Aussenrand der Karte, nicht in `gap`: Bei `gap` fehlt
+ * am Ende der Reihe genau eine Lücke, der Sprung bei -50 % wäre sichtbar.
+ * Als Aussenrand trägt jede Karte ihren Abstand selbst – beide Kopien sind
+ * dann exakt gleich breit und der Übergang liegt genau auf der Naht.
+ */
 .ref-marquee--compare .ref-marquee__track {
-  gap: clamp(1rem, 2vw, 2rem);
-  padding-inline: var(--gutter);
-  animation: none;
+  /* Ohne start würde die höchste Karte die anderen mitziehen und dabei das
+     Seitenverhältnis der Aufnahmen aushebeln. */
+  align-items: start;
+  gap: 0;
+  animation: ref-marquee-run calc(var(--count, 3) * 11s) linear infinite;
 }
 
+.ref-marquee--compare .compare-card {
+  margin-inline-end: clamp(1rem, 2vw, 2rem);
+}
+
+/*
+ * Nur eine Achse darf gesetzt sein: Stehen Breite und Höhe zugleich fest,
+ * ignoriert der Browser das Seitenverhältnis und beschneidet Hochformate quer
+ * durchs Bauteil. Am Schreibtisch gibt die Bandhöhe den Takt vor, die Breite
+ * folgt der Aufnahme – so stehen Hoch- und Querformate sauber nebeneinander.
+ */
 .compare-card .before-after--compact {
-  width: 100%;
-  height: clamp(240px, 25vw, 320px);
+  width: auto;
+  height: clamp(300px, 40vw, 380px);
+  max-width: calc(100vw - (2 * var(--gutter)));
   max-height: none;
   aspect-ratio: var(--comparison-aspect, 3 / 2);
   margin: 0;
+}
+
+/* Am Telefon ist die Breite der knappe Platz – dort führt sie. */
+@media (max-width: 620px) {
+  .compare-card .before-after--compact {
+    width: min(84vw, 380px);
+    height: auto;
+  }
 }
 
 .compare-card .before-after--compact .before-after__label {
@@ -1378,70 +1404,42 @@ body {
   height: 16px;
 }
 
-.compare-card .ref-marquee__label {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  padding-top: 0.75rem;
-}
-
-/* --- Vorher/Nachher als ruhiges Raster ------------------------------------
-   Solange erst ein oder zwei Paare vorliegen, wäre ein Endlosband entweder
-   leer oder es müsste dieselbe Aufnahme wiederholen. Dann stehen die Karten
-   mittig nebeneinander – ohne Lauf, ohne Dopplung. */
-.compare-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 2.5rem);
-  padding: clamp(1.75rem, 4vw, 3rem) var(--gutter);
-  border-block: 1px solid var(--edge);
-}
-
-.compare-grid .ref-marquee__card {
-  width: min(100%, clamp(320px, 46vw, 620px));
-  flex: 1 1 clamp(320px, 40vw, 560px);
-  max-width: 720px;
-}
-
-.compare-grid[data-count='1'] .ref-marquee__card {
-  flex: 0 1 min(100%, 720px);
-}
-
-@media (max-width: 620px) {
-  .compare-grid .ref-marquee__card {
-    width: 100%;
-    flex-basis: 100%;
-  }
-
-  .ref-marquee__card {
-    width: 62vw;
-  }
-
-  /* Am Telefon gibt die Breite den Takt vor, nicht die Höhe. */
-  .compare-card .before-after--compact {
-    height: min(112vw, 440px);
-  }
-}
-
 /*
- * Auf Tastgeräten gibt es kein Darüberfahren, mit dem sich der Lauf anhalten
- * liesse – ein Regler, der unter dem Finger wegfährt, wäre unbedienbar.
- * Dort wird deshalb von Hand gewischt statt automatisch gelaufen.
+ * Die Bildunterschriften sind ganze Sätze. In Versalien mit weiter Sperrung
+ * brechen sie in der schmalen Karte auf drei Zeilen und lassen sich kaum
+ * lesen – hier laufen sie deshalb in gemischter Schrift. Die Nummer bleibt
+ * als Marke gesperrt.
  */
+.compare-card .ref-marquee__label {
+  max-width: 42ch;
+  color: var(--ink);
+  font-size: 0.82rem;
+  letter-spacing: 0.005em;
+  line-height: 1.4;
+  text-transform: none;
+}
+
 @media (hover: none), (pointer: coarse) {
   .ref-marquee--compare {
     overflow-x: auto;
+    mask-image: none;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
   }
 
   .ref-marquee--compare .ref-marquee__track {
+    padding-inline: var(--gutter);
     animation: none;
   }
 
   .ref-marquee--compare .compare-card {
     scroll-snap-align: center;
+  }
+
+  /* Ohne Lauf braucht es die zweite Kopie nicht – sie wäre schlicht eine
+     Wiederholung am Ende des Streifens. */
+  .ref-marquee--compare .compare-card[inert] {
+    display: none;
   }
 }
 
@@ -1449,15 +1447,21 @@ body {
   /* Kein Selbstlauf – der Streifen wird von Hand geschoben */
   .ref-marquee {
     overflow-x: auto;
+    mask-image: none;
     scroll-snap-type: x mandatory;
   }
 
   .ref-marquee__track {
+    padding-inline: var(--gutter);
     animation: none;
   }
 
   .ref-marquee__card {
     scroll-snap-align: start;
+  }
+
+  .ref-marquee--compare .compare-card[inert] {
+    display: none;
   }
 }
 
