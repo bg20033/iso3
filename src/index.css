@@ -1253,6 +1253,27 @@ p {
   flex: 1 1 clamp(220px, 24%, 420px);
 }
 
+.photo-grid--paired > .glare-hover {
+  --gh-height: clamp(280px, 32vw, 460px) !important;
+  flex: 1 1 calc(50% - 1px);
+}
+
+.photo-grid--paired .photo-card::after {
+  position: absolute;
+  z-index: 3;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.42rem 0.58rem;
+  background: rgba(14, 17, 18, 0.84);
+  color: var(--white);
+  content: attr(data-state-label);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .photo-card {
   position: relative;
   display: block;
@@ -1776,6 +1797,11 @@ p {
 
   .photo-grid > .glare-hover {
     flex-basis: clamp(180px, 48%, 340px);
+  }
+
+  .photo-grid--paired > .glare-hover {
+    --gh-height: clamp(230px, 64vw, 360px) !important;
+    flex-basis: 100%;
   }
 
   .reactbits-dome-shell {

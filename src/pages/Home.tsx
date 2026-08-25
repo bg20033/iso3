@@ -92,10 +92,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/*
-        Kein eigener Abschnitt mehr: Der Vergleich steht als durchlaufendes
-        Band zwischen den Abschnitten und trägt sich über die Bilder selbst.
-      */}
+      {/* Five static comparisons, each shown once. */}
       <ComparisonMarquee />
 
       <section className="section section--metal">

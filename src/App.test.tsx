@@ -152,7 +152,7 @@ describe('routing and redesigned experience', () => {
     expect(slider).toHaveValue('0')
   })
 
-  it('runs the before-and-after strip on the landing page', async () => {
+  it('shows five static before-and-after comparisons on the landing page', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -160,8 +160,9 @@ describe('routing and redesigned experience', () => {
     )
 
     const strip = await screen.findByLabelText('Vorher und nachher im Vergleich')
-    expect(within(strip).getAllByText('Vorher').length).toBeGreaterThan(0)
-    expect(within(strip).getAllByText('Nachher').length).toBeGreaterThan(0)
+    expect(comparisons).toHaveLength(5)
+    expect(within(strip).getAllByText('Vorher')).toHaveLength(5)
+    expect(within(strip).getAllByText('Nachher')).toHaveLength(5)
   })
 
   /*
@@ -244,8 +245,27 @@ describe('routing and redesigned experience', () => {
     expect(within(dock).getByRole('button', { name: 'Start' })).toBeInTheDocument()
     expect(within(dock).getByRole('button', { name: 'Lösungen' })).toBeInTheDocument()
     expect(within(dock).getByRole('button', { name: 'IsoMat' })).toBeInTheDocument()
+    expect(within(dock).getByRole('button', { name: 'Referenzen' })).toBeInTheDocument()
     expect(within(dock).getByRole('button', { name: 'Anfrage' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Menü öffnen' })).toBeNull()
     expect(screen.queryByRole('navigation', { name: 'Mobile Navigation' })).toBeNull()
+  })
+
+  it('renders the references page and all specified industries', async () => {
+    render(
+      <MemoryRouter initialEntries={['/referenzen']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Erfahrung aus anspruchsvollen Industrieanlagen.',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Kehrichtverbrennungsanlagen')).toBeInTheDocument()
+    expect(screen.getByText('Gebäudetechnik-Anlagen')).toBeInTheDocument()
+    expect(screen.getByText(/Vierzehn neue Aufnahmen/)).toBeInTheDocument()
   })
 })

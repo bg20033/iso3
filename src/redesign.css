@@ -27,6 +27,15 @@ body {
 
 .header__bar {
   min-height: 72px;
+  grid-template-columns: auto 1fr auto;
+}
+
+.header__nav {
+  justify-self: center;
+}
+
+.header__actions {
+  justify-self: end;
 }
 
 /* Landing hero */
@@ -1334,57 +1343,37 @@ body {
   letter-spacing: 0.18em;
 }
 
-/* --- Vorher/Nachher als laufendes Band ------------------------------------
- * Einheitliche Bandhöhe, Breite nach Aufnahme: Hoch- und Querformate stehen
- * gemischt im Archiv. Ein fixer Kartenrahmen würde bei Hochformaten quer
- * durchs Bauteil schneiden, deshalb gibt die Aufnahme die Breite vor
- * (siehe .before-after--compact).
- */
-.ref-marquee--compare .ref-marquee__card {
-  flex: 0 0 auto;
-  width: auto;
-  max-width: calc(100vw - (2 * var(--gutter)));
+/* Five static comparisons: three cards above and two balanced cards below. */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.75rem) clamp(1rem, 2vw, 2rem);
+  padding: clamp(2.5rem, 5vw, 5rem) var(--gutter);
+  border-block: 1px solid var(--edge);
+  background: var(--paper);
 }
 
-/*
- * Der Abstand steckt im Aussenrand der Karte, nicht in `gap`: Bei `gap` fehlt
- * am Ende der Reihe genau eine Lücke, der Sprung bei -50 % wäre sichtbar.
- * Als Aussenrand trägt jede Karte ihren Abstand selbst – beide Kopien sind
- * dann exakt gleich breit und der Übergang liegt genau auf der Naht.
- */
-.ref-marquee--compare .ref-marquee__track {
-  /* Ohne start würde die höchste Karte die anderen mitziehen und dabei das
-     Seitenverhältnis der Aufnahmen aushebeln. */
-  align-items: start;
-  gap: 0;
-  animation: ref-marquee-run calc(var(--count, 3) * 11s) linear infinite;
+.comparison-grid .compare-card {
+  min-width: 0;
+  grid-column: span 2;
 }
 
-.ref-marquee--compare .compare-card {
-  margin-inline-end: clamp(1rem, 2vw, 2rem);
+.comparison-grid .compare-card:nth-child(n + 4) {
+  grid-column: span 3;
 }
 
-/*
- * Nur eine Achse darf gesetzt sein: Stehen Breite und Höhe zugleich fest,
- * ignoriert der Browser das Seitenverhältnis und beschneidet Hochformate quer
- * durchs Bauteil. Am Schreibtisch gibt die Bandhöhe den Takt vor, die Breite
- * folgt der Aufnahme – so stehen Hoch- und Querformate sauber nebeneinander.
- */
 .compare-card .before-after--compact {
-  width: auto;
-  height: clamp(300px, 40vw, 380px);
-  max-width: calc(100vw - (2 * var(--gutter)));
+  width: 100%;
+  height: auto;
+  max-width: none;
   max-height: none;
-  aspect-ratio: var(--comparison-aspect, 3 / 2);
+  aspect-ratio: 4 / 3;
   margin: 0;
 }
 
-/* Am Telefon ist die Breite der knappe Platz – dort führt sie. */
-@media (max-width: 620px) {
-  .compare-card .before-after--compact {
-    width: min(84vw, 380px);
-    height: auto;
-  }
+.compare-card .before-after--compact img {
+  background: #d6d9da;
+  object-fit: contain;
 }
 
 .compare-card .before-after--compact .before-after__label {
@@ -1411,7 +1400,7 @@ body {
  * als Marke gesperrt.
  */
 .compare-card .ref-marquee__label {
-  max-width: 42ch;
+  max-width: none;
   color: var(--ink);
   font-size: 0.82rem;
   letter-spacing: 0.005em;
@@ -1419,49 +1408,79 @@ body {
   text-transform: none;
 }
 
-@media (hover: none), (pointer: coarse) {
-  .ref-marquee--compare {
-    overflow-x: auto;
-    mask-image: none;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+@media (max-width: 900px) {
+  .comparison-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .ref-marquee--compare .ref-marquee__track {
-    padding-inline: var(--gutter);
-    animation: none;
+  .comparison-grid .compare-card,
+  .comparison-grid .compare-card:nth-child(n + 4) {
+    grid-column: auto;
   }
 
-  .ref-marquee--compare .compare-card {
-    scroll-snap-align: center;
-  }
-
-  /* Ohne Lauf braucht es die zweite Kopie nicht – sie wäre schlicht eine
-     Wiederholung am Ende des Streifens. */
-  .ref-marquee--compare .compare-card[inert] {
-    display: none;
+  .comparison-grid .compare-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* Kein Selbstlauf – der Streifen wird von Hand geschoben */
-  .ref-marquee {
-    overflow-x: auto;
-    mask-image: none;
-    scroll-snap-type: x mandatory;
+/* References page */
+.reference-sector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--edge-strong);
+  border-left: 1px solid var(--edge-strong);
+  list-style: none;
+}
+
+.reference-sector-grid li {
+  min-height: 180px;
+  padding: clamp(1.25rem, 2.6vw, 2.25rem);
+  border-right: 1px solid var(--edge-strong);
+  border-bottom: 1px solid var(--edge-strong);
+}
+
+.reference-sector-grid span {
+  color: var(--signal);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.reference-sector-grid h3 {
+  max-width: 24ch;
+  margin-top: 2.25rem;
+  font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+  line-height: 1.25;
+}
+
+@media (max-width: 900px) {
+  .reference-sector-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .reference-sector-grid {
+    grid-template-columns: 1fr;
   }
 
-  .ref-marquee__track {
-    padding-inline: var(--gutter);
-    animation: none;
+  .reference-sector-grid li {
+    min-height: 132px;
+  }
+}
+
+@media (max-width: 620px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .ref-marquee__card {
-    scroll-snap-align: start;
-  }
-
-  .ref-marquee--compare .compare-card[inert] {
-    display: none;
+  .comparison-grid .compare-card,
+  .comparison-grid .compare-card:last-child:nth-child(odd) {
+    grid-column: auto;
   }
 }
 
@@ -1492,5 +1511,11 @@ body {
   .reactbits-dome-shell {
     height: min(480px, 118vw);
     min-height: 340px;
+  }
+}
+
+@media (max-width: 800px) {
+  .header__bar {
+    grid-template-columns: 1fr auto;
   }
 }

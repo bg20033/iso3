@@ -43,7 +43,7 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
 
   const staticGallery = (
     <div className="reference-static-grid">
-      {images.slice(0, 12).map((image, index) => (
+      {images.map((image, index) => (
         <a
           href={image.src}
           target="_blank"

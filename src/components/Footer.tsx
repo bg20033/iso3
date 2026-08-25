@@ -10,6 +10,7 @@ export function Footer() {
     label: item.to === '/' ? pick('Start', 'Home')
       : item.to === '/loesungen' ? pick('Lösungen', 'Solutions')
       : item.to === '/ueber-uns' ? pick('Über uns', 'About us')
+      : item.to === '/referenzen' ? pick('Referenzen', 'References')
       : pick('Kontakt', 'Contact'),
   }))
   return (

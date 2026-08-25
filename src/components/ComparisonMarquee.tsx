@@ -14,23 +14,20 @@ type Pair = { comparison: Comparison; solution: Solution }
 function CompareCard({
   comparison,
   solution,
-  duplicate = false,
-}: Pair & { duplicate?: boolean }) {
+}: Pair) {
   const { language } = useLanguage()
   const englishCaption: Record<string, string> = {
     'ventile-armaturen-ventil-blau': 'Shut-off valve with removable insulation jacket',
     'heizungszentralen-rohrknoten': 'Pipe junction with flanges and measuring point',
     'sonderbau-armaturengruppe': 'Valve assembly with combined insulation',
+    'ventile-armaturen-rohrleitungsgruppe': 'Pipe assembly with precision-fit insulation jackets',
+    'turbinen-turbinengehaeuse': 'Turbine casing with multi-part insulation',
   }
   const caption = language === 'en'
     ? englishCaption[comparisonKey(comparison)] ?? solution.shortTitle
     : comparison.caption ?? solution.shortTitle
   return (
-    <div
-      className="ref-marquee__card compare-card"
-      aria-hidden={duplicate}
-      inert={duplicate}
-    >
+    <div className="ref-marquee__card compare-card">
       <BeforeAfterSlider
         compact
         before={comparison.before}
@@ -45,18 +42,7 @@ function CompareCard({
   )
 }
 
-/**
- * Vorher/Nachher-Vergleiche als endlos laufendes Band.
- *
- * Der Streifen wird genau einmal dupliziert und um die halbe Breite
- * verschoben: Das Ende der ersten Kopie trifft dabei auf den Anfang der
- * zweiten, der Übergang bleibt unsichtbar. Die zweite Kopie ist inert, damit
- * ihre Regler nicht doppelt in die Bedienreihenfolge geraten.
- *
- * Damit sich die Regler ziehen lassen, hält der Lauf an, sobald der Zeiger
- * über dem Streifen liegt oder der Fokus darin sitzt. Auf Tastgeräten gibt es
- * kein Darüberfahren – dort wird von Hand gewischt statt gelaufen (siehe CSS).
- */
+/** Five static comparisons: three on the first desktop row, two below. */
 export function ComparisonMarquee() {
   const { pick } = useLanguage()
   const { solutions } = useLocalizedSite()
@@ -70,21 +56,12 @@ export function ComparisonMarquee() {
 
   return (
     <div
-      className="ref-marquee ref-marquee--compare"
+      className="comparison-grid"
       aria-label={pick('Vorher und nachher im Vergleich', 'Before and after comparison')}
     >
-      <div
-        className="ref-marquee__track"
-        style={{ '--count': pairs.length } as React.CSSProperties}
-      >
-        {[...pairs, ...pairs].map((pair, index) => (
-          <CompareCard
-            key={`${comparisonKey(pair.comparison)}-${index}`}
-            duplicate={index >= pairs.length}
-            {...pair}
-          />
-        ))}
-      </div>
+      {pairs.map((pair) => (
+        <CompareCard key={comparisonKey(pair.comparison)} {...pair} />
+      ))}
     </div>
   )
 }

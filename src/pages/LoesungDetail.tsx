@@ -161,7 +161,7 @@ export default function LoesungDetail() {
             </div>
             <p>{solution.gallery.length} {pick('reale Aufnahmen aus dem IsoMat-Archiv.', 'real images from the IsoMat archive.')}</p>
           </div>
-          <div className="photo-grid">
+          <div className={`photo-grid${solution.slug === 'turbinen' ? ' photo-grid--paired' : ''}`}>
             {solution.gallery.map((image, index) => (
               <GlareHover
                 width="100%"
@@ -179,13 +179,18 @@ export default function LoesungDetail() {
                 <button
                   type="button"
                   className="photo-card"
+                  data-state-label={solution.slug === 'turbinen'
+                    ? (index % 2 === 0 ? pick('Vorher', 'Before') : pick('Nachher', 'After'))
+                    : undefined}
                   aria-haspopup="dialog"
                   aria-label={`${image.alt} ${pick('vergrössern', 'enlarge')}`}
                   onClick={() => setLightboxIndex(index)}
                 >
                   <ResponsiveImage image={image} />
                   <span>
-                    {pick('Vergrössern', 'Enlarge')}
+                    {solution.slug === 'turbinen'
+                      ? `${index % 2 === 0 ? pick('Vorher', 'Before') : pick('Nachher', 'After')} · ${pick('Vergrössern', 'Enlarge')}`
+                      : pick('Vergrössern', 'Enlarge')}
                     <Maximize2 aria-hidden="true" />
                   </span>
                 </button>

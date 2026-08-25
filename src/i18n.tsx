@@ -195,7 +195,7 @@ export function useLocalizedSite() {
         ...solution,
         ...copy,
         gallery: localizedGallery,
-        featuredImage: localizedGallery[0],
+        featuredImage: solution.slug === 'turbinen' ? localizedGallery[1] : localizedGallery[0],
         problem: copy.paragraphs[0],
         approach: copy.paragraphs[1],
         faqs: englishFaqs(copy.shortTitle),

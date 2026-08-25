@@ -16,6 +16,23 @@ const scope = [
   'Sonderbauteile',
 ]
 
+const story = {
+  de: [
+    'Die IsoMat GmbH ist Ihr kompetenter Partner für massgefertigte Dämmkissen und flexible Isolierungssysteme im industriellen Bereich. In unserer Produktion in Spreitenbach, Schweiz, fertigen wir individuelle Isolierungslösungen, die präzise auf die Anforderungen unserer Kunden abgestimmt sind.',
+    'Hinter IsoMat steht ein Team mit über 15 Jahren Erfahrung in der industriellen Isolierung. Dank unseres fundierten Fachwissens und unserer praxisorientierten Arbeitsweise entwickeln wir Lösungen für unterschiedlichste Anwendungen – von Rohrleitungen und Armaturen bis hin zu komplexen Industrieanlagen.',
+    'Unser Leistungsspektrum umfasst massgeschneiderte Dämmkissen für Ventile, Flansche, Kompensatoren, Turbinen, Wärmetauscher, Rohrleitungen, Behälter sowie zahlreiche weitere Industriekomponenten. Jedes Produkt wird individuell geplant und mit grosser Sorgfalt gefertigt, um den technischen Anforderungen und den Wünschen unserer Kunden gerecht zu werden.',
+    'Eine persönliche Beratung, eine präzise Fertigung und eine zuverlässige Lieferung bilden die Grundlage unserer täglichen Arbeit. Unser Ziel ist es, massgeschneiderte Isolierungslösungen in höchster Qualität zu liefern, die Energieverluste reduzieren, Wartungsarbeiten erleichtern und die Betriebssicherheit erhöhen.',
+    'Wir verstehen uns als langfristiger Partner unserer Kunden und begleiten jedes Projekt von der ersten Beratung über die Planung bis zur fertigen Lösung. Dabei stehen Qualität, Zuverlässigkeit und Kundenzufriedenheit jederzeit im Mittelpunkt unseres Handelns.',
+  ],
+  en: [
+    'IsoMat GmbH is your specialist partner for custom-made insulation jackets and flexible insulation systems for industrial applications. At our production facility in Spreitenbach, Switzerland, we manufacture individual insulation solutions precisely tailored to our customers’ requirements.',
+    'IsoMat is backed by a team with more than 15 years of experience in industrial insulation. Our technical expertise and practical approach enable us to develop solutions for a wide range of applications – from pipework and valves to complex industrial plants.',
+    'Our range includes custom-made insulation jackets for valves, flanges, expansion joints, turbines, heat exchangers, pipework, vessels and many other industrial components. Every product is individually planned and manufactured with great care to meet technical requirements and customer needs.',
+    'Personal advice, precise manufacturing and reliable delivery form the basis of our daily work. Our goal is to provide high-quality, custom insulation solutions that reduce energy loss, simplify maintenance and improve operational safety.',
+    'We see ourselves as a long-term partner to our customers and support every project from the initial consultation and planning through to the completed solution. Quality, reliability and customer satisfaction remain central to everything we do.',
+  ],
+} as const
+
 export default function UeberUns() {
   const { language, pick } = useLanguage()
   const { coreBenefits, processSteps } = useLocalizedSite()
@@ -45,12 +62,8 @@ export default function UeberUns() {
             <h2>{pick('Ein Betrieb. Eine Werkstatt. Jedes Teil ein Unikat.', 'One company. One workshop. Every part unique.')}</h2>
           </div>
           <div className="prose prose--large">
-            <p>
-              {pick('IsoMat entwickelt individuelle Isolierungslösungen für reale Betriebsbedingungen. Geometrie, Temperatur, Bewegung und Zugänglichkeit bestimmen jede Konstruktion.', 'IsoMat develops individual insulation solutions for real operating conditions. Geometry, temperature, movement and accessibility shape every design.')}
-            </p>
-            <p>
-              {pick('Das Ergebnis ist eine flexible, segmentierte Isolierung, die Wärmeverluste reduziert und sich für Wartung oder Inspektion wiederholt entfernen und montieren lässt.', 'The result is flexible, segmented insulation that reduces heat loss and can be repeatedly removed and refitted for maintenance or inspection.')}
-            </p>
+            {story[language].map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            <p><strong>{pick('IsoMat GmbH – Massgeschneiderte Isolierungslösungen für höchste Ansprüche.', 'IsoMat GmbH – Custom insulation solutions for the highest standards.')}</strong></p>
           </div>
         </div>
         <div className="shell about-scope">

@@ -11,6 +11,7 @@ export function Header() {
     label: item.to === '/' ? pick('Start', 'Home')
       : item.to === '/loesungen' ? pick('Lösungen', 'Solutions')
       : item.to === '/ueber-uns' ? pick('Über uns', 'About us')
+      : item.to === '/referenzen' ? pick('Referenzen', 'References')
       : pick('Kontakt', 'Contact'),
   }))
 
@@ -18,7 +19,7 @@ export function Header() {
     <header className="header">
       <div className="shell header__bar">
         <Link to="/" aria-label={pick('IsoMat Startseite', 'IsoMat home')}>
-          <Logo />
+          <Logo iconOnly />
         </Link>
 
         <nav className="header__nav" aria-label={pick('Hauptnavigation', 'Main navigation')}>
@@ -54,12 +55,6 @@ export function Header() {
               </button>
             ))}
           </div>
-          <a className="header__phone" href="tel:+41562451628">
-            056 245 16 28
-          </a>
-          <Link className="button button--compact header__cta" to="/kontakt">
-            {pick('Projekt anfragen', 'Request a project')}
-          </Link>
         </div>
 
         <div className="mobile-language-switch language-switch" role="group" aria-label={pick('Sprache', 'Language')}>

@@ -43,6 +43,14 @@ const staticRoutes: RouteSeo[] = [
     crumb: 'Über uns',
   },
   {
+    path: '/referenzen',
+    title: 'Referenzen für Industrieisolierung | IsoMat GmbH',
+    description:
+      'Referenzen und Einsatzfelder für massgefertigte IsoMat-Dämmkissen in Energie-, Prozess- und Industrieanlagen.',
+    image: '/media/references/turbines/01-after-1280.webp',
+    crumb: 'Referenzen',
+  },
+  {
     path: '/kontakt',
     title: 'Projektanfrage & Kontakt | IsoMat GmbH',
     description:

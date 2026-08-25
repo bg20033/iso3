@@ -13,6 +13,7 @@ import Kontakt from './pages/Kontakt'
 import LoesungDetail from './pages/LoesungDetail'
 import Loesungen from './pages/Loesungen'
 import NichtGefunden from './pages/NichtGefunden'
+import Referenzen from './pages/Referenzen'
 import UeberUns from './pages/UeberUns'
 import { LanguageProvider } from './i18n'
 
@@ -42,6 +43,7 @@ export default function App() {
           element={<Navigate to="/produkte/sonderbau" replace />}
         />
         <Route path="ueber-uns" element={<UeberUns />} />
+        <Route path="referenzen" element={<Referenzen />} />
         <Route path="kontakt" element={<Kontakt />} />
         <Route path="impressum" element={<Impressum />} />
         <Route path="datenschutz" element={<Datenschutz />} />

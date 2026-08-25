@@ -1,4 +1,4 @@
-import { Factory, Home, Mail, PanelsTopLeft } from 'lucide-react'
+import { Factory, GalleryVerticalEnd, Home, Mail, PanelsTopLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Dock from './Dock'
 import { useLanguage } from '../i18n'
@@ -7,6 +7,7 @@ const items = [
   { to: '/', label: 'Start', icon: Home },
   { to: '/loesungen', label: 'Lösungen', icon: PanelsTopLeft },
   { to: '/ueber-uns', label: 'IsoMat', icon: Factory },
+  { to: '/referenzen', label: 'Referenzen', icon: GalleryVerticalEnd },
   { to: '/kontakt', label: 'Anfrage', icon: Mail },
 ]
 
@@ -18,6 +19,7 @@ export function MobileDock() {
     ...item,
     label: item.to === '/' ? pick('Start', 'Home')
       : item.to === '/loesungen' ? pick('Lösungen', 'Solutions')
+      : item.to === '/referenzen' ? pick('Referenzen', 'References')
       : item.to === '/kontakt' ? pick('Anfrage', 'Enquiry')
       : 'IsoMat',
   }))

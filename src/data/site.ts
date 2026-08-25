@@ -49,11 +49,66 @@ export const nav = [
   { to: '/', label: 'Start' },
   { to: '/loesungen', label: 'Lösungen' },
   { to: '/ueber-uns', label: 'Über uns' },
+  { to: '/referenzen', label: 'Referenzen' },
   { to: '/kontakt', label: 'Kontakt' },
 ] as const
 
-const gallery = (slug: keyof typeof mediaBySlug): GalleryImage[] =>
-  mediaBySlug[slug].map((image) => ({ ...image }))
+export const referenceImages: GalleryImage[] = [
+  ['01-before', 1280, 960],
+  ['01-after', 1280, 960],
+  ['02-before', 1280, 958],
+  ['02-after', 1280, 958],
+  ['03-before', 1280, 960],
+  ['03-after', 1280, 960],
+  ['04-before', 1280, 960],
+  ['04-after', 1024, 768],
+  ['05-before', 1280, 957],
+  ['05-after', 1280, 958],
+  ['06-before', 1280, 957],
+  ['06-after', 1280, 960],
+  ['07-before', 1280, 962],
+  ['07-after', 1086, 1449],
+].map(([name, width, height], index) => {
+  const pair = Math.floor(index / 2) + 1
+  const isBefore = index % 2 === 0
+  return {
+    src: `/media/references/turbines/${name}-1280.webp`,
+    thumb: `/media/references/turbines/${name}-480.webp`,
+    alt: `${isBefore ? 'Ungedämmte' : 'Gedämmte'} Turbinenanlage – Referenzpaar ${String(pair).padStart(2, '0')}`,
+    width: Number(width),
+    height: Number(height),
+  }
+})
+
+const replacedValveImages = new Set([
+  '01-1280.webp',
+  '09-1280.webp',
+  '10-1280.webp',
+  '11-1280.webp',
+  '13-1280.webp',
+  '16-1280.webp',
+])
+
+const valveReplacements = [0, 1, 2, 5, 6, 8].map((index) => ({
+  ...mediaBySlug.heizungszentralen[index],
+  alt: `Dämmkissen an Ventilen und Armaturen – Ersatzreferenz ${String(index + 1).padStart(2, '0')}`,
+}))
+
+const gallery = (slug: keyof typeof mediaBySlug): GalleryImage[] => {
+  if (slug === 'turbinen') return referenceImages.map((image) => ({ ...image }))
+
+  if (slug === 'ventile-armaturen') {
+    let replacementIndex = 0
+    return mediaBySlug[slug].map((image) => {
+      const shouldReplace = [...replacedValveImages].some((name) => image.src.endsWith(name))
+      return shouldReplace
+        ? { ...valveReplacements[replacementIndex++] }
+        : { ...image }
+    })
+  }
+
+  return mediaBySlug[slug].map((image) => ({ ...image }))
+}
 
 type SolutionSlug = keyof typeof mediaBySlug
 
@@ -206,7 +261,7 @@ const makeSolution = (
       },
     ],
     gallery: images,
-    featuredImage: images[0],
+    featuredImage: value.slug === 'turbinen' ? images[1] : images[0],
   }
 }
 
@@ -380,26 +435,8 @@ export const coreBenefits = [
   },
 ] as const
 
-/*
- * Curated for the reference dome: only finished, visibly insulated
- * installations. Bare components and before/after source images belong in
- * the comparison strip, not in this gallery.
- */
-const referenceImagePicks: Partial<Record<SolutionSlug, number[]>> = {
-  'ventile-armaturen': [0, 1, 2],
-  heizungszentralen: [0, 1, 2],
-  ascheaustragssysteme: [0, 2],
-  revisionstueren: [0, 1, 2],
-  kompensatoren: [0, 1],
-  turbinen: [1, 2],
-  sonderbau: [2],
-}
-
-export const featuredReferences = solutions.flatMap((solution) =>
-  (referenceImagePicks[solution.slug] ?? [])
-    .map((index) => solution.gallery[index])
-    .filter((image) => image !== undefined),
-)
+/** The globe uses only the newly supplied reference photography. */
+export const featuredReferences = referenceImages
 
 /*
  * Das Heldenbild ist auf der Startseite das grösste Element über dem Falz und
@@ -445,8 +482,7 @@ export type Comparison = {
  *      Zustände, damit der Regler sauber überblendet).
  *   2. Hier einen Eintrag ergänzen; bei mehreren Paaren pro Kategorie eine
  *      eigene `id` vergeben.
- * Darstellung und Wiederholung passen sich automatisch an: ab drei Paaren
- * läuft das Band, darunter steht ein ruhiges Raster ohne Dopplungen.
+ * Alle Paare erscheinen genau einmal in einem ruhigen, statischen Raster.
  */
 export const comparisons: Comparison[] = [
   {
@@ -505,6 +541,26 @@ export const comparisons: Comparison[] = [
       width: 1280,
       height: 956,
     },
+  },
+  {
+    slug: 'ventile-armaturen',
+    id: 'rohrleitungsgruppe',
+    caption: 'Rohrleitungsgruppe mit passgenauen Dämmkissen',
+    before: {
+      ...mediaBySlug['ventile-armaturen'][0],
+      alt: 'Ungedämmte Rohrleitungsgruppe vor der IsoMat-Ausführung',
+    },
+    after: {
+      ...mediaBySlug['ventile-armaturen'][2],
+      alt: 'Rohrleitungsgruppe mit montierten IsoMat-Dämmkissen',
+    },
+  },
+  {
+    slug: 'turbinen',
+    id: 'turbinengehaeuse',
+    caption: 'Turbinengehäuse mit mehrteiliger Isolierung',
+    before: referenceImages[0],
+    after: referenceImages[1],
   },
 ]
 
