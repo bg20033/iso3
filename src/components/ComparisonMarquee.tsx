@@ -16,7 +16,8 @@ type Pair = { comparison: Comparison; solution: Solution }
 function CompareCard({
   comparison,
   solution,
-}: Pair) {
+  displayNo,
+}: Pair & { displayNo: string }) {
   const { language } = useLanguage()
   const englishCaption: Record<string, string> = {
     'ventile-armaturen-ventil-blau': 'Shut-off valve with removable insulation jacket',
@@ -37,7 +38,7 @@ function CompareCard({
         name={solution.shortTitle}
       />
       <Link className="ref-marquee__label" to={solutionQuickviewPath(solution)}>
-        <b>{solution.no}</b>
+        <b>{displayNo}</b>
         {caption}
       </Link>
     </div>
@@ -146,8 +147,12 @@ export function ComparisonMarquee() {
         onScroll={syncNavigation}
       >
         <div className="comparison-carousel__track" id="comparison-carousel-track">
-          {pairs.map((pair) => (
-            <CompareCard key={comparisonKey(pair.comparison)} {...pair} />
+          {pairs.map((pair, index) => (
+            <CompareCard
+              key={comparisonKey(pair.comparison)}
+              displayNo={String(index + 1).padStart(2, '0')}
+              {...pair}
+            />
           ))}
         </div>
       </div>
