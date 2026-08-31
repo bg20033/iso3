@@ -92,7 +92,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Five static comparisons, each shown once. */}
+      {/* Five comparison cards in a manual carousel; each card has its own slider. */}
       <ComparisonMarquee />
 
       <section className="section section--metal">

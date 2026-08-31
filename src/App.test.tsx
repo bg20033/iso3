@@ -152,7 +152,7 @@ describe('routing and redesigned experience', () => {
     expect(slider).toHaveValue('0')
   })
 
-  it('shows five static before-and-after comparisons on the landing page', async () => {
+  it('nests five before-and-after sliders inside a manual card carousel', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -163,14 +163,15 @@ describe('routing and redesigned experience', () => {
     expect(comparisons).toHaveLength(5)
     expect(within(strip).getAllByText('Vorher')).toHaveLength(5)
     expect(within(strip).getAllByText('Nachher')).toHaveLength(5)
+    expect(
+      within(strip).getByRole('button', { name: 'Vorherige Vergleichskarte' }),
+    ).toBeInTheDocument()
+    expect(
+      within(strip).getByRole('button', { name: 'Nächste Vergleichskarte' }),
+    ).toBeInTheDocument()
   })
 
-  /*
-   * Kein Paar darf mehrfach im Streifen stehen, nur um ihn zu füllen. Die
-   * Kopie, die den Lauf nahtlos schliesst, ist inert und zählt deshalb nicht
-   * in die Bedienreihenfolge.
-   */
-  it('never repeats a comparison pair to fill the strip', async () => {
+  it('never repeats a comparison pair to fill the carousel', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -266,6 +267,8 @@ describe('routing and redesigned experience', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Kehrichtverbrennungsanlagen')).toBeInTheDocument()
     expect(screen.getByText('Gebäudetechnik-Anlagen')).toBeInTheDocument()
-    expect(screen.getByText(/Vierzehn neue Aufnahmen/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/jede verfügbare Aufnahme einer fertig isolierten Anlage/),
+    ).toBeInTheDocument()
   })
 })

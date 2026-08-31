@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { company, solutions } from './site'
+import { company, featuredReferences, solutions } from './site'
 
 describe('site content', () => {
   it('contains seven complete solution categories with real media', () => {
@@ -28,5 +28,25 @@ describe('site content', () => {
       phone: '056 245 16 28',
       email: 'info@isomat.ch',
     })
+  })
+
+  it('fills the globe with every unique insulated reference and no before images', () => {
+    const expectedSources = new Set(
+      solutions.flatMap((solution) =>
+        solution.slug === 'turbinen'
+          ? solution.gallery
+              .filter((_, index) => index % 2 === 1)
+              .map((image) => image.src)
+          : solution.gallery.map((image) => image.src),
+      ),
+    )
+    const globeSources = featuredReferences.map((image) => image.src)
+
+    expect(new Set(globeSources).size).toBe(globeSources.length)
+    expect(new Set(globeSources)).toEqual(expectedSources)
+    expect(globeSources.some((src) => src.includes('-before-'))).toBe(false)
+    expect(
+      globeSources.filter((src) => src.includes('/references/turbines/')),
+    ).toHaveLength(7)
   })
 })

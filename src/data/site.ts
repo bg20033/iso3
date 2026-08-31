@@ -435,8 +435,22 @@ export const coreBenefits = [
   },
 ] as const
 
-/** The globe uses only the newly supplied reference photography. */
-export const featuredReferences = referenceImages
+/**
+ * Every unique, visibly insulated installation in the archive. Turbine
+ * galleries alternate before/after, so only the completed (after) images
+ * belong in the globe.
+ */
+const insulatedReferenceCandidates = solutions.flatMap((solution) =>
+  solution.slug === 'turbinen'
+    ? solution.gallery.filter((_, index) => index % 2 === 1)
+    : solution.gallery,
+)
+
+export const featuredReferences = [
+  ...new Map(
+    insulatedReferenceCandidates.map((image) => [image.src, image]),
+  ).values(),
+]
 
 /*
  * Das Heldenbild ist auf der Startseite das grösste Element über dem Falz und

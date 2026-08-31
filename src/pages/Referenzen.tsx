@@ -55,9 +55,9 @@ export default function Referenzen() {
           <div className="section-heading section-heading--redesign">
             <div>
               <span className="eyebrow">02 · {pick('Ausgeführte Arbeiten', 'Completed work')}</span>
-              <h2>{pick('Vorher und nachher an realen Turbinen.', 'Before and after on real turbines.')}</h2>
+              <h2>{pick('Isolierte Lösungen in realen Anlagen.', 'Insulated solutions in real plants.')}</h2>
             </div>
-            <p>{pick('Vierzehn neue Aufnahmen zeigen sieben Anlagen vor und nach der Montage der mehrteiligen IsoMat-Isolierung.', 'Fourteen new photographs show seven plants before and after installation of the multi-part IsoMat insulation.')}</p>
+            <p>{pick('Der Globus zeigt jede verfügbare Aufnahme einer fertig isolierten Anlage – ohne ungedämmte Vorher-Bilder und ohne Dopplungen.', 'The globe shows every available image of a completed insulated installation – without uninsulated before photos or duplicates.')}</p>
           </div>
           <ReferenceDome images={featuredReferences} />
         </div>
