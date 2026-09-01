@@ -30,6 +30,20 @@ describe('site content', () => {
     })
   })
 
+  it('uses a different featured photo for every circular gallery category', () => {
+    const featuredSources = solutions.map(
+      (solution) => solution.featuredImage.src,
+    )
+    const valves = solutions.find(
+      (solution) => solution.slug === 'ventile-armaturen',
+    )
+
+    expect(new Set(featuredSources).size).toBe(solutions.length)
+    expect(valves?.featuredImage.src).toContain(
+      '/media/ventile-armaturen/02-1280.webp',
+    )
+  })
+
   it('fills the globe with every unique insulated reference and no before images', () => {
     const expectedSources = new Set(
       solutions.flatMap((solution) =>

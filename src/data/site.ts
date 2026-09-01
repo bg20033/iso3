@@ -238,6 +238,8 @@ const makeSolution = (
 ): Solution => {
   const images = gallery(value.slug)
   const meta = solutionMeta[value.slug]
+  const featuredImageIndex =
+    value.slug === 'turbinen' || value.slug === 'ventile-armaturen' ? 1 : 0
   return {
     ...value,
     ...meta,
@@ -261,7 +263,7 @@ const makeSolution = (
       },
     ],
     gallery: images,
-    featuredImage: value.slug === 'turbinen' ? images[1] : images[0],
+    featuredImage: images[featuredImageIndex],
   }
 }
 

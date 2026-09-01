@@ -187,6 +187,9 @@ export function useLocalizedSite() {
     }
     const localizedSolutions = solutions.map((solution) => {
       const copy = englishSolutions[solution.slug]
+      const featuredImageIndex = solution.gallery.findIndex(
+        (image) => image.src === solution.featuredImage.src,
+      )
       const localizedGallery = solution.gallery.map((image, index) => ({
         ...image,
         alt: `${copy.title} – IsoMat reference ${String(index + 1).padStart(2, '0')}`,
@@ -195,7 +198,7 @@ export function useLocalizedSite() {
         ...solution,
         ...copy,
         gallery: localizedGallery,
-        featuredImage: solution.slug === 'turbinen' ? localizedGallery[1] : localizedGallery[0],
+        featuredImage: localizedGallery[Math.max(0, featuredImageIndex)],
         problem: copy.paragraphs[0],
         approach: copy.paragraphs[1],
         faqs: englishFaqs(copy.shortTitle),
