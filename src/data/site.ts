@@ -503,6 +503,26 @@ export type Comparison = {
 export const comparisons: Comparison[] = [
   {
     slug: 'ventile-armaturen',
+    id: 'rohrleitungsgruppe',
+    caption: 'Rohrleitungsgruppe mit passgenauen Dämmkissen',
+    before: {
+      ...mediaBySlug['ventile-armaturen'][0],
+      alt: 'Ungedämmte Rohrleitungsgruppe vor der IsoMat-Ausführung',
+    },
+    after: {
+      ...mediaBySlug['ventile-armaturen'][2],
+      alt: 'Rohrleitungsgruppe mit montierten IsoMat-Dämmkissen',
+    },
+  },
+  {
+    slug: 'turbinen',
+    id: 'turbinengehaeuse',
+    caption: 'Turbinengehäuse mit mehrteiliger Isolierung',
+    before: referenceImages[0],
+    after: referenceImages[1],
+  },
+  {
+    slug: 'ventile-armaturen',
     id: 'ventil-blau',
     caption: 'Absperrventil mit abnehmbarem Dämmkissen',
     before: {
@@ -557,26 +577,6 @@ export const comparisons: Comparison[] = [
       width: 1280,
       height: 956,
     },
-  },
-  {
-    slug: 'ventile-armaturen',
-    id: 'rohrleitungsgruppe',
-    caption: 'Rohrleitungsgruppe mit passgenauen Dämmkissen',
-    before: {
-      ...mediaBySlug['ventile-armaturen'][0],
-      alt: 'Ungedämmte Rohrleitungsgruppe vor der IsoMat-Ausführung',
-    },
-    after: {
-      ...mediaBySlug['ventile-armaturen'][2],
-      alt: 'Rohrleitungsgruppe mit montierten IsoMat-Dämmkissen',
-    },
-  },
-  {
-    slug: 'turbinen',
-    id: 'turbinengehaeuse',
-    caption: 'Turbinengehäuse mit mehrteiliger Isolierung',
-    before: referenceImages[0],
-    after: referenceImages[1],
   },
 ]
 

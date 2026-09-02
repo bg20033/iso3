@@ -14,4 +14,4 @@ export async function render(pathname: string) {
   return new Response(prelude).text()
 }
 
-export { renderSeoHead }
+export { canonicalRoutes, renderSeoHead }

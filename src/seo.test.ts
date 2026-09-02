@@ -32,6 +32,14 @@ describe('SEO route manifest', () => {
     expect(serialized).not.toContain('"review"')
   })
 
+  it('describes the company contact and each indexable page', () => {
+    const schema = structuredDataForRoute('/kontakt')
+    const serialized = JSON.stringify(schema)
+    expect(serialized).toContain('"ContactPoint"')
+    expect(serialized).toContain('"ContactPage"')
+    expect(serialized).toContain('"availableLanguage":["de","en"]')
+  })
+
   it('marks unknown routes as noindex', () => {
     expect(getRouteSeo('/unbekannt')).toMatchObject({ noindex: true })
   })

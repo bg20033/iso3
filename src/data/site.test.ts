@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { company, featuredReferences, solutions } from './site'
+import {
+  comparisonKey,
+  comparisons,
+  company,
+  featuredReferences,
+  solutions,
+} from './site'
 
 describe('site content', () => {
   it('contains seven complete solution categories with real media', () => {
@@ -42,6 +48,16 @@ describe('site content', () => {
     expect(valves?.featuredImage.src).toContain(
       '/media/ventile-armaturen/02-1280.webp',
     )
+  })
+
+  it('starts the comparison carousel with the two requested landscape pairs', () => {
+    expect(comparisons.map(comparisonKey)).toEqual([
+      'ventile-armaturen-rohrleitungsgruppe',
+      'turbinen-turbinengehaeuse',
+      'ventile-armaturen-ventil-blau',
+      'heizungszentralen-rohrknoten',
+      'sonderbau-armaturengruppe',
+    ])
   })
 
   it('fills the globe with every unique insulated reference and no before images', () => {

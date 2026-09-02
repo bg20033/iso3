@@ -28,9 +28,9 @@ const staticRoutes: RouteSeo[] = [
   },
   {
     path: '/loesungen',
-    title: 'Ventile & Armaturen isolieren | IsoMat GmbH',
+    title: 'Industrielle Dämmkissen & Lösungen | IsoMat GmbH',
     description:
-      'Passgenaue, abnehmbare Dämmkissen für Ventile, Pumpen, Flansche und Armaturen – mit realem Vorher-Nachher-Vergleich.',
+      'Passgenaue, abnehmbare Dämmkissen für Ventile, Turbinen, Heizungszentralen und Sonderbauteile – mit realen Vorher-Nachher-Referenzen.',
     image: '/og.png',
     crumb: 'Lösungen',
   },
@@ -129,6 +129,18 @@ const organization = {
   logo: absoluteUrl('/logo.png'),
   email: company.email,
   telephone: company.phoneHref,
+  areaServed: {
+    '@type': 'Country',
+    name: 'Schweiz',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'Projektanfragen',
+    email: company.email,
+    telephone: company.phoneHref,
+    availableLanguage: ['de', 'en'],
+    areaServed: 'CH',
+  },
   address: {
     '@type': 'PostalAddress',
     streetAddress: company.street,
@@ -151,6 +163,29 @@ export function structuredDataForRoute(pathname: string) {
       publisher: { '@id': `${siteOrigin}/#organization` },
     },
   ]
+
+  if (!seo.noindex) {
+    const pageType =
+      seo.path === '/kontakt'
+        ? 'ContactPage'
+        : seo.path === '/ueber-uns'
+          ? 'AboutPage'
+          : seo.path === '/loesungen' || seo.path === '/referenzen'
+            ? 'CollectionPage'
+            : 'WebPage'
+
+    graph.push({
+      '@type': pageType,
+      '@id': `${absoluteUrl(seo.path)}#webpage`,
+      url: absoluteUrl(seo.path),
+      name: seo.title,
+      description: seo.description,
+      inLanguage: 'de-CH',
+      isPartOf: { '@id': `${siteOrigin}/#website` },
+      about: { '@id': `${siteOrigin}/#organization` },
+      primaryImageOfPage: absoluteUrl(seo.image),
+    })
+  }
 
   if (seo.path !== '/' && !seo.noindex) {
     const items =
@@ -268,15 +303,18 @@ export function renderSeoHead(pathname: string) {
     `<link rel="alternate" hreflang="de-CH" href="${canonical}">`,
     `<link rel="alternate" hreflang="x-default" href="${canonical}">`,
     `<meta property="og:locale" content="de_CH">`,
+    `<meta property="og:site_name" content="${escapeHtml(company.name)}">`,
     `<meta property="og:type" content="${seo.type ?? 'website'}">`,
     `<meta property="og:title" content="${escapeHtml(seo.title)}">`,
     `<meta property="og:description" content="${escapeHtml(seo.description)}">`,
     `<meta property="og:url" content="${canonical}">`,
     `<meta property="og:image" content="${image}">`,
+    `<meta property="og:image:alt" content="${escapeHtml(seo.title)}">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${escapeHtml(seo.title)}">`,
     `<meta name="twitter:description" content="${escapeHtml(seo.description)}">`,
     `<meta name="twitter:image" content="${image}">`,
+    `<meta name="twitter:image:alt" content="${escapeHtml(seo.title)}">`,
     `<script type="application/ld+json">${schema}</script>`,
   ].join('\n    ')
 }

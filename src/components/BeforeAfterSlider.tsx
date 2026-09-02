@@ -3,6 +3,7 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type PointerEvent,
 } from 'react'
 import { MoveHorizontal } from 'lucide-react'
 import { useLanguage } from '../i18n'
@@ -47,31 +48,81 @@ export function BeforeAfterSlider({
     ? `${pick('Vergleich zwischen Vorher und Nachher', 'Before and after comparison')} – ${name}`
     : pick('Vergleich zwischen Vorher und Nachher', 'Before and after comparison')
 
-  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
-    let nextPosition: number | undefined
-
-    switch (event.key) {
-      case 'ArrowLeft':
-      case 'ArrowDown':
-        nextPosition = Math.max(0, Number(event.currentTarget.value) - STEP)
-        break
-      case 'ArrowRight':
-      case 'ArrowUp':
-        nextPosition = Math.min(100, Number(event.currentTarget.value) + STEP)
-        break
-      case 'Home':
-        nextPosition = 0
-        break
-      case 'End':
-        nextPosition = 100
-        break
-      default:
-        return
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      ![
+        'ArrowLeft',
+        'ArrowDown',
+        'ArrowRight',
+        'ArrowUp',
+        'Home',
+        'End',
+      ].includes(event.key)
+    ) {
+      return
     }
 
     event.preventDefault()
-    setPosition(nextPosition)
+    setPosition((current) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowDown':
+          return Math.max(0, current - STEP)
+        case 'ArrowRight':
+        case 'ArrowUp':
+          return Math.min(100, current + STEP)
+        case 'Home':
+          return 0
+        case 'End':
+          return 100
+        default:
+          return current
+      }
+    })
   }, [])
+
+  const updateFromPointer = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    if (bounds.width <= 0) return
+    const nextPosition = ((event.clientX - bounds.left) / bounds.width) * 100
+    setPosition(Math.round(Math.min(100, Math.max(0, nextPosition))))
+  }, [])
+
+  const handlePointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      event.currentTarget.focus()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      updateFromPointer(event)
+    },
+    [updateFromPointer],
+  )
+
+  const handlePointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        updateFromPointer(event)
+      }
+    },
+    [updateFromPointer],
+  )
+
+  const handlePointerEnd = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.hasPointerCapture(event.pointerId)) return
+      updateFromPointer(event)
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    },
+    [updateFromPointer],
+  )
+
+  const handlePointerCancel = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      }
+    },
+    [],
+  )
 
   /*
    * Hoch- und Querformate liegen gemischt im Archiv. Ohne das eigene
@@ -137,17 +188,25 @@ export function BeforeAfterSlider({
         </span>
       </span>
 
-      <input
+      {/*
+       * Kein natives <input type="range">: Edge blendet darüber den
+       * systemeigenen Tooltip „Neue Verknüpfung“ ein. Die semantische
+       * Slider-Rolle und die vollständige Tastaturbedienung bleiben erhalten.
+       */}
+      <div
         className="before-after__range"
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        value={position}
+        role="slider"
+        tabIndex={0}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={position}
         aria-label={sliderLabel}
         aria-valuetext={`${position} ${pick('Prozent Vorher', 'percent before')}, ${100 - position} ${pick('Prozent Nachher', 'percent after')}`}
-        onChange={(event) => setPosition(Number(event.currentTarget.value))}
         onKeyDown={handleKeyDown}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerCancel}
       />
 
       {!compact && (

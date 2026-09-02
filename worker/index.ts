@@ -17,21 +17,14 @@ type Env = {
 
 const redirects: Record<string, string> = {
   '/produkte': '/loesungen',
-  '/produkte/ventile': '/loesungen?solution=ventile',
-  '/produkte/heizungszentralen': '/loesungen?solution=heizungszentralen',
-  '/produkte/ascheaustragssysteme': '/loesungen?solution=ascheaustragssysteme',
-  '/produkte/revisionstueren': '/loesungen?solution=revisionstueren',
-  '/produkte/kompensatoren': '/loesungen?solution=kompensatoren',
-  '/produkte/turbinen': '/loesungen?solution=turbinen',
-  '/produkte/sonderbau': '/loesungen?solution=sonderbau',
-  '/sonderbau': '/loesungen?solution=sonderbau',
-  '/loesungen/ventile-armaturen': '/loesungen?solution=ventile',
-  '/loesungen/heizungszentralen': '/loesungen?solution=heizungszentralen',
-  '/loesungen/ascheaustragssysteme': '/loesungen?solution=ascheaustragssysteme',
-  '/loesungen/revisionstueren': '/loesungen?solution=revisionstueren',
-  '/loesungen/kompensatoren': '/loesungen?solution=kompensatoren',
-  '/loesungen/turbinen': '/loesungen?solution=turbinen',
-  '/loesungen/sonderbau': '/loesungen?solution=sonderbau',
+  '/sonderbau': '/produkte/sonderbau',
+  '/loesungen/ventile-armaturen': '/produkte/ventile',
+  '/loesungen/heizungszentralen': '/produkte/heizungszentralen',
+  '/loesungen/ascheaustragssysteme': '/produkte/ascheaustragssysteme',
+  '/loesungen/revisionstueren': '/produkte/revisionstueren',
+  '/loesungen/kompensatoren': '/produkte/kompensatoren',
+  '/loesungen/turbinen': '/produkte/turbinen',
+  '/loesungen/sonderbau': '/produkte/sonderbau',
 }
 
 const json = (body: unknown, status = 200) =>

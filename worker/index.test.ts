@@ -81,19 +81,27 @@ describe('contact Worker endpoint', () => {
     )
     expect(response.status).toBe(308)
     expect(response.headers.get('location')).toBe(
-      'https://example.test/loesungen?solution=turbinen',
+      'https://example.test/produkte/turbinen',
     )
   })
 
-  it('redirects old product detail pages into the full modal', async () => {
+  it('serves canonical product pages without redirecting them', async () => {
+    const productAssets = {
+      fetch: vi.fn(async (request: Request) =>
+        new URL(request.url).pathname === '/produkte/kompensatoren/index.html'
+          ? new Response('<!doctype html><h1>Kompensatoren</h1>', {
+              headers: { 'content-type': 'text/html' },
+            })
+          : new Response('missing', { status: 404 }),
+      ),
+    }
     const response = await worker.fetch(
       new Request('https://example.test/produkte/kompensatoren'),
-      { ASSETS: assets },
+      { ASSETS: productAssets },
     )
-    expect(response.status).toBe(308)
-    expect(response.headers.get('location')).toBe(
-      'https://example.test/loesungen?solution=kompensatoren',
-    )
+    expect(response.status).toBe(200)
+    expect(response.headers.get('location')).toBeNull()
+    expect(await response.text()).toContain('<h1>Kompensatoren</h1>')
   })
 
   it('serves prerendered HTML when the asset binding retains the dist prefix', async () => {

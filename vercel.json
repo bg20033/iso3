@@ -16,18 +16,18 @@
       "permanent": true
     },
     {
-      "source": "/produkte/:slug",
-      "destination": "/loesungen?solution=:slug",
+      "source": "/sonderbau",
+      "destination": "/produkte/sonderbau",
       "permanent": true
     },
     {
-      "source": "/sonderbau",
-      "destination": "/loesungen?solution=sonderbau",
+      "source": "/loesungen/ventile-armaturen",
+      "destination": "/produkte/ventile",
       "permanent": true
     },
     {
       "source": "/loesungen/:slug",
-      "destination": "/loesungen?solution=:slug",
+      "destination": "/produkte/:slug",
       "permanent": true
     }
   ]

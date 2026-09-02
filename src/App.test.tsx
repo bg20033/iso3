@@ -146,10 +146,12 @@ describe('routing and redesigned experience', () => {
     const slider = screen.getByRole('slider', {
       name: 'Vergleich zwischen Vorher und Nachher',
     })
+    expect(slider.tagName).toBe('DIV')
+    expect(slider).not.toHaveAttribute('title')
     fireEvent.keyDown(slider, { key: 'ArrowRight' })
-    expect(slider).toHaveValue('55')
+    expect(slider).toHaveAttribute('aria-valuenow', '55')
     fireEvent.keyDown(slider, { key: 'Home' })
-    expect(slider).toHaveValue('0')
+    expect(slider).toHaveAttribute('aria-valuenow', '0')
   })
 
   it('nests five before-and-after sliders inside a manual card carousel', async () => {
