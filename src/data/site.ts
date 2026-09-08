@@ -449,12 +449,41 @@ const insulatedReferenceCandidates = solutions.flatMap((solution) =>
     : solution.gallery,
 )
 
+/* Exakte Bildduplikate aus dem gelieferten Global-Foto-Archiv. */
+export const duplicateGlobalFotoSources = new Set([
+  '/media/global-foto/Global_Foto_2/097-1280.webp',
+  '/media/global-foto/Global_Foto_14/082-1280.webp',
+  '/media/global-foto/Global_Foto_2/100-1280.webp',
+  '/media/global-foto/Global_Foto_14/086-1280.webp',
+  '/media/global-foto/Global_Foto_8/192-1280.webp',
+  '/media/global-foto/Global_Foto_7/184-1280.webp',
+  '/media/global-foto/Global_Foto_7/171-1280.webp',
+  '/media/global-foto/Global_Foto_5/150-1280.webp',
+  '/media/global-foto/Global_Foto_3/122-1280.webp',
+  '/media/global-foto/Global_Foto_9/204-1280.webp',
+  '/media/global-foto/Global_Foto_2/109-1280.webp',
+  '/media/global-foto/Global_Foto_13/068-1280.webp',
+  '/media/global-foto/Global_Foto_8/199-1280.webp',
+  '/media/global-foto/Global_Foto_14/076-1280.webp',
+  '/media/global-foto/Global_Foto_7/181-1280.webp',
+  '/media/global-foto/Global_Foto_6/169-1280.webp',
+  '/media/global-foto/Global_Foto_9/212-1280.webp',
+  '/media/global-foto/Global_Foto_7/179-1280.webp',
+  '/media/global-foto/Global_Foto_2/098-1280.webp',
+  '/media/global-foto/Global_Foto_14/078-1280.webp',
+  '/media/global-foto/Global_Foto_14/088-1280.webp',
+  '/media/global-foto/Global_Foto_9/214-1280.webp',
+])
+
+export const uniqueGlobalFotoReferences = globalFotoReferences.filter(
+  (image) => !duplicateGlobalFotoSources.has(image.src),
+)
+
 export const featuredReferences = [
   ...new Map(
-    [...insulatedReferenceCandidates, ...globalFotoReferences].map((image) => [
-      image.src,
-      image,
-    ]),
+    [...insulatedReferenceCandidates, ...uniqueGlobalFotoReferences].map(
+      (image) => [image.src, image],
+    ),
   ).values(),
 ]
 

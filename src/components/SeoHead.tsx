@@ -49,6 +49,14 @@ export function SeoHead() {
       name: 'description',
       content: seo.description,
     })
+    if (seo.keywords?.length) {
+      setMeta('meta[name="keywords"]', {
+        name: 'keywords',
+        content: seo.keywords.join(', '),
+      })
+    } else {
+      document.head.querySelector('meta[name="keywords"]')?.remove()
+    }
     setMeta('meta[name="robots"]', {
       name: 'robots',
       content: seo.noindex ? 'noindex, nofollow' : 'index, follow',

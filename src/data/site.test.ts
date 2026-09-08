@@ -3,8 +3,10 @@ import {
   comparisonKey,
   comparisons,
   company,
+  duplicateGlobalFotoSources,
   featuredReferences,
   solutions,
+  uniqueGlobalFotoReferences,
 } from './site'
 import { globalFotoReferences } from './global-foto.generated'
 
@@ -71,7 +73,7 @@ describe('site content', () => {
                 .map((image) => image.src)
             : solution.gallery.map((image) => image.src),
         ),
-        ...globalFotoReferences.map((image) => image.src),
+        ...uniqueGlobalFotoReferences.map((image) => image.src),
       ],
     )
     const globeSources = featuredReferences.map((image) => image.src)
@@ -84,6 +86,10 @@ describe('site content', () => {
     ).toHaveLength(7)
     expect(
       globeSources.filter((src) => src.includes('/media/global-foto/')),
-    ).toHaveLength(globalFotoReferences.length)
+    ).toHaveLength(uniqueGlobalFotoReferences.length)
+    expect(duplicateGlobalFotoSources.size).toBe(22)
+    expect(uniqueGlobalFotoReferences).toHaveLength(
+      globalFotoReferences.length - duplicateGlobalFotoSources.size,
+    )
   })
 })

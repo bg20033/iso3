@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   canonicalRoutes,
   getRouteSeo,
+  requestedSearchTerms,
   renderSeoHead,
   structuredDataForRoute,
 } from './seo'
@@ -38,6 +39,18 @@ describe('SEO route manifest', () => {
     expect(serialized).toContain('"ContactPoint"')
     expect(serialized).toContain('"ContactPage"')
     expect(serialized).toContain('"availableLanguage":["de","en"]')
+  })
+
+  it('covers every requested insulation search term on the solutions page', () => {
+    const seo = getRouteSeo('/loesungen')
+    const head = renderSeoHead('/loesungen')
+    const schema = JSON.stringify(structuredDataForRoute('/loesungen'))
+
+    expect(new Set(seo.keywords ?? [])).toEqual(new Set(requestedSearchTerms))
+    for (const term of requestedSearchTerms) {
+      expect(head).toContain(term)
+      expect(schema).toContain(term)
+    }
   })
 
   it('marks unknown routes as noindex', () => {

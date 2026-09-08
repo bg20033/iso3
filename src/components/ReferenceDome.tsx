@@ -92,8 +92,8 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
                 dragDampening={0.8}
                 openedImageWidth="min(860px, 92vw)"
                 openedImageHeight="min(620px, 66vh)"
-                imageInset="4px"
-                imageBorderRadius="7px"
+                imageInset="1px"
+                imageBorderRadius="5px"
                 openedImageBorderRadius="4px"
                 grayscale={false}
                 onReady={markReady}

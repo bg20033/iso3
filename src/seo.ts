@@ -16,23 +16,82 @@ export type RouteSeo = {
   type?: 'website' | 'product'
   noindex?: boolean
   crumb?: string
+  keywords?: string[]
 }
+
+export const primarySearchTerms = [
+  'Isoliertechnik',
+  'Isolationstechnik',
+  'Isolierung',
+  'Isolation',
+  'Industrieisolierung',
+  'Technische Isolation',
+  'Wärmedämmung',
+  'Armaturenisolierung',
+  'Isoliermatratzen',
+  'Dämmmatratzen',
+]
+
+export const requestedSearchTerms = [
+  ...primarySearchTerms,
+  'Dämmkissen',
+  'Isolierkissen',
+  'Wärmedämmmatratzen',
+  'Wärmedämmkissen',
+  'Isoliermanschetten',
+  'Dämmmanschetten',
+  'Isolierjacken',
+  'Isoliermäntel',
+  'flexible Isolierung',
+  'industrielle Wärmedämmung',
+  'Hochtemperaturisolierung',
+  'Hitzeschutzisolierung',
+  'thermische Isolierung',
+  'abnehmbare Isolierung',
+  'demontierbare Isolierung',
+  'wiederverwendbare Isolierung',
+  'Ventilisolierung',
+  'Flanschisolierung',
+  'Pumpenisolierung',
+  'Rohrisolierung',
+  'Rohrleitungsisolierung',
+  'Turbinenisolierung',
+  'Gasturbinenisolierung',
+  'Wärmetauscher Isolierung',
+  'Kompensatoren Isolierung',
+  'Schieber Isolierung',
+  'Kugelhahn Isolierung',
+  'Stellventil Isolierung',
+  'Absperrventil Isolierung',
+  'Kondensatableiter Isolierung',
+  'Filter Isolierung',
+  'Industriefilter Isolierung',
+  'Behälterisolierung',
+  'Tankisolierung',
+  'Kesselisolierung',
+  'Abgasleitung Isolierung',
+  'Schalldämpfer Isolierung',
+  'Motorisolierung',
+  'Heizungsarmaturen isolieren',
+]
 
 const staticRoutes: RouteSeo[] = [
   {
     path: '/',
-    title: 'IsoMat GmbH | Industrielle Dämmkissen nach Mass',
+    title: 'IsoMat | Isoliertechnik & Industrieisolierung',
     description:
-      'Massgefertigte, abnehmbare Dämmkissen und Isoliermatratzen für komplexe Industrieanlagen – entwickelt und gefertigt in Spreitenbach.',
+      'Isoliermatratzen, Dämmmatratzen und abnehmbare Dämmkissen für die industrielle Wärmedämmung – nach Mass gefertigt in Spreitenbach.',
     image: '/og.png',
+    keywords: primarySearchTerms,
   },
   {
     path: '/loesungen',
-    title: 'Industrielle Dämmkissen & Lösungen | IsoMat GmbH',
+    title: 'Isoliermatratzen & Dämmkissen | IsoMat GmbH',
     description:
-      'Passgenaue, abnehmbare Dämmkissen für Ventile, Turbinen, Heizungszentralen und Sonderbauteile – mit realen Vorher-Nachher-Referenzen.',
+      'Flexible Isoliermatratzen und Dämmkissen für Ventile, Armaturen, Rohrleitungen, Turbinen und weitere Industriekomponenten.',
     image: '/og.png',
     crumb: 'Lösungen',
+    keywords: requestedSearchTerms,
   },
   {
     path: '/ueber-uns',
@@ -85,6 +144,11 @@ export const canonicalRoutes = [
     image: solution.featuredImage.src,
     type: 'product',
     crumb: solution.title,
+    keywords: [
+      ...primarySearchTerms,
+      solution.seo.primaryKeyword,
+      ...solution.seo.secondaryKeywords,
+    ],
   })),
 ]
 
@@ -180,6 +244,7 @@ export function structuredDataForRoute(pathname: string) {
       url: absoluteUrl(seo.path),
       name: seo.title,
       description: seo.description,
+      keywords: seo.keywords?.join(', '),
       inLanguage: 'de-CH',
       isPartOf: { '@id': `${siteOrigin}/#website` },
       about: { '@id': `${siteOrigin}/#organization` },
@@ -239,6 +304,7 @@ export function structuredDataForRoute(pathname: string) {
           name: solution.title,
           url: absoluteUrl(seo.path),
           description: solution.summary,
+          keywords: seo.keywords?.join(', '),
           image: solution.gallery.slice(0, 4).map((image) => absoluteUrl(image.src)),
           category: 'Industrielle Isoliertechnik',
           brand: { '@type': 'Brand', name: company.name },
@@ -289,6 +355,7 @@ export function renderSeoHead(pathname: string) {
   const canonical = absoluteUrl(seo.path)
   const image = absoluteUrl(seo.image)
   const robots = seo.noindex ? 'noindex, nofollow' : 'index, follow'
+  const keywords = seo.keywords?.join(', ')
   const schema = JSON.stringify(structuredDataForRoute(pathname)).replaceAll(
     '<',
     '\\u003c',
@@ -298,6 +365,9 @@ export function renderSeoHead(pathname: string) {
     renderLcpPreload(pathname),
     `<title>${escapeHtml(seo.title)}</title>`,
     `<meta name="description" content="${escapeHtml(seo.description)}">`,
+    ...(keywords
+      ? [`<meta name="keywords" content="${escapeHtml(keywords)}">`]
+      : []),
     `<meta name="robots" content="${robots}">`,
     `<link rel="canonical" href="${canonical}">`,
     `<link rel="alternate" hreflang="de-CH" href="${canonical}">`,

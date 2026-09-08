@@ -80,7 +80,7 @@ export default function Loesungen() {
         index={pick('01 · Lösungen', '01 · Solutions')}
         crumb={pick('Lösungen', 'Solutions')}
         title={pick('Die passende Form für jede Anlage.', 'The right shape for every plant.')}
-        lead={pick('Sieben typische Kategorien, individuell konstruiert und für Wartung, Inspektion und Reparatur wieder abnehmbar.', 'Seven typical categories, individually designed and removable for maintenance, inspection and repair.')}
+        lead={pick('Isoliertechnik nach Mass: Isoliermatratzen, Dämmmatratzen und Dämmkissen für Wartung, Inspektion und Reparatur.', 'Made-to-measure insulation technology: removable insulation jackets for maintenance, inspection and repair.')}
       />
 
       <section className="section section--light solutions-overview">
@@ -115,7 +115,7 @@ export default function Loesungen() {
             <div className="solutions-overview__intro">
               <span className="eyebrow">{pick('Bauteile & Anwendungen', 'Components & applications')}</span>
               <p>
-                {pick('Wählen Sie die Kategorie, die Ihrer Komponente am nächsten kommt. Ist keine passende Form dabei, entwickelt IsoMat eine Sonderlösung.', 'Choose the category closest to your component. If none matches, IsoMat will develop a custom solution.')}
+                {pick('IsoMat verbindet technische Isolation, Industrieisolierung und industrielle Wärmedämmung in flexiblen, abnehmbaren und wiederverwendbaren Systemen. Wählen Sie die Kategorie, die Ihrer Komponente am nächsten kommt.', 'IsoMat combines technical insulation and industrial thermal insulation in flexible, removable and reusable systems. Choose the category closest to your component.')}
               </p>
             </div>
 
