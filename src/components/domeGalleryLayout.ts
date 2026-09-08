@@ -25,33 +25,46 @@ export function buildDomeItems(
     (_, index) => firstEvenRow + index * 2,
   )
   const oddRows = evenRows.map((row) => row + 1)
-  const coordinates = xColumns.flatMap((x, column) => {
-    const rows = column % 2 === 0 ? evenRows : oddRows
-    return rows.map((y) => ({ x, y, sizeX: 2, sizeY: 2 }))
-  })
+  const allRows = [evenRows, oddRows]
+  const capacity = xColumns.length * normalizedRowCount
 
   if (pool.length === 0) {
-    return coordinates.map((coordinate) => ({
-      ...coordinate,
-      src: '',
-      alt: '',
-    }))
+    return []
   }
-  if (pool.length > coordinates.length) {
+  if (pool.length > capacity) {
     console.warn(
-      `[DomeGallery] Provided image count (${pool.length}) exceeds available tiles (${coordinates.length}). Some images will not be shown.`,
+      `[DomeGallery] Provided image count (${pool.length}) exceeds available tiles (${capacity}). Some images will not be shown.`,
     )
   }
 
-  const images = pool.slice(0, coordinates.length).map((image) =>
+  const images = pool.slice(0, capacity).map((image) =>
     typeof image === 'string'
       ? { src: image, alt: '' }
       : { src: image.src || '', alt: image.alt || '' },
   )
+  const baseRowsPerColumn = Math.floor(images.length / xColumns.length)
+  const columnsWithExtraRow = images.length % xColumns.length
+  const coordinates = xColumns.flatMap((x, column) => {
+    const extrasBefore = Math.floor(
+      (column * columnsWithExtraRow) / xColumns.length,
+    )
+    const extrasAfter = Math.floor(
+      ((column + 1) * columnsWithExtraRow) / xColumns.length,
+    )
+    const rowsInColumn = baseRowsPerColumn + Number(extrasAfter > extrasBefore)
+    const availableRows = allRows[column % 2]
+    const unusedRows = normalizedRowCount - rowsInColumn
+    const rowOffset =
+      Math.floor(unusedRows / 2) +
+      Number(unusedRows % 2 === 1 && column % 4 >= 2)
+    const rows = availableRows.slice(rowOffset, rowOffset + rowsInColumn)
 
-  // Freie Plätze gleichmässig verteilen, statt Fotos zu wiederholen.
+    return rows.map((y) => ({ x, y, sizeX: 2, sizeY: 2 }))
+  })
+
+  // Jede Spalte kompakt füllen: keine Duplikate und keine Löcher im Inneren.
   return images.map((image, index) => ({
-    ...coordinates[Math.floor((index * coordinates.length) / images.length)],
+    ...coordinates[index],
     ...image,
   }))
 }
