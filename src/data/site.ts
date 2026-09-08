@@ -1,4 +1,5 @@
 import { mediaBySlug } from './media.generated'
+import { globalFotoReferences } from './global-foto.generated'
 
 export type GalleryImage = {
   src: string
@@ -450,7 +451,10 @@ const insulatedReferenceCandidates = solutions.flatMap((solution) =>
 
 export const featuredReferences = [
   ...new Map(
-    insulatedReferenceCandidates.map((image) => [image.src, image]),
+    [...insulatedReferenceCandidates, ...globalFotoReferences].map((image) => [
+      image.src,
+      image,
+    ]),
   ).values(),
 ]
 

@@ -6,6 +6,7 @@ import {
   featuredReferences,
   solutions,
 } from './site'
+import { globalFotoReferences } from './global-foto.generated'
 
 describe('site content', () => {
   it('contains seven complete solution categories with real media', () => {
@@ -62,13 +63,16 @@ describe('site content', () => {
 
   it('fills the globe with every unique insulated reference and no before images', () => {
     const expectedSources = new Set(
-      solutions.flatMap((solution) =>
-        solution.slug === 'turbinen'
-          ? solution.gallery
-              .filter((_, index) => index % 2 === 1)
-              .map((image) => image.src)
-          : solution.gallery.map((image) => image.src),
-      ),
+      [
+        ...solutions.flatMap((solution) =>
+          solution.slug === 'turbinen'
+            ? solution.gallery
+                .filter((_, index) => index % 2 === 1)
+                .map((image) => image.src)
+            : solution.gallery.map((image) => image.src),
+        ),
+        ...globalFotoReferences.map((image) => image.src),
+      ],
     )
     const globeSources = featuredReferences.map((image) => image.src)
 
@@ -78,5 +82,8 @@ describe('site content', () => {
     expect(
       globeSources.filter((src) => src.includes('/references/turbines/')),
     ).toHaveLength(7)
+    expect(
+      globeSources.filter((src) => src.includes('/media/global-foto/')),
+    ).toHaveLength(globalFotoReferences.length)
   })
 })
