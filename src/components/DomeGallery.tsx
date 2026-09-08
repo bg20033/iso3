@@ -15,6 +15,7 @@ type DomeGalleryProps = {
   dragSensitivity?: number;
   enlargeTransitionMs?: number;
   segments?: number;
+  rows?: number;
   dragDampening?: number;
   openedImageWidth?: string;
   openedImageHeight?: string;
@@ -117,6 +118,7 @@ export default function DomeGallery({
   dragSensitivity = DEFAULTS.dragSensitivity,
   enlargeTransitionMs = DEFAULTS.enlargeTransitionMs,
   segments = DEFAULTS.segments,
+  rows = 5,
   dragDampening = 2,
   openedImageWidth = '400px',
   openedImageHeight = '400px',
@@ -165,8 +167,8 @@ export default function DomeGallery({
   }, []);
 
   const items = useMemo(
-    () => buildDomeItems(images, segments),
-    [images, segments],
+    () => buildDomeItems(images, segments, rows),
+    [images, rows, segments],
   );
 
   useEffect(() => {

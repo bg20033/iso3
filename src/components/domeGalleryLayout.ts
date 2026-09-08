@@ -9,13 +9,22 @@ export type DomeItem = {
   sizeY: number
 }
 
-export function buildDomeItems(pool: DomeImageItem[], segments: number): DomeItem[] {
+export function buildDomeItems(
+  pool: DomeImageItem[],
+  segments: number,
+  rowCount = 5,
+): DomeItem[] {
   const xColumns = Array.from(
     { length: segments },
     (_, index) => -37 + index * 2,
   )
-  const evenRows = [-4, -2, 0, 2, 4]
-  const oddRows = [-3, -1, 1, 3, 5]
+  const normalizedRowCount = Math.max(1, Math.round(rowCount))
+  const firstEvenRow = -(normalizedRowCount - 1)
+  const evenRows = Array.from(
+    { length: normalizedRowCount },
+    (_, index) => firstEvenRow + index * 2,
+  )
+  const oddRows = evenRows.map((row) => row + 1)
   const coordinates = xColumns.flatMap((x, column) => {
     const rows = column % 2 === 0 ? evenRows : oddRows
     return rows.map((y) => ({ x, y, sizeX: 2, sizeY: 2 }))

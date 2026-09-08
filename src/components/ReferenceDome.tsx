@@ -84,7 +84,8 @@ export function ReferenceDome({ images }: { images: GalleryImage[] }) {
               <DomeGallery
                 images={domeImages}
                 fit={0.56}
-                segments={64}
+                segments={51}
+                rows={7}
                 minRadius={520}
                 maxRadius={920}
                 overlayBlurColor="#eceeef"
