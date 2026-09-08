@@ -58,4 +58,20 @@ describe('DomeGallery item layout', () => {
       expect(rows.slice(1).every((row, index) => row - rows[index] === 2)).toBe(true)
     }
   })
+
+  it('fills the reference globe as an even 48 by 6 grid', () => {
+    const images = Array.from({ length: 288 }, (_, index) => ({
+      src: `/reference-${index + 1}.webp`,
+    }))
+
+    const items = buildDomeItems(images, 48, 6)
+    const columnCounts = items.reduce<Map<number, number>>((counts, item) => {
+      counts.set(item.x, (counts.get(item.x) ?? 0) + 1)
+      return counts
+    }, new Map())
+
+    expect(items).toHaveLength(288)
+    expect(columnCounts.size).toBe(48)
+    expect([...columnCounts.values()]).toEqual(Array(48).fill(6))
+  })
 })
