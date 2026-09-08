@@ -19,6 +19,7 @@ type DomeGalleryProps = {
   dragDampening?: number;
   openedImageWidth?: string;
   openedImageHeight?: string;
+  imageInset?: string;
   imageBorderRadius?: string;
   openedImageBorderRadius?: string;
   grayscale?: boolean;
@@ -178,6 +179,7 @@ export default function DomeGallery({
   dragDampening = 2,
   openedImageWidth = '400px',
   openedImageHeight = '400px',
+  imageInset = '10px',
   imageBorderRadius = '30px',
   openedImageBorderRadius = '30px',
   grayscale = true,
@@ -308,6 +310,7 @@ export default function DomeGallery({
       root.style.setProperty('--radius', `${lockedRadiusRef.current}px`);
       root.style.setProperty('--viewer-pad', `${viewerPad}px`);
       root.style.setProperty('--overlay-blur-color', overlayBlurColor);
+      root.style.setProperty('--tile-inset', imageInset);
       root.style.setProperty('--tile-radius', imageBorderRadius);
       root.style.setProperty('--enlarge-radius', openedImageBorderRadius);
       root.style.setProperty('--image-filter', grayscale ? 'grayscale(1)' : 'none');
@@ -358,6 +361,7 @@ export default function DomeGallery({
     padFactor,
     overlayBlurColor,
     grayscale,
+    imageInset,
     imageBorderRadius,
     openedImageBorderRadius,
     openedImageWidth,
@@ -790,6 +794,7 @@ export default function DomeGallery({
           ['--segments-x' as any]: segments,
           ['--segments-y' as any]: segments,
           ['--overlay-blur-color' as any]: overlayBlurColor,
+          ['--tile-inset' as any]: imageInset,
           ['--tile-radius' as any]: imageBorderRadius,
           ['--enlarge-radius' as any]: openedImageBorderRadius,
           ['--image-filter' as any]: grayscale ? 'grayscale(1)' : 'none'
