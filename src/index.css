@@ -921,6 +921,25 @@ p {
   font-weight: 300;
 }
 
+/* Flacher Kopf: das Formular soll ohne langes Scrollen sichtbar sein */
+.page-head--compact {
+  padding-top: calc(var(--header-h) + clamp(1.75rem, 3.5vw, 3rem));
+  padding-bottom: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+.page-head--compact .crumbs {
+  margin-bottom: clamp(1rem, 2vw, 1.6rem);
+}
+
+.page-head--compact .page-head__title {
+  max-width: 24ch;
+  font-size: clamp(2.3rem, 4.4vw, 3.9rem);
+}
+
+.page-head--compact .page-head__lead {
+  margin-top: 1rem;
+}
+
 /* --- Lösungsübersicht ----------------------------------------------------- */
 
 .solutions-layout {
@@ -1984,6 +2003,10 @@ p {
 
   .page-head__title {
     font-size: clamp(2.8rem, 14vw, 4.6rem);
+  }
+
+  .page-head--compact .page-head__title {
+    font-size: clamp(2rem, 9vw, 3rem);
   }
 
   .detail-hero h1 {

@@ -7,12 +7,14 @@ type PageHeadProps = {
   title: string
   lead: string
   crumb: string
+  /** Flacherer Kopf, wenn der Seiteninhalt schnell erreichbar sein soll. */
+  compact?: boolean
 }
 
-export function PageHead({ index, title, lead, crumb }: PageHeadProps) {
+export function PageHead({ index, title, lead, crumb, compact = false }: PageHeadProps) {
   const { pick } = useLanguage()
   return (
-    <section className="page-head">
+    <section className={compact ? 'page-head page-head--compact' : 'page-head'}>
       <div className="shell">
         <nav className="crumbs" aria-label={pick('Brotkrumen', 'Breadcrumbs')}>
           <Link to="/">{pick('Start', 'Home')}</Link>

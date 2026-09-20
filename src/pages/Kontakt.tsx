@@ -102,6 +102,7 @@ export default function Kontakt() {
   return (
     <>
       <PageHead
+        compact
         index={pick('04 · Kontakt', '04 · Contact')}
         crumb={pick('Kontakt', 'Contact')}
         title={pick('Ihre Anlage. Unsere nächste Massanfertigung.', 'Your plant. Our next custom solution.')}
