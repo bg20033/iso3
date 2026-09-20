@@ -110,6 +110,35 @@ export default function Kontakt() {
 
       <section className="section section--light">
         <div className="shell contact-layout">
+          <div className="contact-strip">
+            <a className="contact-strip__item" href={`tel:${company.phoneHref}`}>
+              <Phone size={18} aria-hidden="true" />
+              <span>
+                <small>{pick('Telefon', 'Phone')}</small>
+                {company.phone}
+              </span>
+            </a>
+            <a className="contact-strip__item" href={`mailto:${company.email}`}>
+              <Mail size={18} aria-hidden="true" />
+              <span>
+                <small>E-Mail</small>
+                {company.email}
+              </span>
+            </a>
+            <a
+              className="contact-strip__item"
+              href={mapDirectionsUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MapPin size={18} aria-hidden="true" />
+              <span>
+                <small>{pick('Adresse', 'Address')}</small>
+                {company.street}, {company.city}
+              </span>
+            </a>
+          </div>
+
           <form className="contact-form" onSubmit={handleSubmit}>
             <label className="form-honeypot" aria-hidden="true">
               Website
@@ -136,7 +165,7 @@ export default function Kontakt() {
                 <span>{pick('Telefon', 'Phone')}</span>
                 <input name="phone" type="tel" autoComplete="tel" />
               </label>
-              <label>
+              <label className="form-field--wide">
                 <span>{pick('Anwendung *', 'Application *')}</span>
                 <select
                   name="application"
@@ -274,33 +303,7 @@ export default function Kontakt() {
             )}
           </form>
 
-          <aside className="contact-aside">
-            <div className="contact-card">
-              <span className="eyebrow eyebrow--light">{pick('Direktkontakt', 'Direct contact')}</span>
-              <h2>IsoMat GmbH</h2>
-              <a href={`tel:${company.phoneHref}`}>
-                <Phone size={19} aria-hidden="true" />
-                {company.phone}
-              </a>
-              <a href={`mailto:${company.email}`}>
-                <Mail size={19} aria-hidden="true" />
-                {company.email}
-              </a>
-              <a
-                href={mapDirectionsUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <MapPin size={19} aria-hidden="true" />
-                <span>
-                  {company.street}
-                  <br />
-                  {company.city}
-                </span>
-              </a>
-            </div>
-            <LocationMap />
-          </aside>
+          <LocationMap />
         </div>
       </section>
     </>
