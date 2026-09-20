@@ -929,7 +929,11 @@ p {
 
 .page-head--compact .page-head__title {
   max-width: 24ch;
+  /* BlurText rendert ein Flex-Layout, deshalb zentriert justify-content */
+  justify-content: center;
+  margin-inline: auto;
   font-size: clamp(2.3rem, 4.4vw, 3.9rem);
+  text-align: center;
 }
 
 /* --- Lösungsübersicht ----------------------------------------------------- */
