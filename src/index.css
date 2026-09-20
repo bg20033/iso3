@@ -923,21 +923,13 @@ p {
 
 /* Flacher Kopf: das Formular soll ohne langes Scrollen sichtbar sein */
 .page-head--compact {
-  padding-top: calc(var(--header-h) + clamp(1.75rem, 3.5vw, 3rem));
-  padding-bottom: clamp(1.75rem, 3vw, 2.75rem);
-}
-
-.page-head--compact .crumbs {
-  margin-bottom: clamp(1rem, 2vw, 1.6rem);
+  padding-top: calc(var(--header-h) + clamp(1.5rem, 3vw, 2.5rem));
+  padding-bottom: clamp(1.5rem, 2.75vw, 2.5rem);
 }
 
 .page-head--compact .page-head__title {
   max-width: 24ch;
   font-size: clamp(2.3rem, 4.4vw, 3.9rem);
-}
-
-.page-head--compact .page-head__lead {
-  margin-top: 1rem;
 }
 
 /* --- Lösungsübersicht ----------------------------------------------------- */

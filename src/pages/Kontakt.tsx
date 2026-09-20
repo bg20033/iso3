@@ -103,10 +103,7 @@ export default function Kontakt() {
     <>
       <PageHead
         compact
-        index={pick('04 · Kontakt', '04 · Contact')}
-        crumb={pick('Kontakt', 'Contact')}
         title={pick('Ihre Anlage. Unsere nächste Massanfertigung.', 'Your plant. Our next custom solution.')}
-        lead={pick('Beschreiben Sie die Komponente und senden Sie Fotos, Zeichnungen oder Projektdokumente direkt und sicher an IsoMat.', 'Describe the component and send photos, drawings or project documents directly and securely to IsoMat.')}
       />
 
       <section className="section section--light">
