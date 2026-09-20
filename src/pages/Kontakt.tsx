@@ -9,8 +9,8 @@ import {
   X,
 } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { LocationMap, mapDirectionsUrl } from '../components/LocationMap'
 import { PageHead } from '../components/PageHead'
-import { ResponsiveImage } from '../components/ResponsiveImage'
 import { company } from '../data/site'
 import { useLanguage, useLocalizedSite } from '../i18n'
 import {
@@ -287,7 +287,7 @@ export default function Kontakt() {
                 {company.email}
               </a>
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Kesselstrasse+11%2C+8957+Spreitenbach"
+                href={mapDirectionsUrl}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -299,7 +299,7 @@ export default function Kontakt() {
                 </span>
               </a>
             </div>
-            <ResponsiveImage image={solutions[1].featuredImage} />
+            <LocationMap />
           </aside>
         </div>
       </section>

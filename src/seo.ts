@@ -212,6 +212,12 @@ const organization = {
     addressLocality: 'Spreitenbach',
     addressCountry: 'CH',
   },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: company.geo.lat,
+    longitude: company.geo.lng,
+  },
+  hasMap: `https://www.google.com/maps/search/?api=1&query=${company.geo.lat},${company.geo.lng}`,
 }
 
 export function structuredDataForRoute(pathname: string) {

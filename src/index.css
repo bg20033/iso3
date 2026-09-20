@@ -1497,6 +1497,59 @@ p {
   object-fit: cover;
 }
 
+.location-map {
+  display: grid;
+  margin: 0;
+  border: 1px solid var(--edge);
+  background: var(--paper);
+}
+
+.location-map__frame {
+  display: block;
+  width: 100%;
+  height: clamp(240px, 32vh, 340px);
+  border: 0;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 240ms ease;
+}
+
+.location-map:hover .location-map__frame,
+.location-map__frame:focus-within {
+  filter: grayscale(0);
+}
+
+.location-map__caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  border-top: 1px solid var(--edge);
+  font-size: 0.82rem;
+}
+
+.location-map__caption span {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.location-map__caption svg {
+  flex: none;
+  color: var(--signal);
+}
+
+.location-map__caption a {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: var(--signal);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* --- Abschlussband, Recht, Fehler ---------------------------------------- */
 .contact-band {
   background: var(--signal);

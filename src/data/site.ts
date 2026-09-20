@@ -44,6 +44,10 @@ export const company = {
   phone: '056 245 16 28',
   phoneHref: '+41562451628',
   email: 'info@isomat.ch',
+  geo: {
+    lat: 47.433567,
+    lng: 8.371311,
+  },
 } as const
 
 export const nav = [
